@@ -1,0 +1,7 @@
+RewriteEngine On
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+RewriteRule ^login$ index.php?page=login [QSA,L]
+RewriteRule ^$ index.php?page=events [QSA,L]

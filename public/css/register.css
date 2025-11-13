@@ -1,0 +1,127 @@
+:root {
+  --bg: #0B1020;
+  --text: #D4D4D4;
+  --text2: #9795B5;
+  --card: #111827;
+  --container-card: #18233a;
+  --borders: #ffffff1a;
+  --section-title: #4f72e6;
+  --social-media-bg: #F2F1FA;
+  --active: #fcfcfd45;
+  --ongoing: #DF505C;
+  --upcoming: #3ec55e;
+  --upcoming-time: #498357;
+  --completed: #4797FF;
+  --buttons: #FFF;
+  color-scheme: dark;
+}
+
+/* REGISTER CONTENT */
+.main-register {
+    gap: 15px !important;
+}
+
+.register-form {
+    display: flex;
+    border: 1px solid var(--borders);
+    flex-direction: column;
+    padding: 40px;
+    max-width: 475px;
+    margin: auto;
+    background-color: var(--card);
+    border-radius: 25px;
+    gap: 20px;
+}
+
+h1 {
+    margin: 0;
+    font-size: 32px;
+    color: var(--text);
+    margin-bottom: -12px;
+}
+
+p {
+    margin: 0;
+    color: var(--text2);
+}
+
+.form-fields {
+    display: flex;
+    flex-direction: column;
+    padding-top: 20px;
+    padding-bottom: 5px;
+    gap: 20px;
+}
+
+.field-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+}
+
+.block {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 50%;
+}
+
+.invisible {
+    color: transparent;
+}
+
+.inputs-container {
+    display: flex;
+    width: 100%;
+}
+
+label {
+    margin-left: 20px;
+    font-weight: 600;
+}
+
+.obligatory {
+    margin-left: 0;
+    color: #cf2d2d;
+}
+
+input {
+    background-color: #fff;
+    border: 1px solid var(--borders);
+    border-radius: 30px;
+    padding: 20px;
+    color: #0B1020;
+    font-family: inherit;
+}
+
+.forgot-password {
+    color: #6B7FFF;
+    margin-left: 20px;
+}
+
+.send-button {
+  display: inline-block;
+  background: linear-gradient(70deg, #9C93FF 0%, #5243FF 100%);
+  width: fit-content;
+  padding: 15px 30px;
+  border-radius: 40px;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--buttons);
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-family: inherit;
+  border: 0;
+  cursor: pointer;
+}
+
+.login-link {
+    text-align: center;
+    text-decoration: none;
+    color: inherit;
+    font-weight: 600;
+}
+
+.login-link:hover {
+    text-decoration: underline;
+}

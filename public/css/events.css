@@ -1,0 +1,282 @@
+:root {
+  --bg: #0B1020;
+  --text: #D4D4D4;
+  --text2: #9795B5;
+  --card: #111827;
+  --container-card: #18233a;
+  --borders: #ffffff1a;
+  --section-title: #4f72e6;
+  --social-media-bg: #F2F1FA;
+  --active: #fcfcfd45;
+  --ongoing: #DF505C;
+  --upcoming: #3ec55e;
+  --upcoming-time: #498357;
+  --completed: #4797FF;
+  color-scheme: dark;
+}
+
+/* EVENTS CONTENT */
+.events-main {
+    display: flex;
+    gap: 8px !important;
+}
+
+.events-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 0px 20px;
+    align-items: end;
+    gap: 60px;
+}
+
+.events-header span {
+    font-weight: bold;
+    color: var(--section-title);
+    width: 50%;
+}
+
+.events {
+    display: flex;
+    gap: 20px;
+}
+
+.events-block {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    gap: 10px;
+}
+
+.event-block {
+    display: flex;
+    padding: 7px;
+    border: 1px solid var(--borders);
+    background-color: var(--card);
+    border-radius: 24px;
+    justify-content: space-between;
+}
+
+.event-block:hover {
+    background-color: #18233a;
+}
+
+.events-block h3 {
+    margin: 0;
+    font-size: 14px;
+}
+
+.event-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    padding: 10px 15px;
+}
+
+.event-logo {
+    padding: 10px;
+    width: 80px;
+    height: 80px;
+    border: 1px solid var(--borders);
+    border-radius: 20px;
+    align-items: center;
+    background-color: var(--container-card);
+}
+
+.event-logo img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    object-position: center;
+    margin: 0 auto;
+}
+
+.event-secondary-info {
+    display: flex;
+    justify-content: space-between;
+}
+
+.sec-info {
+    width: calc(25%);
+    font-size: 12px;
+    display: flex;
+    flex-direction: column;
+}
+
+.event-status {
+    width: 70px;
+}
+
+.event-region {
+    display: flex;
+    flex-direction: column;
+    text-align: right;
+    font-size: 12px;
+    align-items: end;
+}
+
+.event-region img {
+    width: 16px;
+    margin-bottom: -2px;
+}
+
+.info-title {
+    color: var(--text2);
+}
+
+.status {
+    font-weight: bold;
+}
+
+.ongoing {
+    color: var(--ongoing);
+}
+
+.upcoming {
+    color: var(--upcoming);
+}
+
+.completed {
+    color: var(--completed);
+}
+
+/* RESPONSIVE CSS */
+/* ========================= */
+/* 📱 RESPONSIVE EVENTS PAGE */
+/* ========================= */
+
+/* Tablets */
+@media (max-width: 1024px) {
+  .events {
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .events-block {
+    width: 100%;
+  }
+
+  .events-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .event-block {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .event-logo {
+    width: 70px;
+    height: 70px;
+  }
+
+  .event-logo img {
+    width: 70px;
+    height: 70px;
+  }
+
+  .event-secondary-info {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+}
+
+/* Mòbils grans */
+@media (max-width: 768px) {
+  .events-main {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .events {
+    flex-direction: column;
+  }
+
+  .events-header {
+    text-align: left;
+    padding: 0 10px;
+  }
+
+  .events-header span {
+    width: 100%;
+    font-size: 0.9rem;
+  }
+
+  .event-block {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 15px;
+    gap: 15px;
+  }
+
+  .event-info {
+    padding: 0;
+  }
+
+  .event-secondary-info {
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 15px;
+  }
+
+  .event-logo {
+    align-self: center;
+    width: 60px;
+    height: 60px;
+  }
+
+  .event-logo img {
+    width: 60px;
+    height: 60px;
+  }
+
+  .sec-info,
+  .event-region {
+    width: 45%;
+  }
+}
+
+/* Mòbils petits */
+@media (max-width: 480px) {
+  .events-header {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .events-header span {
+    font-size: 0.85rem;
+  }
+
+  .event-block {
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .event-info h3 {
+    font-size: 13px;
+  }
+
+  .event-secondary-info {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .sec-info,
+  .event-region {
+    width: 100%;
+    text-align: left;
+    align-items: flex-start;
+  }
+
+  .event-logo {
+    width: 50px;
+    height: 50px;
+  }
+
+  .event-logo img {
+    width: 50px;
+    height: 50px;
+  }
+}

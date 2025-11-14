@@ -42,6 +42,7 @@ CREATE TABLE IF NOT EXISTS matches (
     score_team_2 TINYINT UNSIGNED NULL,
     date DATE NOT NULL,
     hour TIME NOT NULL,
+    status ENUM('upcoming','live','completed') DEFAULT NULL,
     event_stage VARCHAR(100) NOT NULL,
     event_id INT UNSIGNED NOT NULL,
     post_author INT UNSIGNED DEFAULT NULL,
@@ -51,10 +52,25 @@ CREATE TABLE IF NOT EXISTS matches (
     FOREIGN KEY (post_author) REFERENCES users(id) ON DELETE SET NULL ON UPDATE CASCADE
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE IF NOT EXISTS predictions (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id INT UNSIGNED NOT NULL,
+    match_id INT UNSIGNED NOT NULL,
+    score_team_1_pred TINYINT UNSIGNED NOT NULL,
+    score_team_2_pred TINYINT UNSIGNED NOT NULL,
+    points_awarded INT DEFAULT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_prediction (user_id, match_id),
+    FOREIGN KEY (user_id) REFERENCES users(id)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (match_id) REFERENCES matches(id)
+        ON DELETE CASCADE ON UPDATE CASCADE
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 INSERT INTO users (username, passwd_hash, email, admin)
 VALUES
-('admin', '$2y$10$JqK7WnweyM8vnh.gnOO3GObbGuWi8HpfQ98dFv9GgAhQ7nmxFjE8C', 'samuelcanadas2711@gmail.com', 1),
-('s.canadas', '$2y$10$O1vmIMinouaIeIlDEEXm2ui3TICCPkIRzN81SAaQRj2fmM30GGJKO', 's.canadas@sapalomera.cat', 0);
+('admin', '$2y$10$9NormUYn3BVGoyZjm5kUpuRY5eKk14iEGR6hPLB2BXh0FNZWEL2gq', 'samuelcanadas2711@gmail.com', 1),
+('s.canadas', '$2y$10$bQVnssDHklHm0Wx2rxrBEuYyEHrE92jHPdXrVCQfSBoA00dX2Tnr2', 's.canadas@sapalomera.cat', 0);
 
 INSERT INTO teams (name, country)
 VALUES
@@ -96,3 +112,20 @@ VALUES
 (6, NULL, NULL, NULL, '2025-11-15', '13:00:00', 'Upper Round 2', 1, 1),
 (7, NULL, NULL, NULL, '2025-11-15', '15:00:00', 'Upper Round 2', 1, 1),
 (8, 9, NULL, NULL, '2026-01-13', '23:00:00', 'Lower Round 1', 2, 1);
+
+INSERT INTO predictions (user_id, match_id, score_team_1_pred, score_team_2_pred)
+VALUES
+-- Match 1: Team Heretics vs FNATIC
+(2, 1, 2, 1),
+
+-- Match 2: NAVI vs KOI
+(2, 2, 1, 2),
+
+-- Match 5: KRÜ Esports vs Leviatán
+(2, 5, 2, 0),
+
+-- Match 6: Sentinels vs G2 Esports
+(2, 6, 0, 2),
+
+-- Match 9: Furia vs Loud
+(2, 9, 2, 1);

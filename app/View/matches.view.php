@@ -1,312 +1,90 @@
-<main>
-    <div class="day-block">
-        <div class="header-day">
-            <span class="date-match">Wed, October 15, 2025</span>
-            <div class="matches-tabs">
-                <a href="#" class="tab active">SCHEDULE</a>
-                <a href="#" class="tab">RESULTS</a>
-            </div>
-        </div>
-        <div class="matches-day">
-            <div class="match-block">
-                <div class="match-info">
-                    <span class="match-hour">1:00 PM</span>
+<main class="matches-page">
 
-                    <div class="teams">
-                        <div class="team">
-                            <img src="assets/icons/badges/es.png">
-                            <span>Team Heretics</span>
-                        </div>
-                        <div class="team">
-                            <img src="assets/icons/badges/eu.png">
-                            <span>FNATIC</span>
-                        </div>
-                    </div>
-            
-                    <div class="scoreboard">
-                        <span>0</span>
-                        <span>0</span>
-                    </div>
-                    <div class="live">LIVE</div>
-                </div>
-                <div class="tournament-info">
-                    <div class="tournament-text">
-                        <span class="tournament-stage">Upper Round 1</span>
-                        <span>VCT 2026: EMEA Kickoff</span>
-                    </div>
-                    <img class="tournament-logo" src="assets/icons/events/vct-emea.png" alt="Tournament-icon">
-                </div> 
-            </div>
-            <div class="match-block">
-                <div class="match-info">
-                    <span class="match-hour">3:00 PM</span>
-
-                    <div class="teams">
-                        <div class="team">
-                            <img src="assets/icons/badges/eu.png">
-                            <span>Natus Vincere</span>
-                        </div>
-                        <div class="team">
-                            <img src="assets/icons/badges/es.png">
-                            <span>KOI</span>
-                        </div>
-                    </div>
-            
-                    <div class="scoreboard">
-                        <span>0</span>
-                        <span>0</span>
-                    </div>
-                    <div class="upcoming">
-                        <span>Upcoming</span>
-                        <span class="upcoming-time">1h 23m</span>
-                    </div>
-                </div>
-                <div class="tournament-info">
-                    <div class="tournament-text">
-                        <span class="tournament-stage">Upper Round 1</span>
-                        <span>VCT 2026: EMEA Kickoff</span>
-                    </div>
-                    <img class="tournament-logo" src="assets/icons/events/vct-emea.png" alt="Tournament-icon">
-                </div> 
-            </div>
+    <div class="matches-header">
+        <div class="matches-tabs">
+            <a href="#" class="tab active">SCHEDULE</a>
+            <a href="#" class="tab">RESULTS</a>
         </div>
     </div>
-    <div class="day-block">
-        <div class="header-day">
-            <span class="date-match">Thu, October 16, 2025</span>
-        </div>
-        <div class="matches-day">
-            <div class="match-block">
-                <div class="match-info">
-                    <span class="match-hour">1:00 PM</span>
 
-                    <div class="teams">
-                        <div class="team">
-                            <img src="assets/icons/badges/tr.png">
-                            <span>BBL Esports</span>
-                        </div>
-                        <div class="team">
-                            <img src="assets/icons/badges/tbd.png">
-                            <span>TBD</span>
-                        </div>
-                    </div>
-            
-                    <div class="scoreboard">
-                        <span>0</span>
-                        <span>0</span>
-                    </div>
-                    <div class="upcoming">
-                        <span>Upcoming</span>
-                        <span class="upcoming-time">22h 23m</span>
-                    </div>
-                </div>
-                <div class="tournament-info">
-                    <div class="tournament-text">
-                        <span class="tournament-stage">Lower Round 1</span>
-                        <span>VCT 2026: EMEA Kickoff</span>
-                    </div>
-                    <img class="tournament-logo" src="assets/icons/events/vct-emea.png" alt="Tournament-icon">
-                </div> 
-            </div>
-            <div class="match-block">
-                <div class="match-info">
-                    <span class="match-hour">3:00 PM</span>
+    <?php if (empty($upcomingByDate)): ?>
+        <p>No upcoming matches.</p>
+    <?php else: ?>
 
-                    <div class="teams">
-                        <div class="team">
-                            <img src="assets/icons/badges/eu.png">
-                            <span>Gentle Mates</span>
-                        </div>
-                        <div class="team">
-                            <img src="assets/icons/badges/tbd.png">
-                            <span>TBD</span>
-                        </div>
-                    </div>
-            
-                    <div class="scoreboard">
-                        <span>0</span>
-                        <span>0</span>
-                    </div>
-                    <div class="upcoming">
-                        <span>Upcoming</span>
-                        <span class="upcoming-time">1d 1h</span>
-                    </div>
+        <?php foreach ($upcomingByDate as $date => $matchesOfDay): ?>
+            <div class="day-block">
+                <div class="header-day">
+                    <span class="date-match"><?= formatMatchDate($date) ?></span>
                 </div>
-                <div class="tournament-info">
-                    <div class="tournament-text">
-                        <span class="tournament-stage">Lower Round 1</span>
-                        <span>VCT 2026: EMEA Kickoff</span>
-                    </div>
-                    <img class="tournament-logo" src="assets/icons/events/vct-emea.png" alt="Tournament-icon">
-                </div> 
-            </div>
-            <div class="match-block">
-                <div class="match-info">
-                    <span class="match-hour">23:00 PM</span>
 
-                    <div class="teams">
-                        <div class="team">
-                            <img src="assets/icons/badges/ar.png">
-                            <span>KRÜ Esports</span>
-                        </div>
-                        <div class="team">
-                            <img src="assets/icons/badges/cl.png">
-                            <span>Leviatán</span>
-                        </div>
-                    </div>
-            
-                    <div class="scoreboard">
-                        <span>0</span>
-                        <span>0</span>
-                    </div>
-                    <div class="upcoming">
-                        <span>Upcoming</span>
-                        <span class="upcoming-time">1d 7h</span>
-                    </div>
-                </div>
-                <div class="tournament-info">
-                    <div class="tournament-text">
-                        <span class="tournament-stage">Upper Round 1</span>
-                        <span>VCT 2026: Americas Kickoff</span>
-                    </div>
-                    <img class="tournament-logo" src="assets/icons/events/vct-americas.png" alt="Tournament-icon">
-                </div> 
-            </div>
-        </div>
-    </div>
-    <div class="day-block">
-        <div class="header-day">
-            <span class="date-match">Fri, October 17, 2025</span>
-        </div>
-        <div class="matches-day">
-            <div class="match-block">
-                <div class="match-info">
-                    <span class="match-hour">2:00 AM</span>
+                <div class="matches-day">
+                    <?php foreach ($matchesOfDay as $match): ?>
 
-                    <div class="teams">
-                        <div class="team">
-                            <img src="assets/icons/badges/us.png">
-                            <span>Sentinels</span>
-                        </div>
-                        <div class="team">
-                            <img src="assets/icons/badges/us.png">
-                            <span>G2 Esports</span>
-                        </div>
-                    </div>
-            
-                    <div class="scoreboard">
-                        <span>0</span>
-                        <span>0</span>
-                    </div>
-                    <div class="upcoming">
-                        <span>Upcoming</span>
-                        <span class="upcoming-time">1d 10h</span>
-                    </div>
-                </div>
-                <div class="tournament-info">
-                    <div class="tournament-text">
-                        <span class="tournament-stage">Upper Round 1</span>
-                        <span>VCT 2026: Americas Kickoff</span>
-                    </div>
-                    <img class="tournament-logo" src="assets/icons/events/vct-americas.png" alt="Tournament-icon">
-                </div> 
-            </div>
-            <div class="match-block">
-                <div class="match-info">
-                    <span class="match-hour">1:00 PM</span>
+                        <?php $statusInfo = getMatchStatusInfo($match['date'], $match['hour']); ?>
 
-                    <div class="teams">
-                        <div class="team">
-                            <img src="assets/icons/badges/es.png">
-                            <span>GIANTX</span>
-                        </div>
-                        <div class="team">
-                            <img src="assets/icons/badges/tbd.png">
-                            <span>TBD</span>
-                        </div>
-                    </div>
-            
-                    <div class="scoreboard">
-                        <span>0</span>
-                        <span>0</span>
-                    </div>
-                    <div class="upcoming">
-                        <span>Upcoming</span>
-                        <span class="upcoming-time">22h 23m</span>
-                    </div>
-                </div>
-                <div class="tournament-info">
-                    <div class="tournament-text">
-                        <span class="tournament-stage">Upper Round 2</span>
-                        <span>VCT 2026: EMEA Kickoff</span>
-                    </div>
-                    <img class="tournament-logo" src="assets/icons/events/vct-emea.png" alt="Tournament-icon">
-                </div> 
-            </div>
-            <div class="match-block">
-                <div class="match-info">
-                    <span class="match-hour">3:00 PM</span>
+                        <div class="match-block">
+                            <div class="match-info">
+                                <span class="match-hour">
+                                    <?= formatMatchHour($match['hour']) ?>
+                                </span>
 
-                    <div class="teams">
-                        <div class="team">
-                            <img src="assets/icons/badges/eu.png">
-                            <span>Team Vitality</span>
-                        </div>
-                        <div class="team">
-                            <img src="assets/icons/badges/tbd.png">
-                            <span>TBD</span>
-                        </div>
-                    </div>
-            
-                    <div class="scoreboard">
-                        <span>0</span>
-                        <span>0</span>
-                    </div>
-                    <div class="upcoming">
-                        <span>Upcoming</span>
-                        <span class="upcoming-time">2d 1h</span>
-                    </div>
-                </div>
-                <div class="tournament-info">
-                    <div class="tournament-text">
-                        <span class="tournament-stage">Upper Round 2</span>
-                        <span>VCT 2026: EMEA Kickoff</span>
-                    </div>
-                    <img class="tournament-logo" src="assets/icons/events/vct-emea.png" alt="Tournament-icon">
-                </div> 
-            </div>
-            <div class="match-block">
-                <div class="match-info">
-                    <span class="match-hour">23:00 PM</span>
+                                <div class="teams">
+                                    <div class="team">
+                                        <img src="assets/icons/badges/<?= htmlspecialchars($match['team_1_country']) ?>.png" alt="">
+                                        <span><?= htmlspecialchars($match['team_1_name']) ?></span>
+                                    </div>
 
-                    <div class="teams">
-                        <div class="team">
-                            <img src="assets/icons/badges/br.png">
-                            <span>Furia</span>
+                                    <?php if (!empty($match['team_2_name'])): ?>
+                                        <div class="team">
+                                            <img src="assets/icons/badges/<?= htmlspecialchars($match['team_2_country']) ?>.png" alt="">
+                                            <span><?= htmlspecialchars($match['team_2_name']) ?></span>
+                                        </div>
+                                    <?php else: ?>
+                                        <div class="team">
+                                            <img src="assets/icons/badges/tbd.png" alt="">
+                                            <span>TBD</span>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+
+                                <div class="scoreboard">
+                                    <span><?= $match['score_team_1'] ?? 0 ?></span>
+                                    <span><?= $match['score_team_2'] ?? 0 ?></span>
+                                </div>
+
+                                <?php if ($statusInfo['cssClass'] === 'live'): ?>
+                                    <div class="live">
+                                        <span><?= $statusInfo['label'] ?></span>
+                                    </div>
+                                <?php else: ?>
+                                    <div class="upcoming">
+                                        <span><?= $statusInfo['label'] ?></span>
+                                        <?php if (!empty($statusInfo['countdown'])): ?>
+                                            <span class="upcoming-time"><?= $statusInfo['countdown'] ?></span>
+                                        <?php endif; ?>
+                                    </div>
+                                <?php endif; ?>
+
+                            </div>
+
+                            <div class="tournament-info">
+                                <div class="tournament-text">
+                                    <span class="tournament-stage">
+                                        <?= htmlspecialchars($match['event_stage']) ?>
+                                    </span>
+                                    <span><?= htmlspecialchars($match['event_name']) ?></span>
+                                </div>
+                                <img class="tournament-logo"
+                                     src="assets/icons/events/<?= htmlspecialchars($match['event_logo']) ?>"
+                                     alt="Tournament-icon">
+                            </div>
                         </div>
-                        <div class="team">
-                            <img src="assets/icons/badges/br.png">
-                            <span>LOUD</span>
-                        </div>
-                    </div>
-            
-                    <div class="scoreboard">
-                        <span>0</span>
-                        <span>0</span>
-                    </div>
-                    <div class="upcoming">
-                        <span>Upcoming</span>
-                        <span class="upcoming-time">2d 7h</span>
-                    </div>
+
+                    <?php endforeach; ?>
                 </div>
-                <div class="tournament-info">
-                    <div class="tournament-text">
-                        <span class="tournament-stage">Lower Round 1</span>
-                        <span>VCT 2026: Americas Kickoff</span>
-                    </div>
-                    <img class="tournament-logo" src="assets/icons/events/vct-americas.png" alt="Tournament-icon">
-                </div> 
             </div>
-        </div>
-    </div>
+        <?php endforeach; ?>
+
+    <?php endif; ?>
+
 </main>

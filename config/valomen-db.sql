@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS events (
     name VARCHAR(255) NOT NULL,
     start_date DATE NOT NULL,
     end_date DATE NOT NULL,
-    status ENUM('upcoming','ongoing','completed') DEFAULT NULL,
+    status ENUM('Upcoming','Ongoing','Completed') DEFAULT NULL,
     prize INT UNSIGNED DEFAULT NULL,
     region VARCHAR(5) NOT NULL,
     logo VARCHAR(255) NOT NULL,
@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS matches (
     score_team_2 TINYINT UNSIGNED NULL,
     date DATE NOT NULL,
     hour TIME NOT NULL,
-    status ENUM('upcoming','live','completed') DEFAULT NULL,
+    status ENUM('Upcoming','Live','Completed') DEFAULT NULL,
     event_stage VARCHAR(100) NOT NULL,
     event_id INT UNSIGNED NOT NULL,
     post_author INT UNSIGNED DEFAULT NULL,
@@ -107,11 +107,11 @@ VALUES
 (3, 4, NULL, NULL, '2025-11-13', '15:00:00', 'Upper Round 1', 1, 1),
 (5, NULL, NULL, NULL, '2025-11-14', '13:00:00', 'Lower Round 1', 1, 1),
 (10, NULL, NULL, NULL, '2025-11-14', '15:00:00', 'Lower Round 1', 1, 1),
-(12, 13, NULL, NULL, '2026-01-11', '23:00:00', 'Upper Round 1', 2, 1),
-(11, 14, NULL, NULL, '2026-01-12', '02:00:00', 'Upper Round 1', 2, 1),
+(12, 13, NULL, NULL, '2025-11-15', '23:00:00', 'Upper Round 1', 2, 1),
+(11, 14, NULL, NULL, '2025-11-16', '02:00:00', 'Upper Round 1', 2, 1),
 (6, NULL, NULL, NULL, '2025-11-15', '13:00:00', 'Upper Round 2', 1, 1),
 (7, NULL, NULL, NULL, '2025-11-15', '15:00:00', 'Upper Round 2', 1, 1),
-(8, 9, NULL, NULL, '2026-01-13', '23:00:00', 'Lower Round 1', 2, 1);
+(8, 9, NULL, NULL, '2025-11-16', '23:00:00', 'Lower Round 1', 2, 1);
 
 INSERT INTO predictions (user_id, match_id, score_team_1_pred, score_team_2_pred)
 VALUES

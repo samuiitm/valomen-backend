@@ -1,4 +1,4 @@
-<main>
+<main class="main-login">
     <form class="login-form" method="POST" action="index.php?page=login">
         <h1>Login to Valomen.gg</h1>
         <p>Continue earning points, making pick’ems, and proving who really runs the game.</p>
@@ -15,7 +15,7 @@
                 </div>
             </div>    
             <?php if (!empty($loginError)): ?>
-            <p class="error-message">
+            <p class="field-error">
                 <?= htmlspecialchars($loginError) ?>
             </p>
             <?php endif; ?>

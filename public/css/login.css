@@ -85,6 +85,13 @@ input {
     font-family: inherit;
 }
 
+.field-error {
+    color: #cf2d2d;
+    font-size: 12px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
 .forgot-password {
     color: #6B7FFF;
     margin-left: 20px;

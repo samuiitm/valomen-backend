@@ -14,12 +14,40 @@ $page = $_GET['page'] ?? 'home';
 
 switch ($page) {
     case 'register':
-        $pageTitle = 'Valomen.gg | Register';
-        $pageCss   = 'register.css';
-        require __DIR__ . '/../app/View/partials/header.php';
-        require __DIR__ . '/../app/View/register.view.php';
-        require __DIR__ . '/../app/View/partials/footer.php';
-        break;
+    require __DIR__ . '/../app/Controller/RegisterController.php';
+
+    $registerController = new RegisterController(new UserDAO($db));
+
+    $registerErrors  = [
+        'username'         => '',
+        'email'            => '',
+        'password'         => '',
+        'confirm_password' => '',
+    ];
+    $registerSuccess = false;
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $username        = $_POST['username'] ?? '';
+        $email           = $_POST['email'] ?? '';
+        $password        = $_POST['password'] ?? '';
+        $confirmPassword = $_POST['confirm_password'] ?? '';
+
+        $result = $registerController->register($username, $email, $password, $confirmPassword);
+
+        $registerErrors = $result['errors'];
+
+        if ($result['success']) {
+            $registerSuccess = true;
+        }
+    }
+
+    $pageTitle = 'Valomen.gg | Register';
+    $pageCss   = 'register.css';
+
+    require __DIR__ . '/../app/View/partials/header.php';
+    require __DIR__ . '/../app/View/register.view.php';
+    require __DIR__ . '/../app/View/partials/footer.php';
+    break;
 
     case 'login':
         $pageTitle = 'Valomen.gg | Login';

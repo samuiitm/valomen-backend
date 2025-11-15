@@ -40,6 +40,10 @@
     gap: 20px;
 }
 
+.info-empty {
+  padding-left: 20px;
+}
+
 .events-block {
     display: flex;
     flex-direction: column;

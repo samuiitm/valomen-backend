@@ -128,15 +128,15 @@
     font-weight: bold;
 }
 
-.ongoing {
+.Ongoing {
     color: var(--ongoing);
 }
 
-.upcoming {
+.Upcoming {
     color: var(--upcoming);
 }
 
-.completed {
+.Completed {
     color: var(--completed);
 }
 

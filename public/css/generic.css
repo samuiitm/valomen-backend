@@ -4,6 +4,7 @@
   --text: #D4D4D4;
   --text2: #9795B5;
   --card: #111827;
+  --card-hover: #18233a;
   --social-media-bg: #F2F1FA;
   --active: #fcfcfd45;
   --buttons: #FFF;
@@ -26,6 +27,19 @@ header {
   backdrop-filter: saturate(1.2) blur(5px);
   background: #0b102098;
   border-bottom: 2px solid rgba(255, 255, 255, 0.177);
+}
+
+.user-avatar {
+  display: flex;
+  align-items: center;
+}
+
+.user-avatar img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50px;
+  object-fit: cover;
+  object-position: center;
 }
 
 .logo a {
@@ -90,6 +104,53 @@ nav {
   font-weight: 600;
   text-decoration: none;
   color: var(--buttons);
+}
+
+.user-menu {
+    position: relative;
+    display: inline-block;
+}
+
+.user-avatar-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+.user-avatar-btn img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.user-dropdown {
+    position: absolute;
+    right: 0;
+    top: 55px;
+    background: var(--card);
+    border: 1px solid #333;
+    border-radius: 6px;
+    min-width: 160px;
+    display: none;
+    flex-direction: column;
+    z-index: 100;
+}
+
+.user-dropdown a {
+    padding: 10px 15px;
+    text-decoration: none;
+    color: white;
+    display: block;
+    font-size: 14px;
+}
+
+.user-dropdown a:hover {
+    background: var(--card-hover);
+}
+
+.user-menu.open .user-dropdown {
+    display: flex;
 }
 
 .active-page {

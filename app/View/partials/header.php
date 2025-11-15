@@ -16,7 +16,7 @@ $pageCss   = $pageCss   ?? null;
 
     <link rel="icon" type="image/png" href="assets/icons/valomen_logo.ico">
 
-
+    <script defer src="js/main.js"></script>
     <link rel="stylesheet" href="css/generic.css">
     <?php if ($pageCss): ?>
       <link rel="stylesheet" href="css/<?= htmlspecialchars($pageCss) ?>">
@@ -37,7 +37,21 @@ $pageCss   = $pageCss   ?? null;
                 <li><a href="index.php?page=matches">Matches</a></li>
                 <li><a href="index.php?page=events">Events</a></li>
             </ul>
-            <a class="login-button" href="index.php?page=login">Log in</a>
+            <?php if (!empty($_SESSION['user_id'])): ?>
+                <div class="user-menu">
+                    <button class="user-avatar-btn">
+                        <img src="assets/img/default-avatar.png" alt="User">
+                    </button>
+
+                    <div class="user-dropdown">
+                        <a href="index.php?page=profile">Profile</a>
+                        <a href="index.php?page=my_predictions">My predictions</a>
+                        <a href="index.php?page=logout">Logout</a>
+                    </div>
+                </div>
+            <?php else: ?>
+                <a class="login-button" href="index.php?page=login">Log in</a>
+            <?php endif; ?>
         </div>
     </nav>
 </header>

@@ -17,6 +17,19 @@ class UserDAO extends BaseDAO
         return $user ?: null;
     }
 
+    public function findByEmail(string $email): ?array
+    {
+        $sql = "SELECT id, username, email, admin, passwd_hash
+                FROM users
+                WHERE email = :email";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':email' => $email]);
+        $user = $stmt->fetch();
+
+        return $user ?: null;
+    }
+
     public function findById(int $id): ?array
     {
         $sql = "SELECT id, username, email, admin

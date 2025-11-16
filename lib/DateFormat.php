@@ -24,7 +24,7 @@ function getMatchStatusInfo(string $date, string $time): array
 {
     $matchDateTime = new DateTime($date . ' ' . $time);
     
-    $now = new DateTime('2025-11-13 14:00:00');
+    $now = new DateTime('2025-11-13 13:00:00');
 
     if ($matchDateTime <= $now) {
         return [
@@ -63,4 +63,37 @@ function getMatchStatusInfo(string $date, string $time): array
         'label'     => 'Upcoming',
         'countdown' => $countdown,
     ];
+}
+
+function getElapsedTime(string $date, string $time): string {
+    $matchDateTime = new DateTime("$date $time");
+    $now = new DateTime('now');
+
+    if ($matchDateTime > $now) {
+        return "just now";
+    }
+
+    $diff = $matchDateTime->diff($now);
+
+    if ($diff->y > 0) {
+        return $diff->y . " year" . ($diff->y > 1 ? "s" : "") . " ago";
+    }
+
+    if ($diff->m > 0) {
+        return $diff->m . " month" . ($diff->m > 1 ? "s" : "") . " ago";
+    }
+
+    if ($diff->d > 0) {
+        return $diff->d . " day" . ($diff->d > 1 ? "s" : "") . " ago";
+    }
+
+    if ($diff->h > 0) {
+        return $diff->h . " hour" . ($diff->h > 1 ? "s" : "") . " ago";
+    }
+
+    if ($diff->i > 0) {
+        return $diff->i . " minute" . ($diff->i > 1 ? "s" : "") . " ago";
+    }
+
+    return "Just Now";
 }

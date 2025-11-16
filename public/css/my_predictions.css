@@ -1,0 +1,194 @@
+:root {
+  --bg: #0B1020;
+  --text: #D4D4D4;
+  --text2: #9795B5;
+  --card: #111827;
+  --card-hover: #18233a;
+  --borders: #ffffff1a;
+  --section-title: #4f72e6;
+  --social-media-bg: #F2F1FA;
+  --active: #fcfcfd45;
+  --ongoing: #DF505C;
+  --upcoming: #5CA36C;
+  --upcoming-time: #498357;
+  color-scheme: dark;
+}
+
+.my-predictions-page {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0px;
+}
+
+.my-predictions-page .matches-header {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 12px;
+}
+
+.my-predictions-page .matches-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.my-predictions-page .matches-subtitle {
+    font-size: 14px;
+    color: var(--text2);
+}
+
+.my-predictions-page .no-predictions-message {
+    padding: 12px 14px;
+    border-radius: 14px;
+    background-color: var(--card);
+    border: 1px solid var(--borders);
+    color: var(--text2);
+}
+
+.my-predictions-page .day-block {
+    margin-bottom: 14px;
+}
+
+.my-predictions-page .header-day {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.my-predictions-page .date-match {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.my-predictions-page .prediction-day-tag {
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    background-color: var(--card);
+    border: 1px solid var(--borders);
+    color: var(--text2);
+}
+
+.my-predictions-page .matches-day {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.my-predictions-page .match-block.prediction-block {
+    border-radius: 18px;
+    background-color: var(--card);
+    border: 1px solid var(--borders);
+    padding: 10px 14px;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.my-predictions-page .match-block.prediction-block:hover {
+    background-color: var(--card-hover);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.my-predictions-page .match-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.my-predictions-page .match-hour {
+    font-size: 13px;
+    color: var(--text2);
+    min-width: 70px;
+}
+
+.my-predictions-page .teams {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    color: var(--text);
+    flex: 1;
+}
+
+.my-predictions-page .teams .team {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.my-predictions-page .teams .vs {
+    font-weight: 400;
+    color: var(--text2);
+}
+
+.my-predictions-page .scoreboard {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: center;
+    font-size: 11px;
+}
+
+.my-predictions-page .scoreboard {
+    font-size: 11px;
+}
+
+.my-predictions-page .prediction-scoreboard {
+    display: flex;
+    gap: 4px;
+}
+
+.my-predictions-page .prediction-scoreboard span {
+    min-width: 26px;
+    text-align: center;
+    background-color: #18233a;
+    border-radius: 8px;
+    padding: 4px 6px;
+    font-weight: 600;
+    border: 1px solid var(--borders);
+    color: var(--text);
+    font-size: 13px;
+}
+
+.my-predictions-page .badge-prediction {
+    padding: 3px 8px;
+    border-radius: 999px;
+    background-color: rgba(71, 151, 255, 0.15);
+    border: 1px solid #4797FF;
+    color: #4797FF;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+}
+
+.my-predictions-page .badge-prediction-pts {
+    padding: 3px 8px;
+    border-radius: 999px;
+    background-color: rgba(92, 163, 108, 0.12);
+    border: 1px solid rgba(92, 163, 108, 0.787);
+    color: var(--upcoming);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+}
+
+.my-predictions-page .badge-points {
+    display: flex;
+    width: 50%;
+    padding: 4px 20px;
+    border-radius: 8px;
+    background-color: rgba(92, 163, 108, 0.12);
+    border: 1px solid var(--upcoming);
+    color: var(--upcoming);
+    font-weight: 500;
+    justify-content: center;
+    align-items: center;
+    font-size: 13px;
+}

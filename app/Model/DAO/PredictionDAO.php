@@ -37,10 +37,15 @@ class PredictionDAO extends BaseDAO
 
     public function getPredictionsByUser(int $userId): array
     {
-        $sql = "SELECT p.*, 
-                       m.date, m.hour,
-                       t1.name AS team_1_name,
-                       t2.name AS team_2_name
+        $sql = "SELECT 
+                    p.*,
+                    m.date,
+                    m.hour,
+                    m.score_team_1 AS score_team_1_real,
+                    m.score_team_2 AS score_team_2_real,
+                    m.status AS match_status,
+                    t1.name AS team_1_name,
+                    t2.name AS team_2_name
                 FROM predictions p
                 JOIN matches m ON p.match_id = m.id
                 JOIN teams t1 ON m.team_1 = t1.id
@@ -51,5 +56,48 @@ class PredictionDAO extends BaseDAO
         $stmt = $this->db->prepare($sql);
         $stmt->execute([':user_id' => $userId]);
         return $stmt->fetchAll();
+    }
+
+    public function userHasPrediction(int $userId, int $matchId): bool
+    {
+        $sql = "SELECT 1 FROM predictions
+                WHERE user_id = :user_id AND match_id = :match_id
+                LIMIT 1";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([
+            ':user_id'  => $userId,
+            ':match_id' => $matchId,
+        ]);
+
+        return (bool) $stmt->fetchColumn();
+    }
+
+    public function updatePrediction(int $userId, int $matchId, int $score1, int $score2): bool
+    {
+        $sql = "UPDATE predictions
+                SET score_team_1_pred = :score1,
+                    score_team_2_pred = :score2
+                WHERE user_id = :user_id AND match_id = :match_id";
+
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':score1'   => $score1,
+            ':score2'   => $score2,
+            ':user_id'  => $userId,
+            ':match_id' => $matchId,
+        ]);
+    }
+
+    public function deletePrediction(int $userId, int $matchId): bool
+    {
+        $sql = "DELETE FROM predictions
+                WHERE user_id = :user_id AND match_id = :match_id";
+
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':user_id'  => $userId,
+            ':match_id' => $matchId,
+        ]);
     }
 }

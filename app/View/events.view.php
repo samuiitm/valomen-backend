@@ -18,7 +18,7 @@
                                     <span class="info-title">STATUS</span>
                                 </div>
                                 <div class="sec-info event-prize">
-                                    <span>$<?= htmlspecialchars($event['prize']) ?></span>
+                                    <span>$<?= formatCurrency((int)$event['prize']) ?></span>
                                     <span class="info-title">PRIZE POOL</span>
                                 </div>
                                 <div class="sec-info event-dates">
@@ -46,7 +46,7 @@
                                     <span class="info-title">STATUS</span>
                                 </div>
                                 <div class="sec-info event-prize">
-                                    <span>$<?= htmlspecialchars($event['prize']) ?></span>
+                                    <span>$<?= formatCurrency((int)$event['prize']) ?></span>
                                     <span class="info-title">PRIZE POOL</span>
                                 </div>
                                 <div class="sec-info event-dates">
@@ -83,7 +83,7 @@
                                     <span class="info-title">STATUS</span>
                                 </div>
                                 <div class="sec-info event-prize">
-                                    <span>$<?= htmlspecialchars($event['prize']) ?></span>
+                                    <span>$<?= formatCurrency((int)$event['prize']) ?></span>
                                     <span class="info-title">PRIZE POOL</span>
                                 </div>
                                 <div class="sec-info event-dates">

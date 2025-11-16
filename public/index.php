@@ -80,6 +80,7 @@ switch ($page) {
 
     case 'events':
         require __DIR__ . '/../app/Model/DAO/EventDAO.php';
+        require_once __DIR__ . '/../lib/CurrencyFormat.php';
 
         $eventDao = new EventDAO($db);
         $ongoingEvents   = $eventDao->getOngoingEvents();

@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS users (
     passwd_hash VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
     logo VARCHAR(255),
+    points INT NOT NULL DEFAULT 0,
     admin TINYINT(1) NOT NULL DEFAULT 0
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -88,7 +89,18 @@ VALUES
 ('Sentinels', 'us'),
 ('KRÜ Esports', 'ar'),
 ('Leviatán', 'cl'),
-('G2 Esports', 'us');
+('G2 Esports', 'us'),
+('NRG', 'us'),
+('DRX', 'kr'),
+('Paper Rex', 'sg'),
+('MIBR', 'br'),
+('Rex Regum Qeon', 'id'),
+('T1', 'kr'),
+('Xi Lai Gaming', 'cn'),
+('Team Liquid', 'eu'),
+('Dragon Ranger Gaming', 'cn'),
+('Bilibili Gaming', 'cn'),
+('EDward Gaming', 'cn');
 
 INSERT INTO events (name, start_date, end_date, status, prize, region, logo, post_author)
 VALUES
@@ -113,6 +125,43 @@ VALUES
 (6, NULL, NULL, NULL, '2025-11-15', '13:00:00', 'Upper Round 2', 1, 1),
 (7, NULL, NULL, NULL, '2025-11-15', '15:00:00', 'Upper Round 2', 1, 1),
 (8, 9, NULL, NULL, '2025-11-16', '23:00:00', 'Lower Round 1', 2, 1);
+
+INSERT INTO matches (team_1, team_2, score_team_1, score_team_2, date, hour, status, event_stage, event_id, post_author)
+VALUES
+(6, 11, 2, 1, '2025-08-20', '13:00:00', 'Completed', 'Group Stage–Opening (A)', 5, 1),
+(17, 21, 2, 0, '2025-08-20', '16:00:00', 'Completed', 'Group Stage–Opening (A)', 5, 1),
+(19, 2, 0, 2, '2025-08-20', '19:00:00', 'Completed', 'Group Stage–Opening (B)', 5, 1),
+(24, 18, 0, 2, '2025-08-20', '22:00:00', 'Completed', 'Group Stage–Opening (B)', 5, 1),
+(22, 16, 0, 2, '2025-08-21', '13:00:00', 'Completed', 'Group Stage–Opening (C)', 5, 1),
+(15, 25, 2, 0, '2025-08-21', '16:00:00', 'Completed', 'Group Stage–Opening (C)', 5, 1),
+(14, 1, 0, 2, '2025-08-21', '19:00:00', 'Completed', 'Group Stage–Opening (D)', 5, 1),
+(23, 20, 0, 2, '2025-08-21', '22:00:00', 'Completed', 'Group Stage–Opening (D)', 5, 1),
+(17, 6, 2, 1, '2025-08-22', '13:00:00', 'Completed', 'Group Stage–Winner''s (A)', 5, 1),
+(18, 2, 1, 2, '2025-08-22', '16:00:00', 'Completed', 'Group Stage–Winner''s (B)', 5, 1),
+(16, 15, 1, 2, '2025-08-22', '19:00:00', 'Completed', 'Group Stage–Winner''s (C)', 5, 1),
+(1, 20, 2, 0, '2025-08-22', '22:00:00', 'Completed', 'Group Stage–Winner''s (D)', 5, 1),
+(21, 11, 2, 1, '2025-08-23', '13:00:00', 'Completed', 'Group Stage–Elimination (A)', 5, 1),
+(24, 19, 1, 2, '2025-08-23', '16:00:00', 'Completed', 'Group Stage–Elimination (B)', 5, 1),
+(22, 25, 2, 1, '2025-08-23', '19:00:00', 'Completed', 'Group Stage–Elimination (C)', 5, 1),
+(14, 23, 2, 0, '2025-08-23', '22:00:00', 'Completed', 'Group Stage–Elimination (D)', 5, 1),
+(6, 21, 2, 0, '2025-08-24', '13:00:00', 'Completed', 'Group Stage–Decider (A)', 5, 1),
+(18, 19, 2, 0, '2025-08-24', '16:00:00', 'Completed', 'Group Stage–Decider (B)', 5, 1),
+(16, 22, 2, 0, '2025-08-24', '19:00:00', 'Completed', 'Group Stage–Decider (C)', 5, 1),
+(20, 14, 0, 2, '2025-08-24', '22:00:00', 'Completed', 'Group Stage–Decider (D)', 5, 1),
+(15, 6, 2, 0, '2025-08-25', '13:00:00', 'Completed', 'Playoffs–Upper Quarterfinals', 5, 1),
+(1, 18, 0, 2, '2025-08-25', '16:00:00', 'Completed', 'Playoffs–Upper Quarterfinals', 5, 1),
+(2, 16, 2, 1, '2025-08-25', '19:00:00', 'Completed', 'Playoffs–Upper Quarterfinals', 5, 1),
+(17, 14, 2, 1, '2025-08-25', '22:00:00', 'Completed', 'Playoffs–Upper Quarterfinals', 5, 1),
+(1, 6, 2, 1, '2025-08-26', '13:00:00', 'Completed', 'Playoffs–Lower Round 1', 5, 1),
+(16, 14, 2, 1, '2025-08-26', '16:00:00', 'Completed', 'Playoffs–Lower Round 1', 5, 1),
+(18, 16, 1, 2, '2025-08-26', '19:00:00', 'Completed', 'Playoffs–Lower Round 2', 5, 1),
+(17, 1, 2, 1, '2025-08-26', '22:00:00', 'Completed', 'Playoffs–Lower Round 2', 5, 1),
+(18, 15, 1, 2, '2025-08-27', '13:00:00', 'Completed', 'Playoffs–Upper Semifinals', 5, 1),
+(2, 17, 2, 1, '2025-08-27', '16:00:00', 'Completed', 'Playoffs–Upper Semifinals', 5, 1),
+(16, 17, 2, 0, '2025-08-27', '19:00:00', 'Completed', 'Playoffs–Lower Round 3', 5, 1),
+(2, 15, 0, 2, '2025-08-27', '22:00:00', 'Completed', 'Playoffs–Upper Final', 5, 1),
+(2, 16, 3, 1, '2025-08-28', '13:00:00', 'Completed', 'Playoffs–Lower Final', 5, 1),
+(15, 2, 3, 2, '2025-08-28', '16:00:00', 'Completed', 'Playoffs–Grand Final', 5, 1);
 
 INSERT INTO predictions (user_id, match_id, score_team_1_pred, score_team_2_pred)
 VALUES

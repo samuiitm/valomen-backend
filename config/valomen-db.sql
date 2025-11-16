@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS users (
     username VARCHAR(50) NOT NULL UNIQUE,
     passwd_hash VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
+    logo VARCHAR(255),
     admin TINYINT(1) NOT NULL DEFAULT 0
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -67,10 +68,10 @@ CREATE TABLE IF NOT EXISTS predictions (
         ON DELETE CASCADE ON UPDATE CASCADE
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO users (username, passwd_hash, email, admin)
+INSERT INTO users (username, passwd_hash, email, logo, admin)
 VALUES
-('admin', '$2y$10$9NormUYn3BVGoyZjm5kUpuRY5eKk14iEGR6hPLB2BXh0FNZWEL2gq', 'samuelcanadas2711@gmail.com', 1),
-('s.canadas', '$2y$10$bQVnssDHklHm0Wx2rxrBEuYyEHrE92jHPdXrVCQfSBoA00dX2Tnr2', 's.canadas@sapalomera.cat', 0);
+('admin', '$2y$10$9NormUYn3BVGoyZjm5kUpuRY5eKk14iEGR6hPLB2BXh0FNZWEL2gq', 'samuelcanadas2711@gmail.com', NULL, 1),
+('s.canadas', '$2y$10$bQVnssDHklHm0Wx2rxrBEuYyEHrE92jHPdXrVCQfSBoA00dX2Tnr2', 's.canadas@sapalomera.cat', NULL, 0);
 
 INSERT INTO teams (name, country)
 VALUES
@@ -95,11 +96,11 @@ VALUES
 ('VCT 2026: Americas Kickoff', '2026-01-10', '2026-02-05', 'upcoming', 0, 'us', '2.png', 1),
 ('VCT 2026: Pacific Kickoff', '2026-01-15', '2026-02-10', 'upcoming', 0, 'th', '3.png', 1),
 ('VCT 2026: China Kickoff', '2026-01-20', '2026-02-12', 'upcoming', 0, 'cn', '4.png', 1),
-('Valorant Champions 2025', '2025-08-01', '2025-08-30', 'completed', 0, 'fr', '5.png', 1),
-('VCT 2025: Americas Ascension', '2025-05-01', '2025-05-20', 'completed', 0, 'br', '6.png', 1),
-('VCT 2025: EMEA Ascension', '2025-05-01', '2025-05-20', 'completed', 0, 'de', '7.png', 1),
-('VCT 2025: Pacific Ascension', '2025-05-01', '2025-05-20', 'completed', 0, 'th', '8.png', 1),
-('VCT 2025: China Ascension', '2025-05-01', '2025-05-20', 'completed', 0, 'cn', '9.png', 1);
+('Valorant Champions 2025', '2025-08-01', '2025-08-30', 'completed', 2250000, 'fr', '5.png', 1),
+('VCT 2025: Americas Ascension', '2025-05-01', '2025-05-20', 'completed', 100000, 'br', '6.png', 1),
+('VCT 2025: EMEA Ascension', '2025-05-01', '2025-05-20', 'completed', 117113, 'de', '7.png', 1),
+('VCT 2025: Pacific Ascension', '2025-05-01', '2025-05-20', 'completed', 100000, 'th', '8.png', 1),
+('VCT 2025: China Ascension', '2025-05-01', '2025-05-20', 'completed', 100000, 'cn', '9.png', 1);
 
 INSERT INTO matches (team_1, team_2, score_team_1, score_team_2, date, hour, event_stage, event_id, post_author)
 VALUES

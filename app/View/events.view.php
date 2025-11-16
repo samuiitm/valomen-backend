@@ -26,7 +26,7 @@
                                     <span class="info-title">DATES</span>
                                 </div>
                                 <div class="event-region">
-                                    <img src="assets/icons/badges/<?= htmlspecialchars($event['region']) ?>.png">
+                                    <img src="<?= getFlagPath($event['region'] ?? '') ?>" alt="Flag">
                                     <span class="info-title">REGION</span>
                                 </div>
                             </div>
@@ -54,7 +54,7 @@
                                     <span class="info-title">DATES</span>
                                 </div>
                                 <div class="event-region">
-                                    <img src="assets/icons/badges/<?= htmlspecialchars($event['region']) ?>.png">
+                                    <img src="<?= getFlagPath($event['region'] ?? '') ?>" alt="Flag">
                                     <span class="info-title">REGION</span>
                                 </div>
                             </div>
@@ -91,7 +91,7 @@
                                     <span class="info-title">DATES</span>
                                 </div>
                                 <div class="event-region">
-                                    <img src="assets/icons/badges/<?= htmlspecialchars($event['region']) ?>.png">
+                                    <img src="<?= getFlagPath($event['region'] ?? '') ?>" alt="Flag">
                                     <span class="info-title">REGION</span>
                                 </div>
                             </div>

@@ -1,0 +1,106 @@
+:root {
+  --bg: #0B1020;
+  --text: #D4D4D4;
+  --text2: #9795B5;
+  --card: #111827;
+  --card-hover: #18233a;
+  --borders: #ffffff1a;
+  --section-title: #4f72e6;
+  --social-media-bg: #F2F1FA;
+  --active: #fcfcfd45;
+  --ongoing: #DF505C;
+  --upcoming: #5CA36C;
+  --upcoming-time: #498357;
+  color-scheme: dark;
+}
+
+.prediction-form-page {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.prediction-form-container {
+    border: 1px solid var(--borders);
+    background-color: var(--card);
+    border-radius: 20px;
+    padding: 24px 26px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.prediction-form-container h1 {
+    margin: 0;
+    font-size: 24px;
+    color: var(--text);
+}
+
+.prediction-form-container .match-summary {
+    margin: 0 0 8px 0;
+    color: var(--text2);
+    font-size: 14px;
+}
+
+.info-message {
+    font-size: 13px;
+    color: var(--text2);
+    background-color: rgba(255, 255, 255, 0.02);
+    border-radius: 10px;
+    border: 1px solid var(--borders);
+    padding: 8px 10px;
+}
+
+.prediction-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.teams-scores {
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+}
+
+.team-score-block {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.team-score-block .team-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.team-score-block input {
+    background-color: #fff;
+    border: 1px solid var(--borders);
+    border-radius: 12px;
+    padding: 10px;
+    color: #0B1020;
+    font-family: inherit;
+    width: 100%;
+}
+
+.team-score-block input:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.prediction-form .send-button[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.back-link {
+    font-size: 13px;
+    color: var(--text2);
+    text-decoration: none;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}

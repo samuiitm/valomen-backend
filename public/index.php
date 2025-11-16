@@ -4,50 +4,150 @@ session_start();
 
 require __DIR__ . '/../config/db-connection.php';
 require_once __DIR__ . '/../lib/DateFormat.php';
+require_once __DIR__ . '/../lib/FlagControl.php';
 require __DIR__ . '/../app/Model/DAO/BaseDAO.php';
 require __DIR__ . '/../app/Model/DAO/UserDAO.php';
 require __DIR__ . '/../app/Controller/LoginController.php';
 
+
 $loginController = new LoginController(new UserDAO($db));
 
 $page = $_GET['page'] ?? 'home';
+$view = $_GET['view'] ?? 'schedule';
+
+if ($view !== 'results') {
+    $view = 'schedule';
+}
 
 switch ($page) {
-    case 'register':
-    require __DIR__ . '/../app/Controller/RegisterController.php';
+    case 'matches':
+        require __DIR__ . '/../app/Model/DAO/MatchDAO.php';
+        require __DIR__ . '/../app/Model/DAO/PredictionDAO.php';
 
-    $registerController = new RegisterController(new UserDAO($db));
+        $matchDao      = new MatchDAO($db);
+        $predictionDao = new PredictionDAO($db);
 
-    $registerErrors  = [
-        'username'         => '',
-        'email'            => '',
-        'password'         => '',
-        'confirm_password' => '',
-    ];
-    $registerSuccess = false;
+        $matchDao->updateMatchStatuses();
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $username        = $_POST['username'] ?? '';
-        $email           = $_POST['email'] ?? '';
-        $password        = $_POST['password'] ?? '';
-        $confirmPassword = $_POST['confirm_password'] ?? '';
+        $upcomingMatches  = $matchDao->getUpcomingMatches();
+        $completedMatches = $matchDao->getCompletedMatches();
 
-        $result = $registerController->register($username, $email, $password, $confirmPassword);
-
-        $registerErrors = $result['errors'];
-
-        if ($result['success']) {
-            $registerSuccess = true;
+        $upcomingByDate = [];
+        foreach ($upcomingMatches as $match) {
+            $upcomingByDate[$match['date']][] = $match;
         }
-    }
 
-    $pageTitle = 'Valomen.gg | Register';
-    $pageCss   = 'register.css';
+        $completedByDate = [];
+        foreach ($completedMatches as $match) {
+            $completedByDate[$match['date']][] = $match;
+        }
 
-    require __DIR__ . '/../app/View/partials/header.php';
-    require __DIR__ . '/../app/View/register.view.php';
-    require __DIR__ . '/../app/View/partials/footer.php';
-    break;
+        $userPredictedMatchIds = [];
+        if (!empty($_SESSION['user_id'])) {
+            $userPredictions = $predictionDao->getPredictionsByUser((int)$_SESSION['user_id']);
+            foreach ($userPredictions as $p) {
+                $userPredictedMatchIds[(int)$p['match_id']] = true;
+            }
+        }
+
+        $pageTitle = 'Valomen.gg | Matches';
+        $pageCss   = 'matches.css';
+
+        require __DIR__ . '/../app/View/partials/header.php';
+        require __DIR__ . '/../app/View/matches.view.php';
+        require __DIR__ . '/../app/View/partials/footer.php';
+        break;
+
+    case 'predict':
+        if (empty($_SESSION['user_id'])) {
+            header('Location: index.php?page=login');
+            exit;
+        }
+
+        if (empty($_GET['match_id']) || !ctype_digit($_GET['match_id'])) {
+            header('Location: index.php?page=matches');
+            exit;
+        }
+
+        $matchId = (int) $_GET['match_id'];
+
+        require __DIR__ . '/../app/Model/DAO/MatchDAO.php';
+
+        $matchDao = new MatchDAO($db);
+        $match    = $matchDao->getMatchById($matchId);
+
+        if (!$match) {
+            header('Location: index.php?page=matches');
+            exit;
+        }
+
+        $pageTitle = 'Valomen.gg | Make prediction';
+        $pageCss   = 'prediction_form.css';
+
+        require __DIR__ . '/../app/View/partials/header.php';
+        require __DIR__ . '/../app/View/prediction_form.view.php';
+        require __DIR__ . '/../app/View/partials/footer.php';
+        break;
+
+    case 'my_predictions':
+        if (empty($_SESSION['user_id'])) {
+            header('Location: index.php?page=login');
+            exit;
+        }
+
+        require __DIR__ . '/../app/Model/DAO/PredictionDAO.php';
+
+        $predictionDao    = new PredictionDAO($db);
+        $userPredictions  = $predictionDao->getPredictionsByUser((int)$_SESSION['user_id']);
+
+        $predictionsByDate = [];
+        foreach ($userPredictions as $prediction) {
+            $predictionsByDate[$prediction['date']][] = $prediction;
+        }
+
+        $pageTitle = 'Valomen.gg | My Predictions';
+        $pageCss   = 'my_predictions.css';
+
+        require __DIR__ . '/../app/View/partials/header.php';
+        require __DIR__ . '/../app/View/my_predictions.view.php';
+        require __DIR__ . '/../app/View/partials/footer.php';
+        break;
+
+    case 'register':
+        require __DIR__ . '/../app/Controller/RegisterController.php';
+
+        $registerController = new RegisterController(new UserDAO($db));
+
+        $registerErrors  = [
+            'username'         => '',
+            'email'            => '',
+            'password'         => '',
+            'confirm_password' => '',
+        ];
+        $registerSuccess = false;
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $username        = $_POST['username'] ?? '';
+            $email           = $_POST['email'] ?? '';
+            $password        = $_POST['password'] ?? '';
+            $confirmPassword = $_POST['confirm_password'] ?? '';
+
+            $result = $registerController->register($username, $email, $password, $confirmPassword);
+
+            $registerErrors = $result['errors'];
+
+            if ($result['success']) {
+                $registerSuccess = true;
+            }
+        }
+
+        $pageTitle = 'Valomen.gg | Register';
+        $pageCss   = 'register.css';
+
+        require __DIR__ . '/../app/View/partials/header.php';
+        require __DIR__ . '/../app/View/register.view.php';
+        require __DIR__ . '/../app/View/partials/footer.php';
+        break;
 
     case 'login':
         $pageTitle = 'Valomen.gg | Login';
@@ -92,32 +192,6 @@ switch ($page) {
 
         require __DIR__ . '/../app/View/partials/header.php';
         require __DIR__ . '/../app/View/events.view.php';
-        require __DIR__ . '/../app/View/partials/footer.php';
-        break;
-
-    case 'matches':
-        require __DIR__ . '/../app/Model/DAO/MatchDAO.php';
-
-        $matchDao = new MatchDAO($db);
-
-        $upcomingMatches  = $matchDao->getUpcomingMatches();
-        $completedMatches = $matchDao->getCompletedMatches();
-
-        $upcomingByDate = [];
-        foreach ($upcomingMatches as $match) {
-            $upcomingByDate[$match['date']][] = $match;
-        }
-
-        $completedByDate = [];
-        foreach ($completedMatches as $match) {
-            $completedByDate[$match['date']][] = $match;
-        }
-
-        $pageTitle = 'Valomen.gg | Matches';
-        $pageCss   = 'matches.css';
-
-        require __DIR__ . '/../app/View/partials/header.php';
-        require __DIR__ . '/../app/View/matches.view.php';
         require __DIR__ . '/../app/View/partials/footer.php';
         break;
 

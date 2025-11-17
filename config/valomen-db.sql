@@ -71,8 +71,11 @@ CREATE TABLE IF NOT EXISTS predictions (
 
 INSERT INTO users (username, passwd_hash, email, logo, admin)
 VALUES
-('admin', '$2y$10$9NormUYn3BVGoyZjm5kUpuRY5eKk14iEGR6hPLB2BXh0FNZWEL2gq', 'samuelcanadas2711@gmail.com', NULL, 1),
-('s.canadas', '$2y$10$bQVnssDHklHm0Wx2rxrBEuYyEHrE92jHPdXrVCQfSBoA00dX2Tnr2', 's.canadas@sapalomera.cat', NULL, 0);
+('admin', '$2y$10$9NormUYn3BVGoyZjm5kUpuRY5eKk14iEGR6hPLB2BXh0FNZWEL2gq', 'samuelcanadas2711@gmail.com', NULL, 1);
+
+INSERT INTO users (username, passwd_hash, email, logo, points, admin)
+VALUES
+('s.canadas', '$2y$10$bQVnssDHklHm0Wx2rxrBEuYyEHrE92jHPdXrVCQfSBoA00dX2Tnr2', 's.canadas@sapalomera.cat', NULL, 10, 0);
 
 INSERT INTO teams (name, country)
 VALUES

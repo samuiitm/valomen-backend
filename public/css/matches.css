@@ -11,6 +11,7 @@
   --ongoing: #DF505C;
   --upcoming: #5CA36C;
   --upcoming-time: #498357;
+  --pending: #d6dc62;
   --completed: #4797FF;
   --completed-time: #3879ce;
   color-scheme: dark;
@@ -96,8 +97,22 @@
 
 .predict-button:hover {
   opacity: 1 !important;
-  background-color: rgba(79, 114, 230, 0.2);
+  background-color: hsla(226, 75%, 61%, 0.081);
   border-color: var(--section-title);
+}
+
+.predict-button.closed {
+    background-color: hsla(355, 69%, 59%, 0.199);
+    border-color: var(--ongoing);
+    opacity: 0.5;         
+    cursor: not-allowed;
+}
+
+.predict-button.pending {
+    background-color: hsla(63, 64%, 62%, 0.100);
+    border-color: var(--pending);
+    opacity: 0.5;         
+    cursor: not-allowed;
 }
 
 .match-info {

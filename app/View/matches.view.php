@@ -69,6 +69,16 @@
                                     class="predict-button">
                                         Make prediction
                                     </a>
+                                <?php elseif ($statusInfo['label'] == 'LIVE'): ?>
+                                    <a
+                                    class="predict-button closed">
+                                        Prediction closed
+                                    </a>
+                                <?php else: ?>
+                                    <a
+                                    class="predict-button pending">
+                                        Pending teams
+                                    </a>
                                 <?php endif; ?>
 
                                 <div class="tournament-info">

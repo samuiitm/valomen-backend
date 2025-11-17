@@ -59,17 +59,17 @@
                                             <?php endif; ?>
                                         </div>
                                     <?php endif; ?>
-
-                                    <?php if (!empty($_SESSION['user_id'])
-                                            && !empty($match['team_2_name'])
-                                            && ($statusInfo['label'] !== 'LIVE')
-                                            && empty($userPredictedMatchIds[(int)$match['id']] ?? null)): ?>
-                                        <a href="index.php?page=predict&match_id=<?= (int)$match['id'] ?>"
-                                        class="predict-button">
-                                            Make prediction
-                                        </a>
-                                    <?php endif; ?>
                                 </div>
+                                
+                                <?php if (!empty($_SESSION['user_id'])
+                                        && !empty($match['team_2_name'])
+                                        && ($statusInfo['label'] !== 'LIVE')
+                                        && empty($userPredictedMatchIds[(int)$match['id']] ?? null)): ?>
+                                    <a href="index.php?page=predict&match_id=<?= (int)$match['id'] ?>"
+                                    class="predict-button">
+                                        Make prediction
+                                    </a>
+                                <?php endif; ?>
 
                                 <div class="tournament-info">
                                     <div class="tournament-text">

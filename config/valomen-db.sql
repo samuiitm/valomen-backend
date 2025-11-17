@@ -76,8 +76,6 @@ VALUES
 
 INSERT INTO teams (name, country)
 VALUES
-
-
 ('Team Heretics', 'es'),
 ('FNATIC', 'eu'),
 ('Natus Vincere', 'ua'),
@@ -181,3 +179,8 @@ VALUES
 
 -- Match 9: Furia vs Loud
 (2, 9, 2, 1);
+
+INSERT INTO predictions (user_id, match_id, score_team_1_pred, score_team_2_pred, points_awarded)
+VALUES
+-- Grand Final (result):  NRG vs FNATIC
+(2, 43, 3, 2, 10);

@@ -79,6 +79,11 @@
                                     class="predict-button closed">
                                         Already predicted
                                     </a>
+                                <?php elseif (empty($_SESSION['user_id'])): ?>
+                                    <a href="index.php?page=login"
+                                    class="predict-button">
+                                        LOG IN TO PREDICT
+                                    </a>
                                 <?php else: ?>
                                     <a
                                     class="predict-button pending">

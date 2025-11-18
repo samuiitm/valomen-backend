@@ -1,13 +1,8 @@
+<?php $boolSchedule = false; ?>
+<?php $boolResults = false; ?>
+
 <main class="matches-page">
 
-    <div class="matches-header">
-        <div class="matches-tabs">
-            <a href="index.php?page=matches&view=schedule" 
-                class="tab <?= $view === 'schedule' ? 'active' : '' ?>">SCHEDULE</a>
-            <a href="index.php?page=matches&view=results" 
-                class="tab <?= $view === 'results' ? 'active' : '' ?>">RESULTS</a>
-        </div>
-    </div>
     <?php if ($view === 'schedule'): ?>
         <?php if (empty($upcomingByDate)): ?>
             <p>No upcoming matches.</p>
@@ -17,6 +12,15 @@
                 <div class="day-block">
                     <div class="header-day">
                         <span class="date-match"><?= formatMatchDate($date) ?></span>
+                        <?php if (!$boolSchedule): ?>
+                            <div class="matches-tabs">
+                                <a href="index.php?page=matches&view=schedule" 
+                                    class="tab <?= $view === 'schedule' ? 'active' : '' ?>">SCHEDULE</a>
+                                <a href="index.php?page=matches&view=results" 
+                                    class="tab <?= $view === 'results' ? 'active' : '' ?>">RESULTS</a>
+                            </div>
+                            <?php $boolSchedule = true; ?>
+                        <?php endif; ?>
                     </div>
 
                     <div class="matches-day">
@@ -107,16 +111,25 @@
                     </div>
                 </div>
             <?php endforeach; ?>
+            <?php $boolSchedule = false; ?>
         <?php endif; ?>
     <?php else: ?>
         <?php if (empty($completedByDate)): ?>
             <p>No completed matches.</p>
         <?php else: ?>
-
             <?php foreach ($completedByDate as $date => $matchesOfDay): ?>
                 <div class="day-block">
                     <div class="header-day">
                         <span class="date-match"><?= formatMatchDate($date) ?></span>
+                        <?php if (!$boolResults): ?>
+                            <div class="matches-tabs">
+                                <a href="index.php?page=matches&view=schedule" 
+                                    class="tab <?= $view === 'schedule' ? 'active' : '' ?>">SCHEDULE</a>
+                                <a href="index.php?page=matches&view=results" 
+                                    class="tab <?= $view === 'results' ? 'active' : '' ?>">RESULTS</a>
+                            </div>
+                            <?php $boolResults = true; ?>
+                        <?php endif; ?>
                     </div>
 
                     <div class="matches-day">
@@ -169,6 +182,7 @@
                     </div>
                 </div>
             <?php endforeach; ?>
+            <?php $boolResults = false; ?>
         <?php endif; ?>
     <?php endif; ?>
 </main>

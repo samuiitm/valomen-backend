@@ -29,19 +29,6 @@ header {
   border-bottom: 2px solid rgba(255, 255, 255, 0.177);
 }
 
-.user-avatar {
-  display: flex;
-  align-items: center;
-}
-
-.user-avatar img {
-  width: 40px;
-  height: 40px;
-  border-radius: 50px;
-  object-fit: cover;
-  object-position: center;
-}
-
 .logo a {
   display: flex;
   align-items: center;
@@ -109,6 +96,8 @@ nav {
 .user-menu {
     position: relative;
     display: inline-block;
+    width: 40px;
+    height: 40px;
 }
 
 .user-avatar-btn {
@@ -116,6 +105,8 @@ nav {
     border: none;
     padding: 0;
     cursor: pointer;
+    width: 40px;
+    height: 40px;
 }
 
 .user-avatar-btn img {

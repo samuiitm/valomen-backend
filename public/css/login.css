@@ -45,6 +45,10 @@ p {
     color: var(--text2);
 }
 
+.error-message {
+    color: var(--ongoing);
+}
+
 .form-fields {
     display: flex;
     flex-direction: column;

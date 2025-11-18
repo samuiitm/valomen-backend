@@ -3,6 +3,11 @@
         <h1>Login to Valomen.gg</h1>
         <p>Continue earning points, making pick’ems, and proving who really runs the game.</p>
 
+        <?php if (!empty($expired)): ?>
+            <p class="error-message">
+                Your session has expired after 40 minutes of inactivity. Please log in again.
+            </p>
+        <?php endif; ?>
         <div class="form-fields">
             <div class="field-container">
                 <div class="block">

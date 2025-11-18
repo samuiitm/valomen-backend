@@ -88,4 +88,62 @@ class MatchDAO extends BaseDAO
     $match = $stmt->fetch();
     return $match ?: null;
   }
+
+  public function countUpcomingMatches(): int
+  {
+      $sql = "SELECT COUNT(*) AS total FROM matches
+              WHERE status = 'Upcoming'";
+      $stmt = $this->db->query($sql);
+      $r = $stmt->fetch();
+      return (int)($r['total'] ?? 0);
+  }
+
+  public function getUpcomingMatchesPaginated(int $limit, int $offset): array
+  {
+      $sql = "SELECT m.*,
+                    t1.name AS team_1_name, t1.country AS team_1_country,
+                    t2.name AS team_2_name, t2.country AS team_2_country,
+                    e.name AS event_name, e.logo AS event_logo
+              FROM matches m
+              JOIN teams t1 ON m.team_1 = t1.id
+              LEFT JOIN teams t2 ON m.team_2 = t2.id
+              JOIN events e ON m.event_id = e.id
+              WHERE m.status = 'Upcoming' OR m.status = 'Live'
+              ORDER BY m.date ASC, m.hour ASC
+              LIMIT :limit OFFSET :offset";
+      $stmt = $this->db->prepare($sql);
+      $stmt->bindValue(':limit',  $limit,  PDO::PARAM_INT);
+      $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+      $stmt->execute();
+      return $stmt->fetchAll();
+  }
+
+  public function countCompletedMatches(): int
+  {
+      $sql = "SELECT COUNT(*) AS total FROM matches
+              WHERE status = 'Completed'";
+      $stmt = $this->db->query($sql);
+      $r = $stmt->fetch();
+      return (int)($r['total'] ?? 0);
+  }
+
+  public function getCompletedMatchesPaginated(int $limit, int $offset): array
+  {
+      $sql = "SELECT m.*,
+                    t1.name AS team_1_name, t1.country AS team_1_country,
+                    t2.name AS team_2_name, t2.country AS team_2_country,
+                    e.name AS event_name, e.logo AS event_logo
+              FROM matches m
+              JOIN teams t1 ON m.team_1 = t1.id
+              LEFT JOIN teams t2 ON m.team_2 = t2.id
+              JOIN events e ON m.event_id = e.id
+              WHERE m.status = 'Completed'
+              ORDER BY m.date DESC, m.hour DESC
+              LIMIT :limit OFFSET :offset";
+      $stmt = $this->db->prepare($sql);
+      $stmt->bindValue(':limit',  $limit,  PDO::PARAM_INT);
+      $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+      $stmt->execute();
+      return $stmt->fetchAll();
+  }
 }

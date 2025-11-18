@@ -200,6 +200,49 @@ footer {
   align-items: center;
 }
 
+/* PAGINATION */
+.pager {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.page {
+  padding: 6px 10px;
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 10px;
+  text-decoration: none;
+  color: var(--text);
+  display: inline-block;
+}
+
+.page:hover { filter: brightness(1.1); }
+
+.page.current {
+  border: 1px solid rgba(255,255,255,.35);
+  background: rgba(255,255,255,.08);
+  font-weight: 600;
+  pointer-events: none;
+}
+
+.btn {
+  padding: 6px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.15);
+  background: #111827;
+  color: #e5e7eb;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn:hover { filter: brightness(1.1); }
+
+.is-disabled {
+  pointer-events: none;
+  opacity: .4;
+}
+
+
 /* RESPONSIVE CSS*/
 @media (max-width: 1024px) {
   nav {

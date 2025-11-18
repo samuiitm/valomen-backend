@@ -185,4 +185,31 @@
             <?php $boolResults = false; ?>
         <?php endif; ?>
     <?php endif; ?>
+
+    <?php if ($totalPagesMb > 1): ?>
+        <nav class="pager">
+            <a href="<?= build_matches_url(1, $perPage, $view) ?>"
+            class="btn<?= $currentPage === 1 ? ' is-disabled' : '' ?>">« First</a>
+
+            <a href="<?= build_matches_url(max(1, $currentPage - 1), $perPage, $view) ?>"
+            class="btn<?= $currentPage === 1 ? ' is-disabled' : '' ?>">‹ Prev</a>
+
+            <?php for ($p = $startPage; $p <= $endPage; $p++): ?>
+                <?php if ($p === $currentPage): ?>
+                    <span class="page current"><?= htmlspecialchars((string)$p) ?></span>
+                <?php else: ?>
+                    <a href="<?= build_matches_url($p, $perPage, $view) ?>" class="page">
+                        <?= htmlspecialchars((string)$p) ?>
+                    </a>
+                <?php endif; ?>
+            <?php endfor; ?>
+
+            <a href="<?= build_matches_url(min($totalPagesMb, $currentPage + 1), $perPage, $view) ?>"
+            class="btn<?= $currentPage === $totalPagesMb ? ' is-disabled' : '' ?>">Next ›</a>
+
+            <a href="<?= build_matches_url($totalPagesMb, $perPage, $view) ?>"
+            class="btn<?= $currentPage === $totalPagesMb ? ' is-disabled' : '' ?>">Last »</a>
+        </nav>
+    <?php endif; ?>
+
 </main>

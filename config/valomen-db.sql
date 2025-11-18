@@ -111,7 +111,7 @@ VALUES
 ('VCT 2026: Americas Kickoff', '2026-01-10', '2026-02-05', 'upcoming', 0, 'us', '2.png', 1),
 ('VCT 2026: Pacific Kickoff', '2026-01-15', '2026-02-10', 'upcoming', 0, 'th', '3.png', 1),
 ('VCT 2026: China Kickoff', '2026-01-20', '2026-02-12', 'upcoming', 0, 'cn', '4.png', 1),
-('Valorant Champions 2025', '2025-08-01', '2025-08-30', 'completed', 2250000, 'fr', '5.png', 1),
+('Valorant Champions 2025', '2025-09-12', '2025-10-06', 'completed', 2250000, 'fr', '5.png', 1),
 ('VCT 2025: Americas Ascension', '2025-05-01', '2025-05-20', 'completed', 100000, 'br', '6.png', 1),
 ('VCT 2025: EMEA Ascension', '2025-05-01', '2025-05-20', 'completed', 117113, 'de', '7.png', 1),
 ('VCT 2025: Pacific Ascension', '2025-05-01', '2025-05-20', 'completed', 100000, 'th', '8.png', 1),

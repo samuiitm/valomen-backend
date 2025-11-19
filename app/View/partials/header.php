@@ -22,7 +22,7 @@ $pageCss   = $pageCss   ?? null;
       <link rel="stylesheet" href="css/<?= htmlspecialchars($pageCss) ?>">
     <?php endif; ?>
 </head>
-<body>
+<body class="<?= !empty($_SESSION['edit_mode']) ? 'edit-mode' : '' ?>">
 <header>
     <nav>
         <div class="logo">
@@ -42,7 +42,6 @@ $pageCss   = $pageCss   ?? null;
                 <button class="user-avatar-btn" id="userMenuBtn" type="button">
                     <img src="assets/img/default-avatar.png" alt="User">
                 </button>
-
                 <div class="user-dropdown" id="userDropdown">
                     <div class="user-dropdown-header">
                         <span class="user-name">

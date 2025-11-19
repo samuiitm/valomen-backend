@@ -12,13 +12,24 @@
                 <div class="day-block">
                     <div class="header-day">
                         <span class="date-match"><?= formatMatchDate($date) ?></span>
+
                         <?php if (!$boolSchedule): ?>
-                            <div class="matches-tabs">
-                                <a href="index.php?page=matches&view=schedule" 
-                                    class="tab <?= $view === 'schedule' ? 'active' : '' ?>">SCHEDULE</a>
-                                <a href="index.php?page=matches&view=results" 
-                                    class="tab <?= $view === 'results' ? 'active' : '' ?>">RESULTS</a>
+                            <div class="matches-header-right">
+                                <div class="matches-tabs">
+                                    <a href="index.php?page=matches&view=schedule" 
+                                        class="tab <?= $view === 'schedule' ? 'active' : '' ?>">SCHEDULE</a>
+                                    <a href="index.php?page=matches&view=results" 
+                                        class="tab <?= $view === 'results' ? 'active' : '' ?>">RESULTS</a>
+                                </div>
+
+                                <?php if (!empty($_SESSION['is_admin']) && !empty($_SESSION['edit_mode'])): ?>
+                                    <a href="index.php?page=match_create" class="add-match-btn">
+                                        <span class="add-match-plus">+</span>
+                                        <span>Add match</span>
+                                    </a>
+                                <?php endif; ?>
                             </div>
+
                             <?php $boolSchedule = true; ?>
                         <?php endif; ?>
                     </div>
@@ -101,6 +112,21 @@
                                         src="assets/icons/events/<?= htmlspecialchars($match['event_logo']) ?>"
                                         alt="Tournament-icon">
                                 </div>
+
+                                <?php if (!empty($_SESSION['is_admin']) && !empty($_SESSION['edit_mode'])): ?>
+                                    <div class="match-admin-actions">
+                                        <a href="index.php?page=match_edit&id=<?= (int)$match['id'] ?>"
+                                        class="match-admin-btn edit"
+                                        title="Edit match">
+                                            ✎
+                                        </a>
+                                        <a href="index.php?page=match_delete&id=<?= (int)$match['id'] ?>"
+                                        class="match-admin-btn delete"
+                                        title="Delete match">
+                                            🗑
+                                        </a>
+                                    </div>
+                                <?php endif; ?>
                             </div>
                         <?php endforeach; ?>
                     </div>
@@ -116,16 +142,28 @@
                 <div class="day-block">
                     <div class="header-day">
                         <span class="date-match"><?= formatMatchDate($date) ?></span>
+
                         <?php if (!$boolResults): ?>
-                            <div class="matches-tabs">
-                                <a href="index.php?page=matches&view=schedule" 
-                                    class="tab <?= $view === 'schedule' ? 'active' : '' ?>">SCHEDULE</a>
-                                <a href="index.php?page=matches&view=results" 
-                                    class="tab <?= $view === 'results' ? 'active' : '' ?>">RESULTS</a>
+                            <div class="matches-header-right">
+                                <div class="matches-tabs">
+                                    <a href="index.php?page=matches&view=schedule" 
+                                        class="tab <?= $view === 'schedule' ? 'active' : '' ?>">SCHEDULE</a>
+                                    <a href="index.php?page=matches&view=results" 
+                                        class="tab <?= $view === 'results' ? 'active' : '' ?>">RESULTS</a>
+                                </div>
+
+                                <?php if (!empty($_SESSION['is_admin']) && !empty($_SESSION['edit_mode'])): ?>
+                                    <a href="index.php?page=match_create" class="add-match-btn">
+                                        <span class="add-match-plus">+</span>
+                                        <span>Add match</span>
+                                    </a>
+                                <?php endif; ?>
                             </div>
+
                             <?php $boolResults = true; ?>
                         <?php endif; ?>
                     </div>
+
 
                     <div class="matches-day">
                         <?php foreach ($matchesOfDay as $match): ?>
@@ -169,6 +207,21 @@
                                         src="assets/icons/events/<?= htmlspecialchars($match['event_logo']) ?>"
                                         alt="Tournament-icon">
                                 </div>
+
+                                <?php if (!empty($_SESSION['is_admin']) && !empty($_SESSION['edit_mode'])): ?>
+                                    <div class="match-admin-actions">
+                                        <a href="index.php?page=match_edit&id=<?= (int)$match['id'] ?>"
+                                        class="match-admin-btn edit"
+                                        title="Edit match">
+                                            ✎
+                                        </a>
+                                        <a href="index.php?page=match_delete&id=<?= (int)$match['id'] ?>"
+                                        class="match-admin-btn delete"
+                                        title="Delete match">
+                                            🗑
+                                        </a>
+                                    </div>
+                                <?php endif; ?>
                             </div>
                         <?php endforeach; ?>
                     </div>

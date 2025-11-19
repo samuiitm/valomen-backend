@@ -45,6 +45,7 @@ CREATE TABLE IF NOT EXISTS matches (
     date DATE NOT NULL,
     hour TIME NOT NULL,
     status ENUM('Upcoming','Live','Completed') DEFAULT NULL,
+    best_of TINYINT UNSIGNED NOT NULL DEFAULT 3,
     event_stage VARCHAR(100) NOT NULL,
     event_id INT UNSIGNED NOT NULL,
     post_author INT UNSIGNED DEFAULT NULL,
@@ -162,9 +163,12 @@ VALUES
 (18, 15, 1, 2, '2025-09-28', '18:20:00', 'Completed', 'Playoffs–Upper Semifinals', 5, 1),
 (2, 17, 2, 1, '2025-09-28', '15:00:00', 'Completed', 'Playoffs–Upper Semifinals', 5, 1),
 (16, 17, 2, 0, '2025-10-03', '15:35:00', 'Completed', 'Playoffs–Lower Round 3', 5, 1),
-(2, 15, 0, 2, '2025-10-03', '13:00:00', 'Completed', 'Playoffs–Upper Final', 5, 1),
-(2, 16, 3, 1, '2025-10-04', '13:00:00', 'Completed', 'Playoffs–Lower Final', 5, 1),
-(15, 2, 3, 2, '2025-10-05', '13:00:00', 'Completed', 'Playoffs–Grand Final', 5, 1);
+(2, 15, 0, 2, '2025-10-03', '13:00:00', 'Completed', 'Playoffs–Upper Final', 5, 1)
+
+INSERT INTO matches (team_1, team_2, score_team_1, score_team_2, date, hour, status, best_of, event_stage, event_id, post_author)
+VALUES
+(2, 16, 3, 1, '2025-10-04', '13:00:00', 'Completed', 5, 'Playoffs–Lower Final', 5, 1),
+(15, 2, 3, 2, '2025-10-05', '13:00:00', 'Completed', 5, 'Playoffs–Grand Final', 5, 1);
 
 INSERT INTO predictions (user_id, match_id, score_team_1_pred, score_team_2_pred)
 VALUES

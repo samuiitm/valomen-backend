@@ -2,11 +2,25 @@
 
 session_start();
 
+if (
+    isset($_GET['action']) &&
+    $_GET['action'] === 'toggle_edit_mode' &&
+    !empty($_SESSION['is_admin'])
+) {
+    $current = !empty($_SESSION['edit_mode']);
+    $_SESSION['edit_mode'] = !$current;
+
+    $redirectTo = $_SERVER['HTTP_REFERER'] ?? 'index.php';
+    header('Location: ' . $redirectTo);
+    exit;
+}
+
 $sessionTimeout = 40 * 60;
 
 if (isset($_SESSION['user_id'])) {
     if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $sessionTimeout) {
         $_SESSION = [];
+
         if (ini_get('session.use_cookies')) {
             $params = session_get_cookie_params();
             setcookie(session_name(), '', time() - 42000, $params['path'], $params['domain'], $params['secure'], $params['httponly']);
@@ -172,6 +186,20 @@ switch ($page) {
         require __DIR__ . '/../app/View/partials/footer.php';
         break;
 
+    case 'admin':
+        if (empty($_SESSION['is_admin'])) {
+            header('Location: index.php?page=home');
+            exit;
+        }
+
+        $pageTitle = 'Valomen.gg | Admin';
+        $pageCss   = 'admin.css';
+
+        require __DIR__ . '/../app/View/partials/header.php';
+        require __DIR__ . '/../app/View/admin.view.php';
+        require __DIR__ . '/../app/View/partials/footer.php';
+        break;
+
     case 'register':
         require __DIR__ . '/../app/Controller/RegisterController.php';
 
@@ -223,6 +251,10 @@ switch ($page) {
 
             if ($result['success']) {
                 header('Location: index.php');
+                $_SESSION['user_id']   = (int)$user['id'];
+                $_SESSION['username']  = $user['username'];
+                $_SESSION['is_admin']  = (int)$user['admin'] === 1;
+                $_SESSION['edit_mode'] = $_SESSION['edit_mode'] ?? false;
                 exit;
             } else {
                 $loginError = $result['error'];

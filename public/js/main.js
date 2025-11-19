@@ -1,15 +1,17 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const userMenu = document.querySelector('.user-menu');
-    const btn = document.querySelector('.user-avatar-btn');
+document.addEventListener("DOMContentLoaded", () => {
+    const btn = document.getElementById("userMenuBtn");
+    const dropdown = document.getElementById("userDropdown");
 
-    if (btn && userMenu) {
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            userMenu.classList.toggle('open');
-        });
+    if (!btn || !dropdown) return;
 
-        document.addEventListener('click', () => {
-            userMenu.classList.remove('open');
-        });
-    }
+    btn.addEventListener("click", (e) => {
+        e.stopPropagation(); 
+        dropdown.classList.toggle("open");
+    });
+
+    document.addEventListener("click", (e) => {
+        if (!dropdown.contains(e.target) && !btn.contains(e.target)) {
+            dropdown.classList.remove("open");
+        }
+    });
 });

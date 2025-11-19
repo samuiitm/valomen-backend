@@ -1,9 +1,18 @@
 <?php
 
-function formatEventDate(string $startDate, string $endDate): string
+function formatEventDate(?string $startDate, ?string $endDate): string
 {
+    if (empty($startDate)) {
+        return 'TBD';
+    }
+
     $start = new DateTime($startDate);
-    $end   = new DateTime($endDate);
+
+    if ($endDate === null || $endDate === '' || $endDate === '0000-00-00') {
+        return $start->format('M j') . ' - TBD';
+    }
+
+    $end = new DateTime($endDate);
 
     return $start->format('M j') . ' - ' . $end->format('M j');
 }
@@ -20,26 +29,24 @@ function formatMatchHour(string $time): string
     return $t ? $t->format('g:i A') : $time;
 }
 
-function getMatchStatusInfo(string $date, string $time): array
+function getMatchCountdown(string $date, string $time): ?string
 {
-    $matchDateTime = new DateTime($date . ' ' . $time);
-    
+    $matchDateTime = new DateTime("$date $time");
+
     $now = new DateTime('2025-11-13 13:00:00');
 
     if ($matchDateTime <= $now) {
-        return [
-            'cssClass'  => 'live',
-            'label'     => 'LIVE',
-            'countdown' => null,
-        ];
+        return null;
     }
 
     $diffSeconds = $matchDateTime->getTimestamp() - $now->getTimestamp();
 
     $days = intdiv($diffSeconds, 86400);
     $diffSeconds %= 86400;
+
     $hours = intdiv($diffSeconds, 3600);
     $diffSeconds %= 3600;
+
     $minutes = intdiv($diffSeconds, 60);
 
     $parts = [];
@@ -56,13 +63,7 @@ function getMatchStatusInfo(string $date, string $time): array
         $parts[] = $minutes . 'm';
     }
 
-    $countdown = implode(' ', $parts);
-
-    return [
-        'cssClass'  => 'upcoming',
-        'label'     => 'Upcoming',
-        'countdown' => $countdown,
-    ];
+    return implode(' ', $parts);
 }
 
 function getElapsedTime(string $date, string $time): string {

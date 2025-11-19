@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS events (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     start_date DATE NOT NULL,
-    end_date DATE NOT NULL,
+    end_date DATE,
     status ENUM('Upcoming','Ongoing','Completed') DEFAULT NULL,
     prize INT UNSIGNED DEFAULT NULL,
     region VARCHAR(5) NOT NULL,
@@ -107,7 +107,7 @@ VALUES
 
 INSERT INTO events (name, start_date, end_date, status, prize, region, logo, post_author)
 VALUES
-('VCT 2026: EMEA Kickoff', '2025-11-01', '2025-12-15', 'Ongoing', 0, 'de', '1.png', 1),
+('VCT 2026: EMEA Kickoff', '2025-11-01', NULL, 'Ongoing', 0, 'de', '1.png', 1),
 ('VCT 2026: Americas Kickoff', '2026-01-10', '2026-02-05', 'Upcoming', 0, 'us', '2.png', 1),
 ('VCT 2026: Pacific Kickoff', '2026-01-15', '2026-02-10', 'Upcoming', 0, 'th', '3.png', 1),
 ('VCT 2026: China Kickoff', '2026-01-20', '2026-02-12', 'Upcoming', 0, 'cn', '4.png', 1),

@@ -102,7 +102,7 @@ class MatchDAO extends BaseDAO
   {
       $sql = "SELECT m.*,
                     t1.name AS team_1_name, t1.country AS team_1_country,
-                    t2.name AS team_2_name, t2.country AS team_2_country,
+                    t2.name AS team_2_name, t2.country AS team_2_country, m.status,
                     e.name AS event_name, e.logo AS event_logo
               FROM matches m
               JOIN teams t1 ON m.team_1 = t1.id

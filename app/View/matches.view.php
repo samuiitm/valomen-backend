@@ -25,9 +25,6 @@
 
                     <div class="matches-day">
                         <?php foreach ($matchesOfDay as $match): ?>
-
-                            <?php $statusInfo = getMatchStatusInfo($match['date'], $match['hour']); ?>
-
                             <div class="match-block">
                                 <div class="match-info">
                                     <span class="match-hour">
@@ -51,29 +48,27 @@
                                         <span><?= $match['score_team_2'] ?? 0 ?></span>
                                     </div>
 
-                                    <?php if ($statusInfo['cssClass'] === 'live'): ?>
+                                    <?php if ($match['status'] === 'Live'): ?>
                                         <div class="live">
-                                            <span><?= $statusInfo['label'] ?></span>
+                                            <span>LIVE</span>
                                         </div>
                                     <?php else: ?>
                                         <div class="upcoming">
-                                            <span><?= $statusInfo['label'] ?></span>
-                                            <?php if (!empty($statusInfo['countdown'])): ?>
-                                                <span class="upcoming-time"><?= $statusInfo['countdown'] ?></span>
-                                            <?php endif; ?>
+                                            <span>Upcoming</span>
+                                            <span class="upcoming-time"><?= getMatchCountdown($match['date'], $match['hour']) ?></span>
                                         </div>
                                     <?php endif; ?>
                                 </div>
                                 
                                 <?php if (!empty($_SESSION['user_id'])
                                         && !empty($match['team_2_name'])
-                                        && ($statusInfo['label'] !== 'LIVE')
+                                        && ($match['status'] !== 'Live')
                                         && empty($userPredictedMatchIds[(int)$match['id']] ?? null)): ?>
                                     <a href="index.php?page=predict&match_id=<?= (int)$match['id'] ?>"
                                     class="predict-button">
                                         Make prediction
                                     </a>
-                                <?php elseif ($statusInfo['label'] === 'LIVE'): ?>
+                                <?php elseif ($match['status'] === 'Live'): ?>
                                     <a
                                     class="predict-button closed">
                                         Prediction closed
@@ -134,9 +129,6 @@
 
                     <div class="matches-day">
                         <?php foreach ($matchesOfDay as $match): ?>
-
-                            <?php $statusInfo = getMatchStatusInfo($match['date'], $match['hour']); ?>
-
                             <div class="match-block">
                                 <div class="match-info">
                                     <span class="match-hour">

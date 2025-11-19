@@ -107,15 +107,15 @@ VALUES
 
 INSERT INTO events (name, start_date, end_date, status, prize, region, logo, post_author)
 VALUES
-('VCT 2026: EMEA Kickoff', '2025-11-01', '2025-12-15', 'ongoing', 0, 'de', '1.png', 1),
-('VCT 2026: Americas Kickoff', '2026-01-10', '2026-02-05', 'upcoming', 0, 'us', '2.png', 1),
-('VCT 2026: Pacific Kickoff', '2026-01-15', '2026-02-10', 'upcoming', 0, 'th', '3.png', 1),
-('VCT 2026: China Kickoff', '2026-01-20', '2026-02-12', 'upcoming', 0, 'cn', '4.png', 1),
-('Valorant Champions 2025', '2025-09-12', '2025-10-06', 'completed', 2250000, 'fr', '5.png', 1),
-('VCT 2025: Americas Ascension', '2025-05-01', '2025-05-20', 'completed', 100000, 'br', '6.png', 1),
-('VCT 2025: EMEA Ascension', '2025-05-01', '2025-05-20', 'completed', 117113, 'de', '7.png', 1),
-('VCT 2025: Pacific Ascension', '2025-05-01', '2025-05-20', 'completed', 100000, 'th', '8.png', 1),
-('VCT 2025: China Ascension', '2025-05-01', '2025-05-20', 'completed', 100000, 'cn', '9.png', 1);
+('VCT 2026: EMEA Kickoff', '2025-11-01', '2025-12-15', 'Ongoing', 0, 'de', '1.png', 1),
+('VCT 2026: Americas Kickoff', '2026-01-10', '2026-02-05', 'Upcoming', 0, 'us', '2.png', 1),
+('VCT 2026: Pacific Kickoff', '2026-01-15', '2026-02-10', 'Upcoming', 0, 'th', '3.png', 1),
+('VCT 2026: China Kickoff', '2026-01-20', '2026-02-12', 'Upcoming', 0, 'cn', '4.png', 1),
+('Valorant Champions 2025', '2025-09-12', '2025-10-06', 'Completed', 2250000, 'fr', '5.png', 1),
+('VCT 2025: Americas Ascension', '2025-05-01', '2025-05-20', 'Completed', 100000, 'br', '6.png', 1),
+('VCT 2025: EMEA Ascension', '2025-05-01', '2025-05-20', 'Completed', 117113, 'de', '7.png', 1),
+('VCT 2025: Pacific Ascension', '2025-05-01', '2025-05-20', 'Completed', 100000, 'th', '8.png', 1),
+('VCT 2025: China Ascension', '2025-05-01', '2025-05-20', 'Completed', 100000, 'cn', '9.png', 1);
 
 INSERT INTO matches (team_1, team_2, score_team_1, score_team_2, date, hour, event_stage, event_id, post_author)
 VALUES

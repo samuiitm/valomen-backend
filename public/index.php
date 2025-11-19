@@ -22,6 +22,7 @@ if (isset($_SESSION['user_id'])) {
 require __DIR__ . '/../config/db-connection.php';
 require_once __DIR__ . '/../lib/DateFormat.php';
 require_once __DIR__ . '/../lib/FlagControl.php';
+require_once __DIR__ . '/../lib/CurrencyFormat.php';
 require __DIR__ . '/../app/Model/DAO/BaseDAO.php';
 require __DIR__ . '/../app/Model/DAO/UserDAO.php';
 require __DIR__ . '/../app/Controller/LoginController.php';
@@ -240,12 +241,62 @@ switch ($page) {
 
     case 'events':
         require __DIR__ . '/../app/Model/DAO/EventDAO.php';
-        require_once __DIR__ . '/../lib/CurrencyFormat.php';
 
         $eventDao = new EventDAO($db);
-        $ongoingEvents   = $eventDao->getOngoingEvents();
-        $upcomingEvents  = $eventDao->getUpcomingEvents();
-        $completedEvents = $eventDao->getCompletedEvents();
+
+        $perPageEvents = filter_input(
+            INPUT_GET,
+            'perPage',
+            FILTER_VALIDATE_INT,
+            ['options' => ['default' => 5, 'min_range' => 1]]
+        );
+
+        $totalCurrent    = $eventDao->countCurrentEvents();
+        $totalCompleted  = $eventDao->countCompletedEvents();
+
+        $pagesCurrent   = max(1, (int)ceil($totalCurrent   / $perPageEvents));
+        $pagesCompleted = max(1, (int)ceil($totalCompleted / $perPageEvents));
+
+        $totalPagesEvents = max($pagesCurrent, $pagesCompleted);
+
+        $pEvents = filter_input(
+            INPUT_GET,
+            'p',
+            FILTER_VALIDATE_INT,
+            ['options' => ['default' => 1, 'min_range' => 1]]
+        );
+        $pEvents = min($pEvents, $totalPagesEvents);
+        $pEvents = max(1, $pEvents);
+
+        $offsetCurrent   = ($pEvents - 1) * $perPageEvents;
+        $offsetCompleted = ($pEvents - 1) * $perPageEvents;
+
+        $currentEvents   = $eventDao->getCurrentEventsPaginated($perPageEvents, $offsetCurrent);
+        $completedEvents = $eventDao->getCompletedEventsPaginated($perPageEvents, $offsetCompleted);
+
+        $ongoingEvents  = [];
+        $upcomingEvents = [];
+
+        foreach ($currentEvents as $ev) {
+            $status = strtolower((string)$ev['status']);
+            if ($status === 'ongoing') {
+                $ongoingEvents[] = $ev;
+            } else {
+                $upcomingEvents[] = $ev;
+            }
+        }
+
+        $startPageEvents = max(1, $pEvents - 2);
+        $endPageEvents   = min($totalPagesEvents, $pEvents + 4);
+
+        $currentPageEvents  = $pEvents;
+        $totalPagesEventsMb = $totalPagesEvents;
+
+        function build_events_url(int $p, int $perPage): string {
+            $p       = max(1, $p);
+            $perPage = max(1, $perPage);
+            return 'index.php?page=events&p=' . $p . '&perPage=' . $perPage;
+        }
 
         $pageTitle = 'Valomen.gg | Events';
         $pageCss   = 'events.css';
@@ -254,6 +305,7 @@ switch ($page) {
         require __DIR__ . '/../app/View/events.view.php';
         require __DIR__ . '/../app/View/partials/footer.php';
         break;
+
 
     default:
         $pageTitle = 'Valomen.gg | Home';

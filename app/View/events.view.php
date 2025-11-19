@@ -104,4 +104,29 @@
             <?php endif; ?>
         </section>
     </div>
+    <?php if ($totalPagesEventsMb > 1): ?>
+        <nav class="pager">
+            <a href="<?= build_events_url(1, $perPageEvents) ?>"
+               class="btn<?= $currentPageEvents === 1 ? ' is-disabled' : '' ?>">« First</a>
+
+            <a href="<?= build_events_url(max(1, $currentPageEvents - 1), $perPageEvents) ?>"
+               class="btn<?= $currentPageEvents === 1 ? ' is-disabled' : '' ?>">‹ Prev</a>
+
+            <?php for ($p = $startPageEvents; $p <= $endPageEvents; $p++): ?>
+                <?php if ($p === $currentPageEvents): ?>
+                    <span class="page current"><?= htmlspecialchars((string)$p) ?></span>
+                <?php else: ?>
+                    <a href="<?= build_events_url($p, $perPageEvents) ?>" class="page">
+                        <?= htmlspecialchars((string)$p) ?>
+                    </a>
+                <?php endif; ?>
+            <?php endfor; ?>
+
+            <a href="<?= build_events_url(min($totalPagesEventsMb, $currentPageEvents + 1), $perPageEvents) ?>"
+               class="btn<?= $currentPageEvents === $totalPagesEventsMb ? ' is-disabled' : '' ?>">Next ›</a>
+
+            <a href="<?= build_events_url($totalPagesEventsMb, $perPageEvents) ?>"
+               class="btn<?= $currentPageEvents === $totalPagesEventsMb ? ' is-disabled' : '' ?>">Last »</a>
+        </nav>
+    <?php endif; ?>
 </main>

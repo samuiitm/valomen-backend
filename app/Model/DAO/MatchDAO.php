@@ -92,7 +92,7 @@ class MatchDAO extends BaseDAO
   public function countUpcomingMatches(): int
   {
       $sql = "SELECT COUNT(*) AS total FROM matches
-              WHERE status = 'Upcoming'";
+              WHERE status = 'Upcoming' || status = 'Live'";
       $stmt = $this->db->query($sql);
       $r = $stmt->fetch();
       return (int)($r['total'] ?? 0);

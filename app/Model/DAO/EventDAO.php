@@ -4,6 +4,19 @@ require_once __DIR__ . '/BaseDAO.php';
 
 class EventDAO extends BaseDAO
 {
+
+    public function getAllEventsForSelect(): array
+    {
+        $sql = "SELECT id, name, status
+                FROM events
+                WHERE LOWER(status) <> 'completed'
+                ORDER BY start_date DESC, name ASC";
+                
+
+        $stmt = $this->db->query($sql);
+        return $stmt->fetchAll();
+    }
+
     public function getOngoingEvents(): array
     {
         $sql = "SELECT 

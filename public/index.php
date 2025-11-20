@@ -131,6 +131,36 @@ switch ($page) {
         require __DIR__ . '/../app/View/partials/footer.php';
         break;
 
+    case 'match_create':
+        if (
+            empty($_SESSION['user_id']) ||
+            empty($_SESSION['is_admin']) ||
+            empty($_SESSION['edit_mode'])
+        ) {
+            header('Location: index.php?page=matches');
+            exit;
+        }
+
+        require __DIR__ . '/../app/Controller/MatchAdminController.php';
+
+        $controller = new MatchAdminController($db);
+
+        $pageTitle = 'Valomen.gg | Create match';
+        $pageCss   = 'match_admin.css';
+
+        require __DIR__ . '/../app/View/partials/header.php';
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $controller->createFromPost();
+        } else {
+            $eventId = isset($_GET['event_id']) ? (int) $_GET['event_id'] : null;
+            $controller->showCreateForm($eventId);
+        }
+
+        require __DIR__ . '/../app/View/partials/footer.php';
+        break;
+
+
     case 'predict':
         if (empty($_SESSION['user_id'])) {
             header('Location: index.php?page=login');

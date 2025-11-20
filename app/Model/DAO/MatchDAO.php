@@ -146,4 +146,60 @@ class MatchDAO extends BaseDAO
       $stmt->execute();
       return $stmt->fetchAll();
   }
+
+  public function createMatch(
+      int $team1Id,
+      int $team2Id,
+      ?int $scoreTeam1,
+      ?int $scoreTeam2,
+      string $date,
+      string $hour,
+      ?string $status,
+      int $bestOf,
+      string $eventStage,
+      int $eventId,
+      ?int $postAuthor
+  ): bool {
+      $sql = "INSERT INTO matches (
+                  team_1,
+                  team_2,
+                  score_team_1,
+                  score_team_2,
+                  date,
+                  hour,
+                  status,
+                  best_of,
+                  event_stage,
+                  event_id,
+                  post_author
+              ) VALUES (
+                  :team_1,
+                  :team_2,
+                  :score_team_1,
+                  :score_team_2,
+                  :date,
+                  :hour,
+                  :status,
+                  :best_of,
+                  :event_stage,
+                  :event_id,
+                  :post_author
+              )";
+
+      $stmt = $this->db->prepare($sql);
+
+      return $stmt->execute([
+          ':team_1'       => $team1Id,
+          ':team_2'       => $team2Id,
+          ':score_team_1' => $scoreTeam1,
+          ':score_team_2' => $scoreTeam2,
+          ':date'         => $date,
+          ':hour'         => $hour,
+          ':status'       => $status,
+          ':best_of'      => $bestOf,
+          ':event_stage'  => $eventStage,
+          ':event_id'     => $eventId,
+          ':post_author'  => $postAuthor,
+      ]);
+  }
 }

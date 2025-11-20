@@ -1,12 +1,10 @@
 DROP DATABASE IF EXISTS valomen_gg;
-
 CREATE DATABASE IF NOT EXISTS valomen_gg
   CHARACTER SET utf8mb4
   COLLATE utf8mb4_unicode_ci;
-
 USE valomen_gg;
 
-CREATE TABLE IF NOT EXISTS users (
+CREATE TABLE users (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
     passwd_hash VARCHAR(255) NOT NULL,
@@ -16,13 +14,13 @@ CREATE TABLE IF NOT EXISTS users (
     admin TINYINT(1) NOT NULL DEFAULT 0
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS teams (
+CREATE TABLE teams (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     country VARCHAR(5) NOT NULL
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS events (
+CREATE TABLE events (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     start_date DATE NOT NULL,
@@ -36,7 +34,7 @@ CREATE TABLE IF NOT EXISTS events (
         ON DELETE SET NULL ON UPDATE CASCADE
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS matches (
+CREATE TABLE matches (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     team_1 INT UNSIGNED NOT NULL,
     team_2 INT UNSIGNED NULL,
@@ -49,13 +47,13 @@ CREATE TABLE IF NOT EXISTS matches (
     event_stage VARCHAR(100) NOT NULL,
     event_id INT UNSIGNED NOT NULL,
     post_author INT UNSIGNED DEFAULT NULL,
-    FOREIGN KEY (team_1) REFERENCES teams(id) ON DELETE RESTRICT ON UPDATE CASCADE,
-    FOREIGN KEY (team_2) REFERENCES teams(id) ON DELETE RESTRICT ON UPDATE CASCADE,
-    FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (post_author) REFERENCES users(id) ON DELETE SET NULL ON UPDATE CASCADE
+    FOREIGN KEY (team_1) REFERENCES teams(id),
+    FOREIGN KEY (team_2) REFERENCES teams(id),
+    FOREIGN KEY (event_id) REFERENCES events(id),
+    FOREIGN KEY (post_author) REFERENCES users(id)
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS predictions (
+CREATE TABLE predictions (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     user_id INT UNSIGNED NOT NULL,
     match_id INT UNSIGNED NOT NULL,
@@ -64,10 +62,16 @@ CREATE TABLE IF NOT EXISTS predictions (
     points_awarded INT DEFAULT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     UNIQUE KEY unique_prediction (user_id, match_id),
-    FOREIGN KEY (user_id) REFERENCES users(id)
-        ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (match_id) REFERENCES matches(id)
-        ON DELETE CASCADE ON UPDATE CASCADE
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE event_teams (
+    event_id INT UNSIGNED NOT NULL,
+    team_id  INT UNSIGNED NOT NULL,
+    PRIMARY KEY (event_id, team_id),
+    FOREIGN KEY (event_id) REFERENCES events(id),
+    FOREIGN KEY (team_id) REFERENCES teams(id)
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO users (username, passwd_hash, email, logo, admin)
@@ -104,7 +108,31 @@ VALUES
 ('Team Liquid', 'eu'),
 ('Dragon Ranger Gaming', 'cn'),
 ('Bilibili Gaming', 'cn'),
-('EDward Gaming', 'cn');
+('EDward Gaming', 'cn'),
+('100 Thieves', 'us'),
+('Cloud 9', 'us'),
+('Evil Geniuses', 'us'),
+('ENVY', 'us'),
+('DetonatioN FocusMe', 'jp'),
+('Gen.G', 'kr'),
+('Global Esports', 'in'),
+('Team Secret', 'ph'),
+('ZETA DIVISION', 'jp'),
+('SLT Seongnam', 'kr'),
+('Nongshim RedForce', 'kr'),
+('FUT Esports', 'tr'),
+('Karmine Corp', 'fr'),
+('ULF Esports', 'tr'),
+('BBL PCIFIC', 'tr'),
+('All Gamers', 'cn'),
+('Partner Team', 'cn'),
+('FunPlus Phoenix', 'cn'),
+('JD Mall JDG Esports', 'cn'),
+('Nova Esports', 'cn'),
+('Wuxi Titan Esports Club', 'cn'),
+('Trace Esports', 'cn'),
+('TYLOO', 'cn'),
+('Wolves Esports', 'cn');
 
 INSERT INTO events (name, start_date, end_date, status, prize, region, logo, post_author)
 VALUES
@@ -118,10 +146,18 @@ VALUES
 ('VCT 2025: Pacific Ascension', '2025-05-01', '2025-05-20', 'Completed', 100000, 'th', '8.png', 1),
 ('VCT 2025: China Ascension', '2025-05-01', '2025-05-20', 'Completed', 100000, 'cn', '9.png', 1);
 
+INSERT INTO event_teams (event_id, team_id)
+VALUES
+(1, 1),(1, 2),(1, 3),(1, 5),(1, 6),(1, 7),(1, 10),(1, 22),(1, 37),(1, 38),(1, 39),(1, 40),
+(2, 8),(2, 9),(2, 11),(2, 12),(2, 13),(2, 14),(2, 15),(2, 18),(2, 26),(2, 27),(2, 28),(2, 29),
+(3, 16),(3, 17),(3, 19),(3, 20),(3, 30),(3, 31),(3, 32),(3, 33),(3, 34),(3, 35),(3, 36),
+(4, 21),(4, 23),(4, 24),(4, 25),(4, 41),(4, 42),(4, 43),(4, 44),(4, 45),(4, 46),(4, 47),(4, 48),(4, 49),
+(5, 1),(5, 2),(5, 6),(5, 11),(5, 14),(5, 15),(5, 16),(5, 17),(5, 18),(5, 19),(5, 20),(5, 21),(5, 22),(5, 23),(5, 24),(5, 25);
+
 INSERT INTO matches (team_1, team_2, score_team_1, score_team_2, date, hour, event_stage, event_id, post_author)
 VALUES
 (1, 2, NULL, NULL, '2025-11-13', '13:00:00', 'Upper Round 1', 1, 1),
-(3, 4, NULL, NULL, '2025-11-13', '15:00:00', 'Upper Round 1', 1, 1),
+(3, 38, NULL, NULL, '2025-11-13', '15:00:00', 'Upper Round 1', 1, 1),
 (5, NULL, NULL, NULL, '2025-11-14', '13:00:00', 'Lower Round 1', 1, 1),
 (10, NULL, NULL, NULL, '2025-11-14', '15:00:00', 'Lower Round 1', 1, 1),
 (12, 13, NULL, NULL, '2025-11-15', '23:00:00', 'Upper Round 1', 2, 1),
@@ -163,7 +199,7 @@ VALUES
 (18, 15, 1, 2, '2025-09-28', '18:20:00', 'Completed', 'Playoffs–Upper Semifinals', 5, 1),
 (2, 17, 2, 1, '2025-09-28', '15:00:00', 'Completed', 'Playoffs–Upper Semifinals', 5, 1),
 (16, 17, 2, 0, '2025-10-03', '15:35:00', 'Completed', 'Playoffs–Lower Round 3', 5, 1),
-(2, 15, 0, 2, '2025-10-03', '13:00:00', 'Completed', 'Playoffs–Upper Final', 5, 1)
+(2, 15, 0, 2, '2025-10-03', '13:00:00', 'Completed', 'Playoffs–Upper Final', 5, 1);
 
 INSERT INTO matches (team_1, team_2, score_team_1, score_team_2, date, hour, status, best_of, event_stage, event_id, post_author)
 VALUES
@@ -172,22 +208,12 @@ VALUES
 
 INSERT INTO predictions (user_id, match_id, score_team_1_pred, score_team_2_pred)
 VALUES
--- Match 1: Team Heretics vs FNATIC
 (2, 1, 2, 1),
-
--- Match 2: NAVI vs KOI
 (2, 2, 1, 2),
-
--- Match 5: KRÜ Esports vs Leviatán
 (2, 5, 2, 0),
-
--- Match 6: Sentinels vs G2 Esports
 (2, 6, 0, 2),
-
--- Match 9: Furia vs Loud
 (2, 9, 2, 1);
 
 INSERT INTO predictions (user_id, match_id, score_team_1_pred, score_team_2_pred, points_awarded)
 VALUES
--- Grand Final (result):  NRG vs FNATIC
 (2, 43, 3, 2, 10);

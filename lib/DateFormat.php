@@ -68,7 +68,7 @@ function getMatchCountdown(string $date, string $time): ?string
 
 function getElapsedTime(string $date, string $time): string {
     $matchDateTime = new DateTime("$date $time");
-    $now = new DateTime('now');
+    $now = new DateTime('2025-11-13 13:00:00');
 
     if ($matchDateTime > $now) {
         return "just now";

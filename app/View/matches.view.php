@@ -44,8 +44,8 @@
 
                                     <div class="teams">
                                         <div class="team">
-                                            <img src="<?= getFlagPath($match['team_1_country']) ?>" alt="Flag">
-                                            <span><?= htmlspecialchars($match['team_1_name']) ?></span>
+                                            <img src="<?= getFlagPath($match['team_1_country'] ?? '') ?>" alt="Flag">
+                                            <span><?= htmlspecialchars($match['team_1_name'] ?? 'TBD') ?></span>
                                         </div>
 
                                         <div class="team">
@@ -72,6 +72,7 @@
                                 </div>
                                 
                                 <?php if (!empty($_SESSION['user_id'])
+                                        && !empty($match['team_1_name'])
                                         && !empty($match['team_2_name'])
                                         && ($match['status'] !== 'Live')
                                         && empty($userPredictedMatchIds[(int)$match['id']] ?? null)): ?>
@@ -176,8 +177,8 @@
 
                                     <div class="teams">
                                         <div class="team">
-                                            <img src="<?= getFlagPath($match['team_1_country']) ?>" alt="Flag">
-                                            <span><?= htmlspecialchars($match['team_1_name']) ?></span>
+                                            <img src="<?= getFlagPath($match['team_1_country'] ?? '') ?>" alt="Flag">
+                                            <span><?= htmlspecialchars($match['team_1_name'] ?? 'TBD') ?></span>
                                         </div>
 
                                         <div class="team">

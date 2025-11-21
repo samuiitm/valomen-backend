@@ -64,8 +64,12 @@ class MatchAdminController
     public function createFromPost(): void
     {
         $eventId    = isset($_POST['event_id']) ? (int) $_POST['event_id'] : 0;
-        $team1Id    = isset($_POST['team_1']) ? (int) $_POST['team_1'] : 0;
-        $team2Id    = isset($_POST['team_2']) && $_POST['team_2'] !== '' ? (int) $_POST['team_2'] : 0;
+        $team1Id = isset($_POST['team_1']) && $_POST['team_1'] !== ''
+            ? (int) $_POST['team_1']
+            : null;
+        $team2Id = isset($_POST['team_2']) && $_POST['team_2'] !== ''
+            ? (int) $_POST['team_2']
+            : null;
         $date       = trim($_POST['date'] ?? '');
         $hour       = trim($_POST['hour'] ?? '');
         $bestOf     = isset($_POST['best_of']) ? (int) $_POST['best_of'] : 3;
@@ -94,15 +98,15 @@ class MatchAdminController
             $errors['event_id'] = 'Event is required.';
         }
 
-        if ($team1Id <= 0) {
-            $errors['team_1'] = 'Team 1 is required.';
+        if ($team1Id !== null && $team1Id < 0) {
+            $errors['team_1'] = 'Invalid team.';
         }
 
-        if ($team2Id <= 0) {
-            $errors['team_2'] = 'Team 2 is required.';
+        if ($team2Id !== null && $team2Id < 0) {
+            $errors['team_2'] = 'Invalid team.';
         }
 
-        if ($team1Id > 0 && $team2Id > 0 && $team1Id === $team2Id) {
+        if ($team1Id !== null && $team2Id !== null && $team1Id === $team2Id) {
             $errors['team_2'] = 'Teams must be different.';
         }
 
@@ -122,11 +126,11 @@ class MatchAdminController
             $errors['event_stage'] = 'Stage is required.';
         }
 
-        if ($eventId > 0 && $team1Id > 0 && !$this->teamDao->teamBelongsToEvent($team1Id, $eventId)) {
+        if ($eventId > 0 && $team1Id !== null && !$this->teamDao->teamBelongsToEvent($team1Id, $eventId)) {
             $errors['team_1'] = 'Team 1 does not belong to this event.';
         }
 
-        if ($eventId > 0 && $team2Id > 0 && !$this->teamDao->teamBelongsToEvent($team2Id, $eventId)) {
+        if ($eventId > 0 && $team2Id !== null && !$this->teamDao->teamBelongsToEvent($team2Id, $eventId)) {
             $errors['team_2'] = 'Team 2 does not belong to this event.';
         }
 
@@ -284,8 +288,12 @@ class MatchAdminController
         }
 
         $eventId    = isset($_POST['event_id']) ? (int) $_POST['event_id'] : 0;
-        $team1Id    = isset($_POST['team_1']) ? (int) $_POST['team_1'] : 0;
-        $team2Id    = isset($_POST['team_2']) && $_POST['team_2'] !== '' ? (int) $_POST['team_2'] : 0;
+        $team1Id = isset($_POST['team_1']) && $_POST['team_1'] !== ''
+            ? (int) $_POST['team_1']
+            : null;
+        $team2Id = isset($_POST['team_2']) && $_POST['team_2'] !== ''
+            ? (int) $_POST['team_2']
+            : null;
         $date       = trim($_POST['date'] ?? '');
         $hour       = trim($_POST['hour'] ?? '');
         $bestOf     = isset($_POST['best_of']) ? (int) $_POST['best_of'] : 3;
@@ -314,15 +322,15 @@ class MatchAdminController
             $errors['event_id'] = 'Event is required.';
         }
 
-        if ($team1Id <= 0) {
-            $errors['team_1'] = 'Team 1 is required.';
+        if ($team1Id !== null && $team1Id < 0) {
+            $errors['team_1'] = 'Invalid team.';
         }
 
-        if ($team2Id <= 0) {
-            $errors['team_2'] = 'Team 2 is required.';
+        if ($team2Id !== null && $team2Id < 0) {
+            $errors['team_2'] = 'Invalid team.';
         }
 
-        if ($team1Id > 0 && $team2Id > 0 && $team1Id === $team2Id) {
+        if ($team1Id !== null && $team2Id !== null && $team1Id === $team2Id) {
             $errors['team_2'] = 'Teams must be different.';
         }
 
@@ -342,11 +350,11 @@ class MatchAdminController
             $errors['event_stage'] = 'Stage is required.';
         }
 
-        if ($eventId > 0 && $team1Id > 0 && !$this->teamDao->teamBelongsToEvent($team1Id, $eventId)) {
+        if ($eventId > 0 && $team1Id !== null && !$this->teamDao->teamBelongsToEvent($team1Id, $eventId)) {
             $errors['team_1'] = 'Team 1 does not belong to this event.';
         }
 
-        if ($eventId > 0 && $team2Id > 0 && !$this->teamDao->teamBelongsToEvent($team2Id, $eventId)) {
+        if ($eventId > 0 && $team2Id !== null && !$this->teamDao->teamBelongsToEvent($team2Id, $eventId)) {
             $errors['team_2'] = 'Team 2 does not belong to this event.';
         }
 

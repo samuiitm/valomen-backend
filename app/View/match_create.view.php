@@ -32,33 +32,39 @@
                 <input type="hidden" name="event_id" value="<?= htmlspecialchars($selectedEventId) ?>">
 
                 <div class="form-row">
-                    <div class="block">
-                        <label>Team 1</label>
-                        <select name="team_1" required>
-                            <option value="">Select team</option>
+                    <div class="field-block">
+                        <label for="team_1">Team 1</label>
+                        <select name="team_1" id="team_1">
+                            <option value="">TBD</option>
                             <?php foreach ($teams as $team): ?>
-                                <option value="<?= htmlspecialchars($team['id']) ?>"
-                                    <?= (int)($old['team_1'] ?? 0) === (int)$team['id'] ? 'selected' : '' ?>>
+                                <option
+                                    value="<?= (int)$team['id'] ?>"
+                                    <?= ((int)$old['team_1'] === (int)$team['id']) ? 'selected' : '' ?>
+                                >
                                     <?= htmlspecialchars($team['name']) ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
+
                         <?php if (!empty($errors['team_1'])): ?>
                             <p class="field-error"><?= htmlspecialchars($errors['team_1']) ?></p>
                         <?php endif; ?>
                     </div>
 
-                    <div class="block">
-                        <label>Team 2</label>
-                        <select name="team_2" required>
-                            <option value="">Select team</option>
+                    <div class="field-block">
+                        <label for="team_2">Team 2</label>
+                        <select name="team_2" id="team_2">
+                            <option value="">TBD</option>
                             <?php foreach ($teams as $team): ?>
-                                <option value="<?= htmlspecialchars($team['id']) ?>"
-                                    <?= (int)($old['team_2'] ?? 0) === (int)$team['id'] ? 'selected' : '' ?>>
+                                <option
+                                    value="<?= (int)$team['id'] ?>"
+                                    <?= ((int)$old['team_2'] === (int)$team['id']) ? 'selected' : '' ?>
+                                >
                                     <?= htmlspecialchars($team['name']) ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
+
                         <?php if (!empty($errors['team_2'])): ?>
                             <p class="field-error"><?= htmlspecialchars($errors['team_2']) ?></p>
                         <?php endif; ?>

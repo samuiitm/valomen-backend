@@ -35,24 +35,6 @@ class MatchDAO extends BaseDAO
     }
   }
 
-  public function getUpcomingMatches(): array
-  {
-    $sql = "SELECT m.*, 
-                      t1.name AS team_1_name, t1.country AS team_1_country,
-                      t2.name AS team_2_name, t2.country AS team_2_country,
-                      e.name AS event_name, e.logo AS event_logo
-              FROM matches m
-              JOIN teams t1 ON m.team_1 = t1.id
-              LEFT JOIN teams t2 ON m.team_2 = t2.id
-              JOIN events e ON m.event_id = e.id
-              WHERE m.score_team_1 IS NULL
-                AND m.score_team_2 IS NULL
-              ORDER BY m.date ASC, m.hour ASC";
-
-    $stmt = $this->db->query($sql);
-    return $stmt->fetchAll();
-  }
-
   public function getCompletedMatches(): array
   {
     $sql = "SELECT m.*, 
@@ -78,7 +60,7 @@ class MatchDAO extends BaseDAO
                     t2.name AS team_2_name, t2.country AS team_2_country,
                     e.name AS event_name, e.logo AS event_logo
               FROM matches m
-              JOIN teams t1 ON m.team_1 = t1.id
+              LEFT JOIN teams t1 ON m.team_1 = t1.id
               LEFT JOIN teams t2 ON m.team_2 = t2.id
               JOIN events e ON m.event_id = e.id
               WHERE m.id = :id";
@@ -105,7 +87,7 @@ class MatchDAO extends BaseDAO
                     t2.name AS team_2_name, t2.country AS team_2_country, m.status,
                     e.name AS event_name, e.logo AS event_logo
               FROM matches m
-              JOIN teams t1 ON m.team_1 = t1.id
+              LEFT JOIN teams t1 ON m.team_1 = t1.id
               LEFT JOIN teams t2 ON m.team_2 = t2.id
               JOIN events e ON m.event_id = e.id
               WHERE m.status = 'Upcoming' OR m.status = 'Live'
@@ -134,7 +116,7 @@ class MatchDAO extends BaseDAO
                     t2.name AS team_2_name, t2.country AS team_2_country,
                     e.name AS event_name, e.logo AS event_logo
               FROM matches m
-              JOIN teams t1 ON m.team_1 = t1.id
+              LEFT JOIN teams t1 ON m.team_1 = t1.id
               LEFT JOIN teams t2 ON m.team_2 = t2.id
               JOIN events e ON m.event_id = e.id
               WHERE m.status = 'Completed'
@@ -148,8 +130,8 @@ class MatchDAO extends BaseDAO
   }
 
   public function createMatch(
-      int $team1Id,
-      int $team2Id,
+      ?int $team1Id,
+      ?int $team2Id,
       ?int $scoreTeam1,
       ?int $scoreTeam2,
       string $date,
@@ -161,51 +143,36 @@ class MatchDAO extends BaseDAO
       ?int $postAuthor
   ): bool {
       $sql = "INSERT INTO matches (
-                  team_1,
-                  team_2,
-                  score_team_1,
-                  score_team_2,
-                  date,
-                  hour,
-                  status,
-                  best_of,
-                  event_stage,
-                  event_id,
-                  post_author
-              ) VALUES (
-                  :team_1,
-                  :team_2,
-                  :score_team_1,
-                  :score_team_2,
-                  :date,
-                  :hour,
-                  :status,
-                  :best_of,
-                  :event_stage,
-                  :event_id,
-                  :post_author
+                  team_1, team_2, score_team_1, score_team_2,
+                  date, hour, status, best_of, event_stage,
+                  event_id, post_author
+              )
+              VALUES (
+                  :team_1, :team_2, :score1, :score2,
+                  :date, :hour, :status, :best_of, :stage,
+                  :event_id, :post_author
               )";
 
       $stmt = $this->db->prepare($sql);
 
-      return $stmt->execute([
-          ':team_1'       => $team1Id,
-          ':team_2'       => $team2Id,
-          ':score_team_1' => $scoreTeam1,
-          ':score_team_2' => $scoreTeam2,
-          ':date'         => $date,
-          ':hour'         => $hour,
-          ':status'       => $status,
-          ':best_of'      => $bestOf,
-          ':event_stage'  => $eventStage,
-          ':event_id'     => $eventId,
-          ':post_author'  => $postAuthor,
-      ]);
+      $stmt->bindValue(':team_1', $team1Id, $team1Id === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+      $stmt->bindValue(':team_2', $team2Id, $team2Id === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+      $stmt->bindValue(':score1', $scoreTeam1, $scoreTeam1 === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+      $stmt->bindValue(':score2', $scoreTeam2, $scoreTeam2 === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+      $stmt->bindValue(':date', $date);
+      $stmt->bindValue(':hour', $hour);
+      $stmt->bindValue(':status', $status);
+      $stmt->bindValue(':best_of', $bestOf, PDO::PARAM_INT);
+      $stmt->bindValue(':stage', $eventStage);
+      $stmt->bindValue(':event_id', $eventId, PDO::PARAM_INT);
+      $stmt->bindValue(':post_author', $postAuthor, $postAuthor === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+
+      return $stmt->execute();
   }
 
   public function updateMatch(
       int $id,
-      int $team1Id,
+      ?int $team1Id,
       ?int $team2Id,
       ?int $scoreTeam1,
       ?int $scoreTeam2,
@@ -216,8 +183,8 @@ class MatchDAO extends BaseDAO
       string $eventStage,
       int $eventId
   ): bool {
-      $sql = "UPDATE matches
-              SET team_1 = :team1,
+      $sql = "UPDATE matches SET
+                  team_1 = :team1,
                   team_2 = :team2,
                   score_team_1 = :score1,
                   score_team_2 = :score2,
@@ -231,19 +198,19 @@ class MatchDAO extends BaseDAO
 
       $stmt = $this->db->prepare($sql);
 
-      return $stmt->execute([
-          ':team1'    => $team1Id,
-          ':team2'    => $team2Id,
-          ':score1'   => $scoreTeam1,
-          ':score2'   => $scoreTeam2,
-          ':date'     => $date,
-          ':hour'     => $hour,
-          ':status'   => $status,
-          ':best_of'  => $bestOf,
-          ':stage'    => $eventStage,
-          ':event_id' => $eventId,
-          ':id'       => $id,
-      ]);
+      $stmt->bindValue(':team1', $team1Id, $team1Id === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+      $stmt->bindValue(':team2', $team2Id, $team2Id === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+      $stmt->bindValue(':score1', $scoreTeam1, $scoreTeam1 === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+      $stmt->bindValue(':score2', $scoreTeam2, $scoreTeam2 === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+      $stmt->bindValue(':date', $date);
+      $stmt->bindValue(':hour', $hour);
+      $stmt->bindValue(':status', $status);
+      $stmt->bindValue(':best_of', $bestOf, PDO::PARAM_INT);
+      $stmt->bindValue(':stage', $eventStage);
+      $stmt->bindValue(':event_id', $eventId, PDO::PARAM_INT);
+      $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+
+      return $stmt->execute();
   }
 
   public function deleteMatchById(int $id): bool

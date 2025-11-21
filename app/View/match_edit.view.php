@@ -56,9 +56,9 @@ $matchId = (int)($match['id'] ?? 0);
 
             <div class="field-row">
                 <div class="field-block">
-                    <label for="team_1">Team 1 <span class="obligatory">*</span></label>
-                    <select name="team_1" id="team_1" required>
-                        <option value="">Select team 1</option>
+                    <label for="team_1">Team 1</label>
+                    <select name="team_1" id="team_1">
+                        <option value="">TBD</option>
                         <?php foreach ($teams as $team): ?>
                             <option
                                 value="<?= (int)$team['id'] ?>"
@@ -75,9 +75,9 @@ $matchId = (int)($match['id'] ?? 0);
                 </div>
 
                 <div class="field-block">
-                    <label for="team_2">Team 2 <span class="obligatory">*</span></label>
-                    <select name="team_2" id="team_2" required>
-                        <option value="">Select team 2</option>
+                    <label for="team_2">Team 2</label>
+                    <select name="team_2" id="team_2">
+                        <option value="">TBD</option>
                         <?php foreach ($teams as $team): ?>
                             <option
                                 value="<?= (int)$team['id'] ?>"

@@ -365,11 +365,11 @@ switch ($page) {
             INPUT_GET,
             'perPage',
             FILTER_VALIDATE_INT,
-            ['options' => ['default' => 5, 'min_range' => 1]]
+            ['options' => ['default' => 6, 'min_range' => 1]]
         );
 
-        $totalCurrent    = $eventDao->countCurrentEvents();
-        $totalCompleted  = $eventDao->countCompletedEvents();
+        $totalCurrent   = $eventDao->countCurrentEvents();   // Upcoming + Ongoing
+        $totalCompleted = $eventDao->countCompletedEvents(); // Completed
 
         $pagesCurrent   = max(1, (int)ceil($totalCurrent   / $perPageEvents));
         $pagesCompleted = max(1, (int)ceil($totalCompleted / $perPageEvents));
@@ -382,8 +382,12 @@ switch ($page) {
             FILTER_VALIDATE_INT,
             ['options' => ['default' => 1, 'min_range' => 1]]
         );
-        $pEvents = min($pEvents, $totalPagesEvents);
-        $pEvents = max(1, $pEvents);
+        if ($pEvents < 1) {
+            $pEvents = 1;
+        }
+        if ($pEvents > $totalPagesEvents) {
+            $pEvents = $totalPagesEvents;
+        }
 
         $offsetCurrent   = ($pEvents - 1) * $perPageEvents;
         $offsetCompleted = ($pEvents - 1) * $perPageEvents;
@@ -403,11 +407,11 @@ switch ($page) {
             }
         }
 
-        $startPageEvents = max(1, $pEvents - 2);
-        $endPageEvents   = min($totalPagesEvents, $pEvents + 4);
-
         $currentPageEvents  = $pEvents;
         $totalPagesEventsMb = $totalPagesEvents;
+
+        $startPageEvents = max(1, $currentPageEvents - 2);
+        $endPageEvents   = min($totalPagesEventsMb, $currentPageEvents + 4);
 
         function build_events_url(int $p, int $perPage): string {
             $p       = max(1, $p);
@@ -421,6 +425,87 @@ switch ($page) {
         require __DIR__ . '/../app/View/partials/header.php';
         require __DIR__ . '/../app/View/events.view.php';
         require __DIR__ . '/../app/View/partials/footer.php';
+        break;
+
+    case 'event_create':
+        if (
+            empty($_SESSION['user_id']) ||
+            empty($_SESSION['is_admin']) ||
+            empty($_SESSION['edit_mode'])
+        ) {
+            header('Location: index.php?page=events');
+            exit;
+        }
+
+        require __DIR__ . '/../app/Controller/EventAdminController.php';
+        $controller = new EventAdminController($db);
+
+        $pageTitle = 'Valomen.gg | Create event';
+        $pageCss   = 'match_admin.css'; // o event_admin.css si haces uno aparte
+
+        require __DIR__ . '/../app/View/partials/header.php';
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $controller->createFromPost();
+        } else {
+            $controller->showCreateForm();
+        }
+
+        require __DIR__ . '/../app/View/partials/footer.php';
+        break;
+
+    case 'event_edit':
+        if (
+            empty($_SESSION['user_id']) ||
+            empty($_SESSION['is_admin']) ||
+            empty($_SESSION['edit_mode'])
+        ) {
+            header('Location: index.php?page=events');
+            exit;
+        }
+
+        $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+        if ($id <= 0) {
+            header('Location: index.php?page=events');
+            exit;
+        }
+
+        require __DIR__ . '/../app/Controller/EventAdminController.php';
+        $controller = new EventAdminController($db);
+
+        $pageTitle = 'Valomen.gg | Edit event';
+        $pageCss   = 'match_admin.css';
+
+        require __DIR__ . '/../app/View/partials/header.php';
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $controller->updateFromPost($id);
+        } else {
+            $controller->showEditForm($id);
+        }
+
+        require __DIR__ . '/../app/View/partials/footer.php';
+        break;
+
+    case 'event_delete':
+        if (
+            empty($_SESSION['user_id']) ||
+            empty($_SESSION['is_admin']) ||
+            empty($_SESSION['edit_mode'])
+        ) {
+            header('Location: index.php?page=events');
+            exit;
+        }
+
+        $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+        if ($id <= 0) {
+            header('Location: index.php?page=events');
+            exit;
+        }
+
+        require __DIR__ . '/../app/Controller/EventAdminController.php';
+        $controller = new EventAdminController($db);
+        $controller->deleteEvent($id);
         break;
 
 

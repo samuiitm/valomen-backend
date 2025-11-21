@@ -31,3 +31,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.js-delete-event').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const label = btn.getAttribute('data-event-label') || 'this event';
+            const ok = confirm(`Are you sure you want to delete "${label}"? This action cannot be undone.`);
+            if (!ok) {
+                e.preventDefault();
+            }
+        });
+    });
+});

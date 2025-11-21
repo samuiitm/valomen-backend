@@ -7,14 +7,148 @@ class EventDAO extends BaseDAO
 
     public function getAllEventsForSelect(): array
     {
-        $sql = "SELECT id, name, status
+        $sql = "SELECT id, name
                 FROM events
-                WHERE LOWER(status) <> 'completed'
                 ORDER BY start_date DESC, name ASC";
-                
 
         $stmt = $this->db->query($sql);
         return $stmt->fetchAll();
+    }
+
+    public function getEventById(int $id): ?array
+    {
+        $sql = "SELECT *
+                FROM events
+                WHERE id = :id";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':id' => $id]);
+        $row = $stmt->fetch();
+
+        return $row ?: null;
+    }
+
+    public function createEvent(
+        string $name,
+        string $startDate,
+        ?string $endDate,
+        ?string $status,
+        ?int $prize,
+        string $region,
+        string $logo,
+        ?int $postAuthor
+    ): int {
+        $sql = "INSERT INTO events (
+                    name,
+                    start_date,
+                    end_date,
+                    status,
+                    prize,
+                    region,
+                    logo,
+                    post_author
+                ) VALUES (
+                    :name,
+                    :start_date,
+                    :end_date,
+                    :status,
+                    :prize,
+                    :region,
+                    :logo,
+                    :post_author
+                )";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([
+            ':name'        => $name,
+            ':start_date'  => $startDate,
+            ':end_date'    => $endDate,
+            ':status'      => $status,
+            ':prize'       => $prize,
+            ':region'      => $region,
+            ':logo'        => $logo,
+            ':post_author' => $postAuthor,
+        ]);
+
+        return (int)$this->db->lastInsertId();
+    }
+
+    public function updateEvent(
+        int $id,
+        string $name,
+        string $startDate,
+        ?string $endDate,
+        ?string $status,
+        ?int $prize,
+        string $region,
+        string $logo
+    ): bool {
+        $sql = "UPDATE events
+                SET name       = :name,
+                    start_date = :start_date,
+                    end_date   = :end_date,
+                    status     = :status,
+                    prize      = :prize,
+                    region     = :region,
+                    logo       = :logo
+                WHERE id = :id";
+
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':name'       => $name,
+            ':start_date' => $startDate,
+            ':end_date'   => $endDate,
+            ':status'     => $status,
+            ':prize'      => $prize,
+            ':region'     => $region,
+            ':logo'       => $logo,
+            ':id'         => $id,
+        ]);
+    }
+
+    public function deleteEventById(int $id): bool
+    {
+        $sql = "DELETE FROM events WHERE id = :id";
+        $stmt = $this->db->prepare($sql);
+
+        return $stmt->execute([':id' => $id]);
+    }
+
+    public function getTeamIdsForEvent(int $eventId): array
+    {
+        $sql = "SELECT team_id
+                FROM event_teams
+                WHERE event_id = :event_id";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':event_id' => $eventId]);
+        $rows = $stmt->fetchAll();
+
+        return array_map(fn($row) => (int)$row['team_id'], $rows);
+    }
+
+    public function setEventTeams(int $eventId, array $teamIds): void
+    {
+        $this->db->beginTransaction();
+
+        $sqlDelete = "DELETE FROM event_teams WHERE event_id = :event_id";
+        $stmtDel   = $this->db->prepare($sqlDelete);
+        $stmtDel->execute([':event_id' => $eventId]);
+
+        if (!empty($teamIds)) {
+            $sqlIns = "INSERT INTO event_teams (event_id, team_id)
+                       VALUES (:event_id, :team_id)";
+            $stmtIns = $this->db->prepare($sqlIns);
+
+            foreach ($teamIds as $teamId) {
+                $stmtIns->execute([
+                    ':event_id' => $eventId,
+                    ':team_id'  => (int)$teamId,
+                ]);
+            }
+        }
+
+        $this->db->commit();
     }
 
     public function getOngoingEvents(): array
@@ -107,12 +241,13 @@ class EventDAO extends BaseDAO
 
     public function countCompletedEvents(): int
     {
-        $sql = "SELECT COUNT(*) AS total
+         $sql = "SELECT COUNT(*) AS total
                 FROM events
                 WHERE LOWER(status) = 'completed'";
         $stmt = $this->db->query($sql);
         $row = $stmt->fetch();
-        return (int)($row['total' ?? 0] ?? 0);
+
+        return (int)($row['total'] ?? 0);
     }
 
     public function getCompletedEventsPaginated(int $limit, int $offset): array

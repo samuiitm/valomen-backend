@@ -1,0 +1,133 @@
+<main class="admin-page">
+    <section class="admin-card">
+        <h1>Edit event</h1>
+        <p>Update event info and participating teams.</p>
+
+        <form method="POST" action="index.php?page=event_edit&id=<?= (int)$event['id'] ?>" class="admin-form">
+
+            <div class="field-row">
+                <div class="field-block">
+                    <label for="name">Name <span class="obligatory">*</span></label>
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        value="<?= htmlspecialchars($old['name'] ?? '') ?>"
+                        required
+                    >
+                    <?php if (!empty($errors['name'])): ?>
+                        <p class="field-error"><?= htmlspecialchars($errors['name']) ?></p>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <div class="field-row">
+                <div class="field-block">
+                    <label for="start_date">Start date <span class="obligatory">*</span></label>
+                    <input
+                        type="date"
+                        id="start_date"
+                        name="start_date"
+                        value="<?= htmlspecialchars($old['start_date'] ?? '') ?>"
+                        required
+                    >
+                    <?php if (!empty($errors['start_date'])): ?>
+                        <p class="field-error"><?= htmlspecialchars($errors['start_date']) ?></p>
+                    <?php endif; ?>
+                </div>
+
+                <div class="field-block">
+                    <label for="end_date">End date</label>
+                    <input
+                        type="date"
+                        id="end_date"
+                        name="end_date"
+                        value="<?= htmlspecialchars($old['end_date'] ?? '') ?>"
+                    >
+                    <?php if (!empty($errors['end_date'])): ?>
+                        <p class="field-error"><?= htmlspecialchars($errors['end_date']) ?></p>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <div class="field-row">
+                <div class="field-block">
+                    <label for="prize">Prize pool (USD)</label>
+                    <input
+                        type="number"
+                        min="0"
+                        id="prize"
+                        name="prize"
+                        value="<?= htmlspecialchars($old['prize'] ?? '') ?>"
+                    >
+                    <?php if (!empty($errors['prize'])): ?>
+                        <p class="field-error"><?= htmlspecialchars($errors['prize']) ?></p>
+                    <?php endif; ?>
+                </div>
+
+                <div class="field-block">
+                    <label for="region">Region <span class="obligatory">*</span></label>
+                    <input
+                        type="text"
+                        id="region"
+                        name="region"
+                        value="<?= htmlspecialchars($old['region'] ?? '') ?>"
+                        required
+                    >
+                    <?php if (!empty($errors['region'])): ?>
+                        <p class="field-error"><?= htmlspecialchars($errors['region']) ?></p>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <div class="field-row">
+                <div class="field-block">
+                    <label for="logo">Logo filename <span class="obligatory">*</span></label>
+                    <input
+                        type="text"
+                        id="logo"
+                        name="logo"
+                        value="<?= htmlspecialchars($old['logo'] ?? '') ?>"
+                        required
+                    >
+                    <?php if (!empty($errors['logo'])): ?>
+                        <p class="field-error"><?= htmlspecialchars($errors['logo']) ?></p>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <div class="field-row">
+                <div class="field-block full-width">
+                    <label for="teams">Participating teams</label>
+                    <select id="teams" name="teams[]" multiple size="8">
+                        <?php
+                            $selectedTeams = $old['teams'] ?? [];
+                            $selectedMap   = [];
+                            foreach ($selectedTeams as $tid) {
+                                $selectedMap[(int)$tid] = true;
+                            }
+                        ?>
+                        <?php foreach ($allTeams as $team): ?>
+                            <option
+                                value="<?= (int)$team['id'] ?>"
+                                <?= isset($selectedMap[(int)$team['id']]) ? 'selected' : '' ?>
+                            >
+                                <?= htmlspecialchars($team['name']) ?> (<?= htmlspecialchars($team['country']) ?>)
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                    <?php if (!empty($errors['teams'])): ?>
+                        <p class="field-error"><?= htmlspecialchars($errors['teams']) ?></p>
+                    <?php endif; ?>
+                    <p class="field-help">Hold Ctrl (Cmd en Mac) para seleccionar varios equipos.</p>
+                </div>
+            </div>
+
+            <?php if (!empty($errors['global'])): ?>
+                <p class="field-error global-error"><?= htmlspecialchars($errors['global']) ?></p>
+            <?php endif; ?>
+
+            <button type="submit" class="send-button">Save changes</button>
+        </form>
+    </section>
+</main>

@@ -4,11 +4,21 @@ require_once __DIR__ . '/BaseDAO.php';
 
 class TeamDAO extends BaseDAO
 {
+    public function getAllTeams(): array
+    {
+        $sql = "SELECT id, name, country
+                FROM teams
+                ORDER BY name ASC";
+
+        $stmt = $this->db->query($sql);
+        return $stmt->fetchAll();
+    }
+
     public function getTeamsByEvent(int $eventId): array
     {
         $sql = "SELECT t.*
                 FROM teams t
-                JOIN event_teams et ON et.team_id = t.id
+                JOIN event_teams et ON t.id = et.team_id
                 WHERE et.event_id = :event_id
                 ORDER BY t.name ASC";
 
@@ -21,7 +31,8 @@ class TeamDAO extends BaseDAO
     {
         $sql = "SELECT 1
                 FROM event_teams
-                WHERE event_id = :event_id AND team_id = :team_id";
+                WHERE event_id = :event_id
+                  AND team_id  = :team_id";
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
@@ -29,6 +40,6 @@ class TeamDAO extends BaseDAO
             ':team_id'  => $teamId,
         ]);
 
-        return (bool) $stmt->fetchColumn();
+        return (bool)$stmt->fetchColumn();
     }
 }

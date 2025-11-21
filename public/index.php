@@ -160,6 +160,27 @@ switch ($page) {
         require __DIR__ . '/../app/View/partials/footer.php';
         break;
 
+    case 'match_delete':
+        if (
+            empty($_SESSION['user_id']) ||
+            empty($_SESSION['is_admin']) ||
+            empty($_SESSION['edit_mode'])
+        ) {
+            header('Location: index.php?page=matches');
+            exit;
+        }
+
+        if (empty($_GET['id'])) {
+            header('Location: index.php?page=matches');
+            exit;
+        }
+
+        require __DIR__ . '/../app/Controller/MatchAdminController.php';
+        $controller = new MatchAdminController($db);
+
+        $matchId = (int) $_GET['id'];
+        $controller->deleteMatch($matchId);
+        break;
 
     case 'predict':
         if (empty($_SESSION['user_id'])) {

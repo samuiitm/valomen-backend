@@ -121,7 +121,8 @@
                                             ✎
                                         </a>
                                         <a href="index.php?page=match_delete&id=<?= (int)$match['id'] ?>"
-                                        class="match-admin-btn delete"
+                                        class="match-admin-btn delete js-delete-match"
+                                        data-match-label="<?= htmlspecialchars($match['team_1_name'] . ' vs ' . htmlspecialchars($match['team_2_name'] ?? 'TBD')) ?>"
                                         title="Delete match">
                                             🗑
                                         </a>
@@ -216,7 +217,8 @@
                                             ✎
                                         </a>
                                         <a href="index.php?page=match_delete&id=<?= (int)$match['id'] ?>"
-                                        class="match-admin-btn delete"
+                                        class="match-admin-btn delete js-delete-match"
+                                        data-match-label="<?= htmlspecialchars($match['team_1_name'] . ' vs ' . $match['team_2_name']) ?>"
                                         title="Delete match">
                                             🗑
                                         </a>
@@ -256,5 +258,4 @@
             class="btn<?= $currentPage === $totalPagesMb ? ' is-disabled' : '' ?>">Last »</a>
         </nav>
     <?php endif; ?>
-
 </main>

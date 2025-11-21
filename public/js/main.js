@@ -15,3 +15,19 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.js-delete-match').forEach(btn => {
+        btn.addEventListener('click', function (e) {
+            e.preventDefault();
+
+            const matchName = this.dataset.matchLabel || 'this match';
+
+            const ok = confirm(`Are you sure you want to delete ${matchName}?`);
+
+            if (ok) {
+                window.location.href = this.href;
+            }
+        });
+    });
+});

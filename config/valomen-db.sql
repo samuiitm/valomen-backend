@@ -64,6 +64,8 @@ CREATE TABLE predictions (
     UNIQUE KEY unique_prediction (user_id, match_id),
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (match_id) REFERENCES matches(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
 ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE event_teams (

@@ -229,4 +229,17 @@ class MatchAdminController
         header('Location: index.php?page=matches');
         exit;
     }
+
+    public function deleteMatch(int $matchId): void
+    {
+        if ($matchId <= 0) {
+            header('Location: index.php?page=matches');
+            exit;
+        }
+
+        $this->matchDao->deleteMatchById($matchId);
+
+        header('Location: index.php?page=matches');
+        exit;
+    }
 }

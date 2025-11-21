@@ -202,4 +202,11 @@ class MatchDAO extends BaseDAO
           ':post_author'  => $postAuthor,
       ]);
   }
+
+  public function deleteMatchById(int $id): bool
+  {
+      $sql = "DELETE FROM matches WHERE id = :id";
+      $stmt = $this->db->prepare($sql);
+      return $stmt->execute([':id' => $id]);
+  }
 }

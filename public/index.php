@@ -160,6 +160,40 @@ switch ($page) {
         require __DIR__ . '/../app/View/partials/footer.php';
         break;
 
+    case 'match_edit':
+    if (
+        empty($_SESSION['user_id']) ||
+        empty($_SESSION['is_admin']) ||
+        empty($_SESSION['edit_mode'])
+    ) {
+        header('Location: index.php?page=matches');
+        exit;
+    }
+
+    require __DIR__ . '/../app/Controller/MatchAdminController.php';
+
+    $controller = new MatchAdminController($db);
+
+    $pageTitle = 'Valomen.gg | Edit match';
+    $pageCss   = 'match_admin.css';
+
+    require __DIR__ . '/../app/View/partials/header.php';
+
+    $matchId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+
+    if ($matchId <= 0) {
+        echo '<p>Invalid match.</p>';
+    } else {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $controller->updateFromPost($matchId);
+        } else {
+            $controller->showEditForm($matchId);
+        }
+    }
+
+    require __DIR__ . '/../app/View/partials/footer.php';
+    break;
+
     case 'match_delete':
         if (
             empty($_SESSION['user_id']) ||

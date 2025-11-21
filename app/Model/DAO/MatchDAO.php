@@ -203,6 +203,49 @@ class MatchDAO extends BaseDAO
       ]);
   }
 
+  public function updateMatch(
+      int $id,
+      int $team1Id,
+      ?int $team2Id,
+      ?int $scoreTeam1,
+      ?int $scoreTeam2,
+      string $date,
+      string $hour,
+      ?string $status,
+      int $bestOf,
+      string $eventStage,
+      int $eventId
+  ): bool {
+      $sql = "UPDATE matches
+              SET team_1 = :team1,
+                  team_2 = :team2,
+                  score_team_1 = :score1,
+                  score_team_2 = :score2,
+                  date = :date,
+                  hour = :hour,
+                  status = :status,
+                  best_of = :best_of,
+                  event_stage = :stage,
+                  event_id = :event_id
+              WHERE id = :id";
+
+      $stmt = $this->db->prepare($sql);
+
+      return $stmt->execute([
+          ':team1'    => $team1Id,
+          ':team2'    => $team2Id,
+          ':score1'   => $scoreTeam1,
+          ':score2'   => $scoreTeam2,
+          ':date'     => $date,
+          ':hour'     => $hour,
+          ':status'   => $status,
+          ':best_of'  => $bestOf,
+          ':stage'    => $eventStage,
+          ':event_id' => $eventId,
+          ':id'       => $id,
+      ]);
+  }
+
   public function deleteMatchById(int $id): bool
   {
       $sql = "DELETE FROM matches WHERE id = :id";

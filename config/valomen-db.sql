@@ -12,13 +12,15 @@ CREATE TABLE users (
     logo VARCHAR(255),
     points INT NOT NULL DEFAULT 0,
     admin TINYINT(1) NOT NULL DEFAULT 0
-) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB
+  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE teams (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     country VARCHAR(5) NOT NULL
-) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB
+  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE events (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -31,8 +33,10 @@ CREATE TABLE events (
     logo VARCHAR(255) NOT NULL,
     post_author INT UNSIGNED DEFAULT NULL,
     FOREIGN KEY (post_author) REFERENCES users(id)
-        ON DELETE SET NULL ON UPDATE CASCADE
-) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+) ENGINE=InnoDB
+  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE matches (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -47,11 +51,20 @@ CREATE TABLE matches (
     event_stage VARCHAR(100) NOT NULL,
     event_id INT UNSIGNED NOT NULL,
     post_author INT UNSIGNED DEFAULT NULL,
-    FOREIGN KEY (team_1) REFERENCES teams(id),
-    FOREIGN KEY (team_2) REFERENCES teams(id),
-    FOREIGN KEY (event_id) REFERENCES events(id),
+    FOREIGN KEY (team_1) REFERENCES teams(id)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE,
+    FOREIGN KEY (team_2) REFERENCES teams(id)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE,
+    FOREIGN KEY (event_id) REFERENCES events(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
     FOREIGN KEY (post_author) REFERENCES users(id)
-) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+) ENGINE=InnoDB
+  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE predictions (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -62,19 +75,27 @@ CREATE TABLE predictions (
     points_awarded INT DEFAULT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     UNIQUE KEY unique_prediction (user_id, match_id),
-    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (user_id) REFERENCES users(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
     FOREIGN KEY (match_id) REFERENCES matches(id)
         ON DELETE CASCADE
         ON UPDATE CASCADE
-) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB
+  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE event_teams (
     event_id INT UNSIGNED NOT NULL,
     team_id  INT UNSIGNED NOT NULL,
     PRIMARY KEY (event_id, team_id),
-    FOREIGN KEY (event_id) REFERENCES events(id),
+    FOREIGN KEY (event_id) REFERENCES events(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
     FOREIGN KEY (team_id) REFERENCES teams(id)
-) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE
+) ENGINE=InnoDB
+  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO users (username, passwd_hash, email, logo, admin)
 VALUES

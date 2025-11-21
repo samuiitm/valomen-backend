@@ -6,7 +6,7 @@ class MatchDAO extends BaseDAO
 {
   public function updateMatchStatuses(): void
   {
-    $now = new DateTime('2025-11-13 14:00:00');
+    $now = new DateTime('2025-11-13 13:00:00');
 
     $sql = "SELECT id, date, hour, score_team_1, score_team_2, status FROM matches";
     $stmt = $this->db->query($sql);

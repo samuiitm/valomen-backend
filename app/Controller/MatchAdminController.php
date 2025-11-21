@@ -28,26 +28,31 @@ class MatchAdminController
 
         if (empty($old)) {
             $old = [
-                'event_id'    => $eventId,
-                'team_1'      => '',
-                'team_2'      => '',
-                'date'        => '',
-                'hour'        => '',
-                'best_of'     => 3,
-                'event_stage' => '',
+                'event_id'      => $eventId,
+                'team_1'        => '',
+                'team_2'        => '',
+                'date'          => '',
+                'hour'          => '',
+                'best_of'       => 3,
+                'event_stage'   => '',
+                'score_team_1'  => '',
+                'score_team_2'  => '',
             ];
         }
 
         $defaultErrors = [
-            'event_id'    => '',
-            'team_1'      => '',
-            'team_2'      => '',
-            'date'        => '',
-            'hour'        => '',
-            'best_of'     => '',
-            'event_stage' => '',
-            'global'      => '',
+            'event_id'      => '',
+            'team_1'        => '',
+            'team_2'        => '',
+            'date'          => '',
+            'hour'          => '',
+            'best_of'       => '',
+            'event_stage'   => '',
+            'score_team_1'  => '',
+            'score_team_2'  => '',
+            'global'        => '',
         ];
+
 
         $errors = array_merge($defaultErrors, $errors);
 
@@ -66,16 +71,23 @@ class MatchAdminController
         $bestOf     = isset($_POST['best_of']) ? (int) $_POST['best_of'] : 3;
         $eventStage = trim($_POST['event_stage'] ?? '');
 
+        $score1Raw = trim($_POST['score_team_1'] ?? '');
+        $score2Raw = trim($_POST['score_team_2'] ?? '');
+
+        $scoreTeam1 = $score1Raw === '' ? null : (int) $score1Raw;
+        $scoreTeam2 = $score2Raw === '' ? null : (int) $score2Raw;
+
         $errors = [
-            'event_id'    => '',
-            'team_1'      => '',
-            'team_2'      => '',
-            'date'        => '',
-            'hour'        => '',
-            'date_time'        => '',
-            'best_of'     => '',
-            'event_stage' => '',
-            'global'      => '',
+            'event_id'       => '',
+            'team_1'         => '',
+            'team_2'         => '',
+            'date'           => '',
+            'hour'           => '',
+            'best_of'        => '',
+            'event_stage'    => '',
+            'score_team_1'   => '',
+            'score_team_2'   => '',
+            'global'         => '',
         ];
 
         if ($eventId <= 0) {
@@ -102,13 +114,6 @@ class MatchAdminController
             $errors['hour'] = 'Hour is required.';
         }
 
-        $now = new DateTime('2025-11-13 14:00:00');
-        $dateTimeMatch = new DateTime($date . " " . $hour);
-
-        if ($dateTimeMatch < $now) {
-            $errors['hour'] = 'You cannot add a finished match. Check the date and time.';
-        }
-
         if (!in_array($bestOf, [1, 3, 5], true)) {
             $errors['best_of'] = 'Best of must be 1, 3 or 5.';
         }
@@ -125,6 +130,63 @@ class MatchAdminController
             $errors['team_2'] = 'Team 2 does not belong to this event.';
         }
 
+        $status = null;
+
+        if ($date !== '' && $hour !== '') {
+            try {
+                $now           = new DateTimeImmutable('2025-11-13 13:00:00');
+                $matchDateTime = new DateTimeImmutable($date . ' ' . $hour);
+
+                $diffSeconds = $matchDateTime->getTimestamp() - $now->getTimestamp();
+
+                if ($diffSeconds > 0) {
+                    $status = 'Upcoming';
+                } elseif ($diffSeconds >= -3 * 3600) {
+                    $status = 'Live';
+                } else {
+                    $status = 'Completed';
+                }
+            } catch (Exception $e) {
+                $status = 'Upcoming';
+            }
+        } else {
+            $status = 'Upcoming';
+        }
+
+        if ($status === 'Completed') {
+            if ($scoreTeam1 === null || $scoreTeam2 === null) {
+                $errors['score_team_1'] = 'Score is required for completed matches.';
+                $errors['score_team_2'] = 'Score is required for completed matches.';
+            } else {
+                if ($scoreTeam1 < 0 || $scoreTeam2 < 0) {
+                    $errors['global'] = 'Score cannot be negative.';
+                } else {
+                    $max = max($scoreTeam1, $scoreTeam2);
+                    $min = min($scoreTeam1, $scoreTeam2);
+
+                    if ($bestOf === 1) {
+                        if (!(($scoreTeam1 === 1 && $scoreTeam2 === 0) || ($scoreTeam1 === 0 && $scoreTeam2 === 1))) {
+                            $errors['global'] = 'For BO1 the score must be 1-0 or 0-1.';
+                        }
+                    } elseif ($bestOf === 3) {
+                        if (!($max === 2 && $min >= 0 && $min <= 1)) {
+                            $errors['global'] = 'For BO3 the winner must have 2 maps and the loser 0 or 1.';
+                        }
+                    } elseif ($bestOf === 5) {
+                        if (!($max === 3 && $min >= 0 && $min <= 2)) {
+                            $errors['global'] = 'For BO5 the winner must have 3 maps and the loser 0, 1 or 2.';
+                        }
+                    }
+                }
+            }
+        } else {
+            if ($scoreTeam1 !== null || $scoreTeam2 !== null) {
+                $errors['global'] = 'You can only set the score for completed matches.';
+            }
+            $scoreTeam1 = null;
+            $scoreTeam2 = null;
+        }
+
         $hasErrors = false;
         foreach ($errors as $e) {
             if ($e !== '') {
@@ -134,13 +196,15 @@ class MatchAdminController
         }
 
         $old = [
-            'event_id'    => $eventId,
-            'team_1'      => $team1Id,
-            'team_2'      => $team2Id,
-            'date'        => $date,
-            'hour'        => $hour,
-            'best_of'     => $bestOf,
-            'event_stage' => $eventStage,
+            'event_id'      => $eventId,
+            'team_1'        => $team1Id,
+            'team_2'        => $team2Id,
+            'date'          => $date,
+            'hour'          => $hour,
+            'best_of'       => $bestOf,
+            'event_stage'   => $eventStage,
+            'score_team_1'  => $score1Raw,
+            'score_team_2'  => $score2Raw,
         ];
 
         if ($hasErrors) {
@@ -148,13 +212,11 @@ class MatchAdminController
             return;
         }
 
-        $status = null;
-
         $this->matchDao->createMatch(
             $team1Id,
             $team2Id,
-            null,
-            null,
+            $scoreTeam1,
+            $scoreTeam2,
             $date,
             $hour,
             $status,

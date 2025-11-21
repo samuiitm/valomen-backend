@@ -95,6 +95,36 @@
 
                 <div class="form-row">
                     <div class="block">
+                        <label>Score Team 1</label>
+                        <input
+                            type="number"
+                            name="score_team_1"
+                            min="0"
+                            max="5"
+                            value="<?= htmlspecialchars($old['score_team_1'] ?? '') ?>"
+                        >
+                        <?php if (!empty($errors['score_team_1'])): ?>
+                            <p class="field-error"><?= htmlspecialchars($errors['score_team_1']) ?></p>
+                        <?php endif; ?>
+                    </div>
+
+                    <div class="block">
+                        <label>Score Team 2</label>
+                        <input
+                            type="number"
+                            name="score_team_2"
+                            min="0"
+                            max="5"
+                            value="<?= htmlspecialchars($old['score_team_2'] ?? '') ?>"
+                        >
+                        <?php if (!empty($errors['score_team_2'])): ?>
+                            <p class="field-error"><?= htmlspecialchars($errors['score_team_2']) ?></p>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="block">
                         <label>Best of</label>
                         <select name="best_of" required>
                             <?php $bo = (int)($old['best_of'] ?? 3); ?>

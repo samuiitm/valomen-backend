@@ -60,4 +60,46 @@ class UserDAO extends BaseDAO
 
         return (int) $this->db->lastInsertId();
     }
+
+    public function getAllUsers(): array
+    {
+        $sql = "SELECT id, username, email, points, admin
+                FROM users
+                ORDER BY username ASC";
+
+        $stmt = $this->db->query($sql);
+        return $stmt->fetchAll();
+    }
+
+    public function deleteUserById(int $id): bool
+    {
+        $sql = "DELETE FROM users WHERE id = :id";
+        $stmt = $this->db->prepare($sql);
+
+        return $stmt->execute([':id' => $id]);
+    }
+
+    public function countUsers(): int
+    {
+        $sql = "SELECT COUNT(*) AS total FROM users";
+        $stmt = $this->db->query($sql);
+        $row = $stmt->fetch();
+        return (int)($row['total'] ?? 0);
+    }
+
+    public function getUsersPaginated(int $limit, int $offset): array
+    {
+        $sql = "SELECT id, username, email, points, admin
+                FROM users
+                ORDER BY username ASC
+                LIMIT :limit OFFSET :offset";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll();
+    }
+
 }

@@ -14,6 +14,18 @@ class TeamDAO extends BaseDAO
         return $stmt->fetchAll();
     }
 
+    public function deleteTeamById(int $id): bool
+    {
+        $sql = "DELETE FROM teams WHERE id = :id";
+        $stmt = $this->db->prepare($sql);
+
+        try {
+            return $stmt->execute([':id' => $id]);
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+
     public function getTeamsByEvent(int $eventId): array
     {
         $sql = "SELECT t.*
@@ -41,5 +53,28 @@ class TeamDAO extends BaseDAO
         ]);
 
         return (bool)$stmt->fetchColumn();
+    }
+
+    public function countTeams(): int
+    {
+        $sql = "SELECT COUNT(*) AS total FROM teams";
+        $stmt = $this->db->query($sql);
+        $row = $stmt->fetch();
+        return (int)($row['total'] ?? 0);
+    }
+
+    public function getTeamsPaginated(int $limit, int $offset): array
+    {
+        $sql = "SELECT id, name, country
+                FROM teams
+                ORDER BY name ASC
+                LIMIT :limit OFFSET :offset";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll();
     }
 }

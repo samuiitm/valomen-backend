@@ -1,0 +1,161 @@
+:root {
+  --bg: #0B1020;
+  --text: #D4D4D4;
+  --text2: #9795B5;
+  --card: #111827;
+  --card-hover: #18233a;
+  --borders: #ffffff1a;
+  --section-title: #4f72e6;
+  --social-media-bg: #F2F1FA;
+  --active: #fcfcfd45;
+  --ongoing: #DF505C;
+  --upcoming: #5CA36C;
+  --upcoming-time: #498357;
+  --pending: #d6dc62;
+  --completed: #4797FF;
+  --completed-time: #3879ce;
+  color-scheme: dark;
+}
+
+.admin-main {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 16px 0 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.admin-header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.admin-header p {
+    font-size: 14px;
+    color: var(--text2);
+}
+
+.admin-section {
+    background-color: var(--card);
+    border-radius: 18px;
+    border: 1px solid var(--borders);
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.admin-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.admin-section-header h2 {
+    font-size: 18px;
+    color: var(--text);
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.admin-table thead tr {
+    border-bottom: 1px solid var(--borders);
+}
+
+.admin-table th,
+.admin-table td {
+    padding: 8px 6px;
+    text-align: left;
+}
+
+.admin-table tbody tr:hover {
+    background-color: var(--card-hover);
+}
+
+.admin-actions-col {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.admin-icon-btn {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    margin-left: 6px;
+    font-size: 16px;
+    text-decoration: none;
+}
+
+.admin-icon-btn.edit {
+    opacity: 0.8;
+}
+
+.admin-icon-btn.delete {
+    opacity: 0.8;
+}
+
+.admin-icon-btn:hover {
+    opacity: 1;
+    transform: translateY(-1px);
+}
+
+.admin-add-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--borders);
+    background-color: var(--active);
+    font-size: 13px;
+    text-decoration: none;
+    color: var(--text);
+}
+
+.admin-add-btn:hover {
+    background-color: var(--card-hover);
+}
+
+.admin-tabs {
+    display: inline-flex;
+    gap: 6px;
+    margin: 0px 0 15px;
+    border-radius: 999px;
+    padding: 2px;
+    background-color: var(--card);
+    border: 1px solid var(--borders);
+}
+
+.admin-tab {
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    text-decoration: none;
+    color: var(--text2);
+}
+
+.admin-tab.active {
+    background-color: var(--active);
+    color: var(--text);
+}
+
+.admin-filters {
+    margin-bottom: 12px;
+    font-size: 13px;
+    color: var(--text2);
+}
+
+.admin-filters select {
+    margin-left: 6px;
+    background-color: var(--card);
+    border-radius: 8px;
+    border: 1px solid var(--borders);
+    padding: 4px 8px;
+    color: var(--text);
+}

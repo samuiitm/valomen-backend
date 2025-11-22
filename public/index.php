@@ -268,18 +268,130 @@ switch ($page) {
         break;
 
     case 'admin':
-        if (empty($_SESSION['is_admin'])) {
+        if (empty($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
             header('Location: index.php?page=home');
             exit;
         }
 
-        $pageTitle = 'Valomen.gg | Admin';
+        require __DIR__ . '/../app/Model/DAO/TeamDAO.php';
+
+        $section = $_GET['section'] ?? 'users';
+        if ($section !== 'users' && $section !== 'teams') {
+            $section = 'users';
+        }
+
+        $perPageAdmin = filter_input(
+            INPUT_GET,
+            'perPage',
+            FILTER_VALIDATE_INT,
+            ['options' => ['default' => 10, 'min_range' => 1]]
+        );
+
+        $pAdmin = filter_input(
+            INPUT_GET,
+            'p',
+            FILTER_VALIDATE_INT,
+            ['options' => ['default' => 1, 'min_range' => 1]]
+        );
+
+        $teamDao = new TeamDAO($db);
+        $userDao = new UserDAO($db);
+
+        if ($section === 'users') {
+            $total = $userDao->countUsers();
+        } else {
+            $total = $teamDao->countTeams();
+        }
+
+        $totalPagesAdmin = max(1, (int)ceil($total / $perPageAdmin));
+        $pAdmin = min($pAdmin, $totalPagesAdmin);
+        $pAdmin = max(1, $pAdmin);
+
+        $offset = ($pAdmin - 1) * $perPageAdmin;
+
+        if ($section === 'users') {
+            $users = $userDao->getUsersPaginated($perPageAdmin, $offset);
+            $teams = [];
+        } else {
+            $teams = $teamDao->getTeamsPaginated($perPageAdmin, $offset);
+            $users = [];
+        }
+
+        $startPageAdmin = max(1, $pAdmin - 2);
+        $endPageAdmin   = min($totalPagesAdmin, $pAdmin + 4);
+
+        $currentPageAdmin  = $pAdmin;
+        $totalPagesAdminMb = $totalPagesAdmin;
+
+        function build_admin_url(string $section, int $p, int $perPage): string {
+            $p       = max(1, $p);
+            $perPage = max(1, $perPage);
+            $section = $section === 'teams' ? 'teams' : 'users';
+            return 'index.php?page=admin&section=' . urlencode($section) . '&p=' . $p . '&perPage=' . $perPage;
+        }
+
+        $pageTitle = 'Valomen.gg | Admin panel';
         $pageCss   = 'admin.css';
 
         require __DIR__ . '/../app/View/partials/header.php';
         require __DIR__ . '/../app/View/admin.view.php';
         require __DIR__ . '/../app/View/partials/footer.php';
         break;
+
+
+    case 'user_delete':
+        if (empty($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
+            header('Location: index.php?page=home');
+            exit;
+        }
+
+        $userId = filter_input(
+            INPUT_GET,
+            'id',
+            FILTER_VALIDATE_INT,
+            ['options' => ['default' => 0, 'min_range' => 1]]
+        );
+
+        $section = $_GET['section'] ?? 'users';
+        if ($section !== 'users' && $section !== 'teams') {
+            $section = 'users';
+        }
+
+        if ($userId === (int)$_SESSION['user_id']) {
+            header('Location: index.php?page=admin&section=' . $section);
+            exit;
+        }
+
+        $userDao = new UserDAO($db);
+        $userDao->deleteUserById($userId);
+
+        header('Location: index.php?page=admin&section=' . $section);
+        exit;
+
+    case 'team_delete':
+        if (empty($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
+            header('Location: index.php?page=home');
+            exit;
+        }
+
+        $teamId = filter_input(
+            INPUT_GET,
+            'id',
+            FILTER_VALIDATE_INT,
+            ['options' => ['default' => 0, 'min_range' => 1]]
+        );
+
+        $section = $_GET['section'] ?? 'teams';
+        if ($section !== 'users' && $section !== 'teams') {
+            $section = 'teams';
+        }
+
+        require __DIR__ . '/../app/Model/DAO/TeamDAO.php';
+        $teamDao = new TeamDAO($db);
+        $teamDao->deleteTeamById($teamId);
+
+        header('Location: index.php?page=admin&section=' . $section);
+        exit;
 
     case 'register':
         require __DIR__ . '/../app/Controller/RegisterController.php';
@@ -364,8 +476,8 @@ switch ($page) {
             ['options' => ['default' => 6, 'min_range' => 1]]
         );
 
-        $totalCurrent   = $eventDao->countCurrentEvents();   // Upcoming + Ongoing
-        $totalCompleted = $eventDao->countCompletedEvents(); // Completed
+        $totalCurrent   = $eventDao->countCurrentEvents();
+        $totalCompleted = $eventDao->countCompletedEvents();
 
         $pagesCurrent   = max(1, (int)ceil($totalCurrent   / $perPageEvents));
         $pagesCompleted = max(1, (int)ceil($totalCompleted / $perPageEvents));
@@ -437,7 +549,7 @@ switch ($page) {
         $controller = new EventAdminController($db);
 
         $pageTitle = 'Valomen.gg | Create event';
-        $pageCss   = 'match_admin.css'; // o event_admin.css si haces uno aparte
+        $pageCss   = 'match_admin.css';
 
         require __DIR__ . '/../app/View/partials/header.php';
 

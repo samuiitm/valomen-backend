@@ -77,4 +77,32 @@ class TeamDAO extends BaseDAO
 
         return $stmt->fetchAll();
     }
+
+    public function getTeamById(int $id): ?array
+    {
+        $sql = "SELECT id, name, country
+                FROM teams
+                WHERE id = :id";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':id' => $id]);
+        $row = $stmt->fetch();
+
+        return $row ?: null;
+    }
+
+    public function updateTeam(int $id, string $name, string $country): bool
+    {
+        $sql = "UPDATE teams
+                SET name    = :name,
+                    country = :country
+                WHERE id = :id";
+
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':name'    => $name,
+            ':country' => $country,
+            ':id'      => $id,
+        ]);
+    }
 }

@@ -39,6 +39,7 @@ require_once __DIR__ . '/../lib/FlagControl.php';
 require_once __DIR__ . '/../lib/CurrencyFormat.php';
 require __DIR__ . '/../app/Model/DAO/BaseDAO.php';
 require __DIR__ . '/../app/Model/DAO/UserDAO.php';
+require __DIR__ . '/../app/Model/DAO/TeamDAO.php';
 require __DIR__ . '/../app/Controller/LoginController.php';
 
 
@@ -273,8 +274,6 @@ switch ($page) {
             exit;
         }
 
-        require __DIR__ . '/../app/Model/DAO/TeamDAO.php';
-
         $section = $_GET['section'] ?? 'users';
         if ($section !== 'users' && $section !== 'teams') {
             $section = 'users';
@@ -294,8 +293,8 @@ switch ($page) {
             ['options' => ['default' => 1, 'min_range' => 1]]
         );
 
-        $teamDao = new TeamDAO($db);
         $userDao = new UserDAO($db);
+        $teamDao = new TeamDAO($db);
 
         if ($section === 'users') {
             $total = $userDao->countUsers();
@@ -323,11 +322,14 @@ switch ($page) {
         $currentPageAdmin  = $pAdmin;
         $totalPagesAdminMb = $totalPagesAdmin;
 
-        function build_admin_url(string $section, int $p, int $perPage): string {
-            $p       = max(1, $p);
-            $perPage = max(1, $perPage);
-            $section = $section === 'teams' ? 'teams' : 'users';
-            return 'index.php?page=admin&section=' . urlencode($section) . '&p=' . $p . '&perPage=' . $perPage;
+        if (!function_exists('build_admin_url')) {
+            function build_admin_url(string $section, int $p, int $perPage): string {
+                $p       = max(1, $p);
+                $perPage = max(1, $perPage);
+                $section = $section === 'teams' ? 'teams' : 'users';
+                return 'index.php?page=admin&section=' . urlencode($section)
+                    . '&p=' . $p . '&perPage=' . $perPage;
+            }
         }
 
         $pageTitle = 'Valomen.gg | Admin panel';
@@ -340,58 +342,56 @@ switch ($page) {
 
 
     case 'user_delete':
-        if (empty($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
-            header('Location: index.php?page=home');
-            exit;
-        }
-
-        $userId = filter_input(
-            INPUT_GET,
-            'id',
-            FILTER_VALIDATE_INT,
-            ['options' => ['default' => 0, 'min_range' => 1]]
-        );
-
-        $section = $_GET['section'] ?? 'users';
-        if ($section !== 'users' && $section !== 'teams') {
-            $section = 'users';
-        }
-
-        if ($userId === (int)$_SESSION['user_id']) {
-            header('Location: index.php?page=admin&section=' . $section);
-            exit;
-        }
-
-        $userDao = new UserDAO($db);
-        $userDao->deleteUserById($userId);
-
-        header('Location: index.php?page=admin&section=' . $section);
-        exit;
+        require __DIR__ . '/../app/Controller/AdminPanelController.php';
+        $controller = new AdminPanelController($db);
+        $controller->deleteUser((int)($_GET['id'] ?? 0));
+        break;
 
     case 'team_delete':
-        if (empty($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
-            header('Location: index.php?page=home');
+        require __DIR__ . '/../app/Controller/AdminPanelController.php';
+        $controller = new AdminPanelController($db);
+        $controller->deleteTeam((int)($_GET['id'] ?? 0));
+        break;
+
+    case 'user_edit':
+        require __DIR__ . '/../app/Controller/AdminPanelController.php';
+        $controller = new AdminPanelController($db);
+
+        $id = (int)($_GET['id'] ?? 0);
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $controller->updateUser($id);
             exit;
         }
 
-        $teamId = filter_input(
-            INPUT_GET,
-            'id',
-            FILTER_VALIDATE_INT,
-            ['options' => ['default' => 0, 'min_range' => 1]]
-        );
+        $data = $controller->showEditUser($id);
 
-        $section = $_GET['section'] ?? 'teams';
-        if ($section !== 'users' && $section !== 'teams') {
-            $section = 'teams';
+        $pageTitle = 'Edit user';
+        $pageCss   = 'admin.css';
+        require __DIR__ . '/../app/View/partials/header.php';
+        require __DIR__ . '/../app/View/user_edit.view.php';
+        require __DIR__ . '/../app/View/partials/footer.php';
+        break;
+    
+    case 'team_edit':
+        require __DIR__ . '/../app/Controller/AdminPanelController.php';
+        $controller = new AdminPanelController($db);
+
+        $id = (int)($_GET['id'] ?? 0);
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $controller->updateTeam($id);
+            exit;
         }
 
-        require __DIR__ . '/../app/Model/DAO/TeamDAO.php';
-        $teamDao = new TeamDAO($db);
-        $teamDao->deleteTeamById($teamId);
+        $data = $controller->showEditTeam($id);
 
-        header('Location: index.php?page=admin&section=' . $section);
-        exit;
+        $pageTitle = 'Edit team';
+        $pageCss   = 'admin.css';
+        require __DIR__ . '/../app/View/partials/header.php';
+        require __DIR__ . '/../app/View/team_edit.view.php';
+        require __DIR__ . '/../app/View/partials/footer.php';
+        break;
 
     case 'register':
         require __DIR__ . '/../app/Controller/RegisterController.php';

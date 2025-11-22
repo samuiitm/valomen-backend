@@ -102,4 +102,40 @@ class UserDAO extends BaseDAO
         return $stmt->fetchAll();
     }
 
+    public function getUserById(int $id): ?array
+    {
+        $sql = "SELECT *
+                FROM users
+                WHERE id = :id";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':id' => $id]);
+        $row = $stmt->fetch();
+
+        return $row ?: null;
+    }
+
+    public function updateUser(
+        int $id,
+        string $username,
+        string $email,
+        int $points,
+        int $isAdmin
+    ): bool {
+        $sql = "UPDATE users
+                SET username = :username,
+                    email    = :email,
+                    points   = :points,
+                    admin    = :admin
+                WHERE id = :id";
+
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':username' => $username,
+            ':email'    => $email,
+            ':points'   => $points,
+            ':admin'    => $isAdmin,
+            ':id'       => $id,
+        ]);
+    }
 }

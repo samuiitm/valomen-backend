@@ -112,12 +112,14 @@
                                 <td><?= !empty($user['admin']) ? 'Admin' : 'User' ?></td>
                                 <td class="admin-actions-col">
                                     <?php if ((int)$user['id'] !== (int)($_SESSION['user_id'] ?? 0)): ?>
-                                        <a href="index.php?page=user_delete&id=<?= (int)$user['id'] ?>&section=users"
-                                        class="admin-delete-btn js-delete-user"
-                                        data-user-label="<?= htmlspecialchars($user['username']) ?>">
-                                            🗑
-                                        </a>
+                                        <a href="index.php?page=user_edit&id=<?= (int)$user['id'] ?>"
+                                        class="admin-icon-btn edit"
+                                        title="Edit user">✎</a>
 
+                                        <a href="index.php?page=user_delete&id=<?= (int)$user['id'] ?>&section=users"
+                                        class="admin-icon-btn delete js-delete-user"
+                                        data-user-label="<?= htmlspecialchars($user['username']) ?>"
+                                        title="Delete user">🗑</a>
                                     <?php else: ?>
                                         <span class="admin-self-label">You</span>
                                     <?php endif; ?>

@@ -32,7 +32,6 @@
 .events-header span {
     font-weight: bold;
     color: var(--section-title);
-    width: 50%;
 }
 
 .events {
@@ -67,6 +66,97 @@
 .events-block h3 {
     margin: 0;
     font-size: 14px;
+}
+
+.upcoming-events {
+  height: 30px;
+}
+
+.event-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.add-event-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(79, 114, 230, 0.6);
+    background: rgba(79, 114, 230, 0.12);
+    color: var(--text);
+    font-size: 12px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.12s ease, box-shadow 0.15s ease;
+}
+
+.add-event-plus {
+    font-size: 14px;
+    line-height: 1;
+}
+
+.add-event-btn:hover {
+    background-color: rgba(79, 114, 230, 0.22);
+    border-color: rgba(79, 114, 230, 0.9);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.45);
+}
+
+.add-event-btn:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+.event-admin-actions {
+    display: flex;
+    gap: 6px;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-2px);
+    transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.edit-mode .event-block:hover .event-admin-actions {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+
+.event-admin-btn {
+    width: 25px;
+    height: 25px;
+    border-radius: 999px;
+    border: 1px solid var(--borders);
+    background-color: rgba(15, 23, 42, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    text-decoration: none;
+    color: var(--text2);
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.12s ease;
+}
+
+.event-admin-btn:hover {
+    transform: translateY(-1px);
+}
+
+.event-admin-btn.edit:hover {
+    border-color: var(--section-title);
+    color: var(--section-title);
+}
+
+.event-admin-btn.delete:hover {
+    border-color: var(--ongoing);
+    color: var(--ongoing);
+}
+
+.edit-mode .event-block:hover {
+    box-shadow: 0 0 0 1px rgba(79, 114, 230, 0.7);
 }
 
 .event-info {

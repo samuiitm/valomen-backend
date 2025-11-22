@@ -1,7 +1,7 @@
 <main>
     <div class="events">
         <section class="events-block">
-            <div class="events-header">
+            <div class="events-header <?php if (!empty($_SESSION['is_admin']) && !empty($_SESSION['edit_mode'])): ?>upcoming-events<?php endif; ?>">
                 <span>UPCOMING EVENTS</span>
             </div>
 
@@ -12,22 +12,25 @@
                 <?php foreach ($ongoingEvents as $event): ?>
                     <article class="event-block">
                         <div class="event-info">
-                            <h3><?= htmlspecialchars($event['name']) ?></h3>    
-                            <?php if (!empty($_SESSION['is_admin']) && !empty($_SESSION['edit_mode'])): ?>
-                                <div class="event-admin-actions">
-                                    <a href="index.php?page=event_edit&id=<?= (int)$event['id'] ?>"
-                                    class="event-admin-btn edit"
-                                    title="Edit event">
-                                        ✎
-                                    </a>
-                                    <a href="index.php?page=event_delete&id=<?= (int)$event['id'] ?>"
-                                    class="event-admin-btn delete js-delete-event"
-                                    data-event-label="<?= htmlspecialchars($event['name']) ?>"
-                                    title="Delete event">
-                                        🗑
-                                    </a>
-                                </div>
-                            <?php endif; ?>
+                            <div class="event-head">
+                                <h3><?= htmlspecialchars($event['name']) ?></h3>    
+                                <?php if (!empty($_SESSION['is_admin']) && !empty($_SESSION['edit_mode'])): ?>
+                                    <div class="event-admin-actions">
+                                        <a href="index.php?page=event_edit&id=<?= (int)$event['id'] ?>"
+                                        class="event-admin-btn edit"
+                                        title="Edit event">
+                                            ✎
+                                        </a>
+                                        <a href="index.php?page=event_delete&id=<?= (int)$event['id'] ?>"
+                                        class="event-admin-btn delete js-delete-event"
+                                        data-event-label="<?= htmlspecialchars($event['name']) ?>"
+                                        title="Delete event">
+                                            🗑
+                                        </a>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                            
                             <div class="event-secondary-info">
                                 <div class="sec-info event-status">
                                     <span class="status <?= htmlspecialchars($event['status']) ?>">
@@ -58,22 +61,24 @@
                 <?php foreach ($upcomingEvents as $event): ?>
                     <article class="event-block">
                         <div class="event-info">
-                            <h3><?= htmlspecialchars($event['name']) ?></h3>
-                            <?php if (!empty($_SESSION['is_admin']) && !empty($_SESSION['edit_mode'])): ?>
-                                <div class="event-admin-actions">
-                                    <a href="index.php?page=event_edit&id=<?= (int)$event['id'] ?>"
-                                    class="event-admin-btn edit"
-                                    title="Edit event">
-                                        ✎
-                                    </a>
-                                    <a href="index.php?page=event_delete&id=<?= (int)$event['id'] ?>"
-                                    class="event-admin-btn delete js-delete-event"
-                                    data-event-label="<?= htmlspecialchars($event['name']) ?>"
-                                    title="Delete event">
-                                        🗑
-                                    </a>
-                                </div>
-                            <?php endif; ?>    
+                            <div class="event-head">
+                                <h3><?= htmlspecialchars($event['name']) ?></h3>    
+                                <?php if (!empty($_SESSION['is_admin']) && !empty($_SESSION['edit_mode'])): ?>
+                                    <div class="event-admin-actions">
+                                        <a href="index.php?page=event_edit&id=<?= (int)$event['id'] ?>"
+                                        class="event-admin-btn edit"
+                                        title="Edit event">
+                                            ✎
+                                        </a>
+                                        <a href="index.php?page=event_delete&id=<?= (int)$event['id'] ?>"
+                                        class="event-admin-btn delete js-delete-event"
+                                        data-event-label="<?= htmlspecialchars($event['name']) ?>"
+                                        title="Delete event">
+                                            🗑
+                                        </a>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
                             <div class="event-secondary-info">
                                 <div class="sec-info event-status">
                                     <span class="status <?= htmlspecialchars($event['status']) ?>">
@@ -108,8 +113,8 @@
             <div class="events-header">
                 <span>COMPLETED EVENTS</span>
                 <?php if (!empty($_SESSION['is_admin']) && !empty($_SESSION['edit_mode'])): ?>
-                    <a href="index.php?page=event_create" class="add-match-btn">
-                        <span class="add-match-plus">+</span>
+                    <a href="index.php?page=event_create" class="add-event-btn">
+                        <span class="add-event-plus">+</span>
                         <span>Add event</span>
                     </a>
                 <?php endif; ?>
@@ -120,22 +125,24 @@
                 <?php foreach ($completedEvents as $event): ?>
                     <article class="event-block">
                         <div class="event-info">
-                            <h3><?= htmlspecialchars($event['name']) ?></h3>   
-                            <?php if (!empty($_SESSION['is_admin']) && !empty($_SESSION['edit_mode'])): ?>
-                                <div class="event-admin-actions">
-                                    <a href="index.php?page=event_edit&id=<?= (int)$event['id'] ?>"
-                                    class="event-admin-btn edit"
-                                    title="Edit event">
-                                        ✎
-                                    </a>
-                                    <a href="index.php?page=event_delete&id=<?= (int)$event['id'] ?>"
-                                    class="event-admin-btn delete js-delete-event"
-                                    data-event-label="<?= htmlspecialchars($event['name']) ?>"
-                                    title="Delete event">
-                                        🗑
-                                    </a>
-                                </div>
-                            <?php endif; ?> 
+                            <div class="event-head">
+                                <h3><?= htmlspecialchars($event['name']) ?></h3>    
+                                <?php if (!empty($_SESSION['is_admin']) && !empty($_SESSION['edit_mode'])): ?>
+                                    <div class="event-admin-actions">
+                                        <a href="index.php?page=event_edit&id=<?= (int)$event['id'] ?>"
+                                        class="event-admin-btn edit"
+                                        title="Edit event">
+                                            ✎
+                                        </a>
+                                        <a href="index.php?page=event_delete&id=<?= (int)$event['id'] ?>"
+                                        class="event-admin-btn delete js-delete-event"
+                                        data-event-label="<?= htmlspecialchars($event['name']) ?>"
+                                        title="Delete event">
+                                            🗑
+                                        </a>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
                             <div class="event-secondary-info">
                                 <div class="sec-info event-status">
                                     <span class="status <?= htmlspecialchars($event['status']) ?>"><?= htmlspecialchars($event['status']) ?></span>

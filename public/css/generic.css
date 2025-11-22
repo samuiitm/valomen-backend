@@ -331,10 +331,33 @@ footer {
 }
 
 /* PAGINATION */
+.filters-pag {
+  display: flex;
+  gap: 15px;
+}
+
+.filter-label {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
+.filter-select {
+  padding: 6px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.15);
+  background: #111827;
+  color: #e5e7eb;
+  text-decoration: none;
+  display: inline-block;
+  font-family: inherit;
+}
+
 .pager {
   display: flex;
   gap: 6px;
   flex-wrap: wrap;
+  margin: 0;
 }
 
 .page {

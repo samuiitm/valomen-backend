@@ -80,8 +80,11 @@ class MatchDAO extends BaseDAO
       return (int)($r['total'] ?? 0);
   }
 
-  public function getUpcomingMatchesPaginated(int $limit, int $offset): array
+  public function getUpcomingMatchesPaginated(int $limit, int $offset, string $order): array
   {
+      if ($order === 'date_desc') $orderBy = 'm.date DESC, m.hour DESC';
+      else $orderBy = 'm.date ASC, m.hour ASC';
+
       $sql = "SELECT m.*,
                     t1.name AS team_1_name, t1.country AS team_1_country,
                     t2.name AS team_2_name, t2.country AS team_2_country, m.status,
@@ -91,7 +94,7 @@ class MatchDAO extends BaseDAO
               LEFT JOIN teams t2 ON m.team_2 = t2.id
               JOIN events e ON m.event_id = e.id
               WHERE m.status = 'Upcoming' OR m.status = 'Live'
-              ORDER BY m.date ASC, m.hour ASC
+              ORDER BY $orderBy
               LIMIT :limit OFFSET :offset";
       $stmt = $this->db->prepare($sql);
       $stmt->bindValue(':limit',  $limit,  PDO::PARAM_INT);
@@ -109,8 +112,11 @@ class MatchDAO extends BaseDAO
       return (int)($r['total'] ?? 0);
   }
 
-  public function getCompletedMatchesPaginated(int $limit, int $offset): array
+  public function getCompletedMatchesPaginated(int $limit, int $offset, string $order): array
   {
+      if ($order === 'date_desc') $orderBy = 'm.date DESC, m.hour DESC';
+      else $orderBy = 'm.date ASC, m.hour ASC';
+      
       $sql = "SELECT m.*,
                     t1.name AS team_1_name, t1.country AS team_1_country,
                     t2.name AS team_2_name, t2.country AS team_2_country,
@@ -120,7 +126,7 @@ class MatchDAO extends BaseDAO
               LEFT JOIN teams t2 ON m.team_2 = t2.id
               JOIN events e ON m.event_id = e.id
               WHERE m.status = 'Completed'
-              ORDER BY m.date DESC, m.hour DESC
+              ORDER BY $orderBy
               LIMIT :limit OFFSET :offset";
       $stmt = $this->db->prepare($sql);
       $stmt->bindValue(':limit',  $limit,  PDO::PARAM_INT);

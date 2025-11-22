@@ -218,17 +218,16 @@ class EventDAO extends BaseDAO
         return (int)($row['total'] ?? 0);
     }
 
-    public function getCurrentEventsPaginated(int $limit, int $offset): array
+    public function getCurrentEventsPaginated(int $limit, int $offset, string $order): array
     {
+        if ($order === 'date_desc') $orderBy = 'e.start_date DESC';
+        else $orderBy = 'e.start_date ASC';
+
         $sql = "SELECT e.*
                 FROM events e
                 WHERE LOWER(e.status) IN ('upcoming','ongoing')
                 ORDER BY
-                    CASE
-                        WHEN LOWER(e.status) = 'ongoing' THEN 1
-                        ELSE 2
-                    END,
-                    e.start_date ASC
+                    $orderBy
                 LIMIT :limit OFFSET :offset";
 
         $stmt = $this->db->prepare($sql);
@@ -250,12 +249,15 @@ class EventDAO extends BaseDAO
         return (int)($row['total'] ?? 0);
     }
 
-    public function getCompletedEventsPaginated(int $limit, int $offset): array
+    public function getCompletedEventsPaginated(int $limit, int $offset, string $order): array
     {
+        if ($order === 'date_desc') $orderBy = 'e.start_date DESC';
+        else $orderBy = 'e.start_date ASC';
+
         $sql = "SELECT e.*
                 FROM events e
                 WHERE LOWER(e.status) = 'completed'
-                ORDER BY e.start_date DESC
+                ORDER BY $orderBy
                 LIMIT :limit OFFSET :offset";
 
         $stmt = $this->db->prepare($sql);

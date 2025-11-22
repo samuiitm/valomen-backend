@@ -62,7 +62,18 @@ switch ($page) {
 
         $matchDao->updateMatchStatuses();
 
-        $perPage = filter_input(
+        $view = $_GET['view'] ?? 'schedule';
+        if ($view !== 'results') {
+            $view = 'schedule';
+        }
+
+        $orderMatches = $_GET['order'] ?? 'date_asc';
+        $validOrder = ['date_asc','date_desc'];
+        if (!in_array($orderMatches, $validOrder, true)) {
+            $orderMatches = 'date_asc';
+        }
+
+        $perPageMatches = filter_input(
             INPUT_GET,
             'perPage',
             FILTER_VALIDATE_INT,
@@ -71,12 +82,17 @@ switch ($page) {
 
         if ($view === 'results') {
             $total       = $matchDao->countCompletedMatches();
-            $totalPages  = max(1, (int)ceil($total / $perPage));
-            $p           = filter_input(INPUT_GET, 'p', FILTER_VALIDATE_INT, ['options' => ['default' => 1,'min_range' => 1]]);
+            $totalPages  = max(1, (int)ceil($total / $perPageMatches));
+            $p           = filter_input(
+                INPUT_GET,
+                'p',
+                FILTER_VALIDATE_INT,
+                ['options' => ['default' => 1, 'min_range' => 1]]
+            );
             $p           = min($p, $totalPages);
-            $offset      = ($p - 1) * $perPage;
+            $offset      = ($p - 1) * $perPageMatches;
 
-            $completedMatches = $matchDao->getCompletedMatchesPaginated($perPage, $offset);
+            $completedMatches = $matchDao->getCompletedMatchesPaginated($perPageMatches, $offset, $orderMatches);
 
             $completedByDate = [];
             foreach ($completedMatches as $m) {
@@ -90,12 +106,17 @@ switch ($page) {
             $totalPagesMb = $totalPages;
         } else {
             $total       = $matchDao->countUpcomingMatches();
-            $totalPages  = max(1, (int)ceil($total / $perPage));
-            $p           = filter_input(INPUT_GET, 'p', FILTER_VALIDATE_INT, ['options' => ['default' => 1,'min_range' => 1]]);
+            $totalPages  = max(1, (int)ceil($total / $perPageMatches));
+            $p           = filter_input(
+                INPUT_GET,
+                'p',
+                FILTER_VALIDATE_INT,
+                ['options' => ['default' => 1, 'min_range' => 1]]
+            );
             $p           = min($p, $totalPages);
-            $offset      = ($p - 1) * $perPage;
+            $offset      = ($p - 1) * $perPageMatches;
 
-            $upcomingMatches = $matchDao->getUpcomingMatchesPaginated($perPage, $offset);
+            $upcomingMatches = $matchDao->getUpcomingMatchesPaginated($perPageMatches, $offset, $orderMatches);
 
             $upcomingByDate = [];
             foreach ($upcomingMatches as $m) {
@@ -117,11 +138,14 @@ switch ($page) {
             }
         }
 
-        function build_matches_url(int $p, int $perPage, string $view): string {
+        function build_matches_url(int $p, int $perPage, string $view, string $order): string {
             $p       = max(1, $p);
             $perPage = max(1, $perPage);
-            return 'index.php?page=matches&view=' . urlencode($view) .
-                '&p=' . $p . '&perPage=' . $perPage;
+            $view    = $view === 'results' ? 'results' : 'schedule';
+            return 'index.php?page=matches&view=' . urlencode($view)
+                . '&p=' . $p
+                . '&perPage=' . $perPage
+                . '&order=' . urlencode($order);
         }
 
         $pageTitle = 'Valomen.gg | Matches';
@@ -469,6 +493,12 @@ switch ($page) {
 
         $eventDao = new EventDAO($db);
 
+        $orderEvents = $_GET['order'] ?? 'date_asc';
+        $validOrder = ['date_asc','date_desc'];
+        if (!in_array($orderEvents, $validOrder, true)) {
+            $orderEvents = 'date_asc';
+        }
+
         $perPageEvents = filter_input(
             INPUT_GET,
             'perPage',
@@ -500,8 +530,8 @@ switch ($page) {
         $offsetCurrent   = ($pEvents - 1) * $perPageEvents;
         $offsetCompleted = ($pEvents - 1) * $perPageEvents;
 
-        $currentEvents   = $eventDao->getCurrentEventsPaginated($perPageEvents, $offsetCurrent);
-        $completedEvents = $eventDao->getCompletedEventsPaginated($perPageEvents, $offsetCompleted);
+        $currentEvents   = $eventDao->getCurrentEventsPaginated($perPageEvents, $offsetCurrent, $orderEvents);
+        $completedEvents = $eventDao->getCompletedEventsPaginated($perPageEvents, $offsetCompleted, $orderEvents);
 
         $ongoingEvents  = [];
         $upcomingEvents = [];

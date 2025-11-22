@@ -170,29 +170,47 @@
             <?php endif; ?>
         </section>
     </div>
-    <?php if ($totalPagesEventsMb > 1): ?>
-        <nav class="pager">
-            <a href="<?= build_events_url(1, $perPageEvents) ?>"
-               class="btn<?= $currentPageEvents === 1 ? ' is-disabled' : '' ?>">« First</a>
+    <nav class="pager">
+        <div class="filters-pag">
+            <label class="filter-label">
+                <span>Items per page:</span>
+                <select class="filter-select" onchange="location.href='index.php?page=events&view=<?= htmlspecialchars($view) ?>&p=1&order=<?= htmlspecialchars($orderevents) ?>&perPage=' + this.value;">
+                    <?php foreach ([5,10,20,50] as $opt): ?>
+                        <option value="<?= $opt ?>" <?= $opt === (int)$perPageEvents ? 'selected' : '' ?>>
+                            <?= $opt ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </label>
+            <label class="filter-label">
+                <span>Order:</span>
+                <select class="filter-select" onchange="location.href='index.php?page=events&view=<?= htmlspecialchars($view) ?>&p=1&perPage=<?= htmlspecialchars($perPageEvents) ?>&order=' + this.value;">
+                    <option value="date_asc" <?= $orderEvents === 'date_asc' ? 'selected' : '' ?>>Date ASC</option>
+                    <option value="date_desc" <?= $orderEvents === 'date_desc' ? 'selected' : '' ?>>Date DESC</option>
+                </select>
+            </label>
+        </div>
 
-            <a href="<?= build_events_url(max(1, $currentPageEvents - 1), $perPageEvents) ?>"
-               class="btn<?= $currentPageEvents === 1 ? ' is-disabled' : '' ?>">‹ Prev</a>
+        <a href="<?= build_events_url(1, $perPageEvents) ?>"
+            class="btn<?= $currentPageEvents === 1 ? ' is-disabled' : '' ?>">« First</a>
 
-            <?php for ($p = $startPageEvents; $p <= $endPageEvents; $p++): ?>
-                <?php if ($p === $currentPageEvents): ?>
-                    <span class="page current"><?= htmlspecialchars((string)$p) ?></span>
-                <?php else: ?>
-                    <a href="<?= build_events_url($p, $perPageEvents) ?>" class="page">
-                        <?= htmlspecialchars((string)$p) ?>
-                    </a>
-                <?php endif; ?>
-            <?php endfor; ?>
+        <a href="<?= build_events_url(max(1, $currentPageEvents - 1), $perPageEvents) ?>"
+            class="btn<?= $currentPageEvents === 1 ? ' is-disabled' : '' ?>">‹ Prev</a>
 
-            <a href="<?= build_events_url(min($totalPagesEventsMb, $currentPageEvents + 1), $perPageEvents) ?>"
-               class="btn<?= $currentPageEvents === $totalPagesEventsMb ? ' is-disabled' : '' ?>">Next ›</a>
+        <?php for ($p = $startPageEvents; $p <= $endPageEvents; $p++): ?>
+            <?php if ($p === $currentPageEvents): ?>
+                <span class="page current"><?= htmlspecialchars((string)$p) ?></span>
+            <?php else: ?>
+                <a href="<?= build_events_url($p, $perPageEvents) ?>" class="page">
+                    <?= htmlspecialchars((string)$p) ?>
+                </a>
+            <?php endif; ?>
+        <?php endfor; ?>
 
-            <a href="<?= build_events_url($totalPagesEventsMb, $perPageEvents) ?>"
-               class="btn<?= $currentPageEvents === $totalPagesEventsMb ? ' is-disabled' : '' ?>">Last »</a>
-        </nav>
-    <?php endif; ?>
+        <a href="<?= build_events_url(min($totalPagesEventsMb, $currentPageEvents + 1), $perPageEvents) ?>"
+            class="btn<?= $currentPageEvents === $totalPagesEventsMb ? ' is-disabled' : '' ?>">Next ›</a>
+
+        <a href="<?= build_events_url($totalPagesEventsMb, $perPageEvents) ?>"
+            class="btn<?= $currentPageEvents === $totalPagesEventsMb ? ' is-disabled' : '' ?>">Last »</a>
+    </nav>
 </main>

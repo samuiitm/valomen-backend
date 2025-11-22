@@ -93,6 +93,11 @@
     transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.12s ease, box-shadow 0.15s ease;
 }
 
+.add-event-btn span {
+    color: inherit;
+    font-weight: inherit;
+}
+
 .add-event-plus {
     font-size: 14px;
     line-height: 1;

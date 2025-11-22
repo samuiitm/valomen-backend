@@ -459,13 +459,19 @@ class MatchAdminController
     public function deleteMatch(int $matchId): void
     {
         if ($matchId <= 0) {
-            header('Location: index.php?page=matches');
+            header('Location: index.php?page=matches&view=schedule');
             exit;
         }
 
         $this->matchDao->deleteMatchById($matchId);
 
-        header('Location: index.php?page=matches');
+        $view = $_GET['view'] ?? 'schedule';
+
+        if ($view !== 'results') {
+            $view = 'schedule';
+        }
+
+        header('Location: index.php?page=matches&view=' . $view);
         exit;
     }
 }

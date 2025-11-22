@@ -5,7 +5,29 @@
 
     <?php if ($view === 'schedule'): ?>
         <?php if (empty($upcomingByDate)): ?>
-            <p>No upcoming matches.</p>
+            <div class="header-day">
+                <span class="date-match">No upcoming matches</span>
+
+                <?php if (!$boolSchedule): ?>
+                    <div class="matches-header-right">
+                        <div class="matches-tabs">
+                            <a href="index.php?page=matches&view=schedule" 
+                                class="tab <?= $view === 'schedule' ? 'active' : '' ?>">SCHEDULE</a>
+                            <a href="index.php?page=matches&view=results" 
+                                class="tab <?= $view === 'results' ? 'active' : '' ?>">RESULTS</a>
+                        </div>
+
+                        <?php if (!empty($_SESSION['is_admin']) && !empty($_SESSION['edit_mode'])): ?>
+                            <a href="index.php?page=match_create" class="add-match-btn">
+                                <span class="add-match-plus">+</span>
+                                <span>Add match</span>
+                            </a>
+                        <?php endif; ?>
+                    </div>
+
+                    <?php $boolSchedule = true; ?>
+                <?php endif; ?>
+            </div>
         <?php else: ?>
 
             <?php foreach ($upcomingByDate as $date => $matchesOfDay): ?>
@@ -121,9 +143,9 @@
                                         title="Edit match">
                                             ✎
                                         </a>
-                                        <a href="index.php?page=match_delete&id=<?= (int)$match['id'] ?>"
+                                       <a href="index.php?page=match_delete&id=<?= (int)$match['id'] ?>&view=schedule"
                                         class="match-admin-btn delete js-delete-match"
-                                        data-match-label="<?= htmlspecialchars($match['team_1_name'] . ' vs ' . htmlspecialchars($match['team_2_name'] ?? 'TBD')) ?>"
+                                        data-match-label="<?= htmlspecialchars($match['team_1_name'] . ' vs ' . ($match['team_2_name'] ?? 'TBD')) ?>"
                                         title="Delete match">
                                             🗑
                                         </a>
@@ -138,7 +160,29 @@
         <?php endif; ?>
     <?php else: ?>
         <?php if (empty($completedByDate)): ?>
-            <p>No completed matches.</p>
+            <div class="header-day">
+                <span class="date-match">No completed matches</span>
+
+                <?php if (!$boolSchedule): ?>
+                    <div class="matches-header-right">
+                        <div class="matches-tabs">
+                            <a href="index.php?page=matches&view=schedule" 
+                                class="tab <?= $view === 'schedule' ? 'active' : '' ?>">SCHEDULE</a>
+                            <a href="index.php?page=matches&view=results" 
+                                class="tab <?= $view === 'results' ? 'active' : '' ?>">RESULTS</a>
+                        </div>
+
+                        <?php if (!empty($_SESSION['is_admin']) && !empty($_SESSION['edit_mode'])): ?>
+                            <a href="index.php?page=match_create" class="add-match-btn">
+                                <span class="add-match-plus">+</span>
+                                <span>Add match</span>
+                            </a>
+                        <?php endif; ?>
+                    </div>
+
+                    <?php $boolSchedule = true; ?>
+                <?php endif; ?>
+            </div>
         <?php else: ?>
             <?php foreach ($completedByDate as $date => $matchesOfDay): ?>
                 <div class="day-block">
@@ -217,9 +261,9 @@
                                         title="Edit match">
                                             ✎
                                         </a>
-                                        <a href="index.php?page=match_delete&id=<?= (int)$match['id'] ?>"
+                                        <a href="index.php?page=match_delete&id=<?= (int)$match['id'] ?>&view=results"
                                         class="match-admin-btn delete js-delete-match"
-                                        data-match-label="<?= htmlspecialchars($match['team_1_name'] . ' vs ' . $match['team_2_name']) ?>"
+                                        data-match-label="<?= htmlspecialchars($match['team_1_name'] . ' vs ' . ($match['team_2_name'] ?? 'TBD')) ?>"
                                         title="Delete match">
                                             🗑
                                         </a>

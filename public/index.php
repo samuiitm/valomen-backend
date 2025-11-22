@@ -200,19 +200,15 @@ switch ($page) {
             empty($_SESSION['is_admin']) ||
             empty($_SESSION['edit_mode'])
         ) {
-            header('Location: index.php?page=matches');
-            exit;
-        }
-
-        if (empty($_GET['id'])) {
-            header('Location: index.php?page=matches');
+            header('Location: index.php?page=matches&view=schedule');
             exit;
         }
 
         require __DIR__ . '/../app/Controller/MatchAdminController.php';
-        $controller = new MatchAdminController($db);
 
-        $matchId = (int) $_GET['id'];
+        $controller = new MatchAdminController($db);
+        $matchId    = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+
         $controller->deleteMatch($matchId);
         break;
 

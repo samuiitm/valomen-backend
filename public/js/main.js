@@ -14,9 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
             dropdown.classList.remove("open");
         }
     });
-});
 
-document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.js-delete-match').forEach(btn => {
         btn.addEventListener('click', function (e) {
             e.preventDefault();
@@ -30,9 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
-});
 
-document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.js-delete-event').forEach(btn => {
         btn.addEventListener('click', (e) => {
             const label = btn.getAttribute('data-event-label') || 'this event';
@@ -41,5 +37,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 e.preventDefault();
             }
         });
+    });
+
+    // Aquest mètode és per actualitzar els equips que es poden escollir segons el valor de
+    // l'event que l'usuari escull en editar patits.
+    const form   = document.getElementById('match-edit-form');
+    const select = document.getElementById('event_id');
+
+    if (!form || !select) return;
+
+    select.addEventListener('change', () => {
+        let hidden = form.querySelector('input[name="refresh_teams"]');
+        if (!hidden) {
+            hidden = document.createElement('input');
+            hidden.type  = 'hidden';
+            hidden.name  = 'refresh_teams';
+            hidden.value = '1';
+            form.appendChild(hidden);
+        } else {
+            hidden.value = '1';
+        }
+
+        form.submit();
     });
 });

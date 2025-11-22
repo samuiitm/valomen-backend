@@ -305,6 +305,23 @@ class MatchAdminController
         $scoreTeam1 = $score1Raw === '' ? null : (int) $score1Raw;
         $scoreTeam2 = $score2Raw === '' ? null : (int) $score2Raw;
 
+        $old = [
+            'event_id'      => $eventId,
+            'team_1'        => $team1Id,
+            'team_2'        => $team2Id,
+            'date'          => $date,
+            'hour'          => $hour,
+            'best_of'       => $bestOf,
+            'event_stage'   => $eventStage,
+            'score_team_1'  => $score1Raw,
+            'score_team_2'  => $score2Raw,
+        ];
+
+        if (isset($_POST['refresh_teams'])) {
+            $this->showEditForm($matchId, $old, []);
+            return;
+        }
+
         $errors = [
             'event_id'      => '',
             'team_1'        => '',
@@ -384,6 +401,8 @@ class MatchAdminController
             if ($scoreTeam1 === null || $scoreTeam2 === null) {
                 $errors['score_team_1'] = 'Score is required for completed matches.';
                 $errors['score_team_2'] = 'Score is required for completed matches.';
+            } else if ($team1Id === null || $team2Id === null) {
+                $errors['team_2'] = 'Teams are required for completed matches.';
             } else {
                 if ($scoreTeam1 < 0 || $scoreTeam2 < 0) {
                     $errors['global'] = 'Score cannot be negative.';
@@ -420,18 +439,6 @@ class MatchAdminController
                 break;
             }
         }
-
-        $old = [
-            'event_id'      => $eventId,
-            'team_1'        => $team1Id,
-            'team_2'        => $team2Id,
-            'date'          => $date,
-            'hour'          => $hour,
-            'best_of'       => $bestOf,
-            'event_stage'   => $eventStage,
-            'score_team_1'  => $score1Raw,
-            'score_team_2'  => $score2Raw,
-        ];
 
         if ($hasErrors) {
             $this->showEditForm($matchId, $old, $errors);

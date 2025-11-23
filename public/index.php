@@ -571,7 +571,7 @@ switch ($page) {
         $eventDao = new EventDAO($db);
 
         $orderEvents = $_GET['order'] ?? 'date_asc';
-        $validOrder = ['date_asc','date_desc'];
+        $validOrder  = ['date_asc','date_desc'];
         if (!in_array($orderEvents, $validOrder, true)) {
             $orderEvents = 'date_asc';
         }
@@ -580,14 +580,21 @@ switch ($page) {
             INPUT_GET,
             'perPage',
             FILTER_VALIDATE_INT,
-            ['options' => ['default' => 6, 'min_range' => 1]]
+            ['options' => ['default' => 5, 'min_range' => 1]]
         );
 
-        $totalCurrent   = $eventDao->countCurrentEvents();
-        $totalCompleted = $eventDao->countCompletedEvents();
+        $searchEvents = trim($_GET['search'] ?? '');
 
-        $pagesCurrent   = max(1, (int)ceil($totalCurrent   / $perPageEvents));
-        $pagesCompleted = max(1, (int)ceil($totalCompleted / $perPageEvents));
+        $totalCurrent   = $eventDao->countCurrentEvents($searchEvents);
+        $totalCompleted = $eventDao->countCompletedEvents($searchEvents);
+
+        if ($searchEvents !== '') {
+            $pagesCurrent   = 1;
+            $pagesCompleted = 1;
+        } else {
+            $pagesCurrent   = max(1, (int)ceil($totalCurrent   / $perPageEvents));
+            $pagesCompleted = max(1, (int)ceil($totalCompleted / $perPageEvents));
+        }
 
         $totalPagesEvents = max($pagesCurrent, $pagesCompleted);
 
@@ -604,11 +611,33 @@ switch ($page) {
             $pEvents = $totalPagesEvents;
         }
 
-        $offsetCurrent   = ($pEvents - 1) * $perPageEvents;
-        $offsetCompleted = ($pEvents - 1) * $perPageEvents;
+        if ($searchEvents !== '') {
+            $offsetCurrent   = 0;
+            $offsetCompleted = 0;
 
-        $currentEvents   = $eventDao->getCurrentEventsPaginated($perPageEvents, $offsetCurrent, $orderEvents);
-        $completedEvents = $eventDao->getCompletedEventsPaginated($perPageEvents, $offsetCompleted, $orderEvents);
+            $limitCurrent    = $totalCurrent   > 0 ? $totalCurrent   : 1;
+            $limitCompleted  = $totalCompleted > 0 ? $totalCompleted : 1;
+        } else {
+            $offsetCurrent   = ($pEvents - 1) * $perPageEvents;
+            $offsetCompleted = ($pEvents - 1) * $perPageEvents;
+
+            $limitCurrent    = $perPageEvents;
+            $limitCompleted  = $perPageEvents;
+        }
+
+        $currentEvents = $eventDao->getCurrentEventsPaginated(
+            $limitCurrent,
+            $offsetCurrent,
+            $orderEvents,
+            $searchEvents !== '' ? $searchEvents : null
+        );
+
+        $completedEvents = $eventDao->getCompletedEventsPaginated(
+            $limitCompleted,
+            $offsetCompleted,
+            $orderEvents,
+            $searchEvents !== '' ? $searchEvents : null
+        );
 
         $ongoingEvents  = [];
         $upcomingEvents = [];
@@ -628,10 +657,18 @@ switch ($page) {
         $startPageEvents = max(1, $currentPageEvents - 2);
         $endPageEvents   = min($totalPagesEventsMb, $currentPageEvents + 4);
 
-        function build_events_url(int $p, int $perPage): string {
+        function build_events_url(int $p, int $perPage, string $order): string {
             $p       = max(1, $p);
             $perPage = max(1, $perPage);
-            return 'index.php?page=events&p=' . $p . '&perPage=' . $perPage;
+            $validOrder  = ['date_asc','date_desc'];
+            if (!in_array($order, $validOrder, true)) {
+                $order = 'date_asc';
+            }
+
+            return 'index.php?page=events'
+                . '&p=' . $p
+                . '&perPage=' . $perPage
+                . '&order=' . urlencode($order);
         }
 
         $pageTitle = 'Valomen.gg | Events';

@@ -208,8 +208,21 @@ class EventDAO extends BaseDAO
         return $stmt->fetchAll();
     }
 
-    public function countCurrentEvents(): int
+    public function countCurrentEvents(?string $search = null): int
     {
+        if ($search !== null && $search !== '') {
+            $sql = "SELECT COUNT(*) AS total
+                    FROM events
+                    WHERE LOWER(status) IN ('upcoming','ongoing')
+                    AND name LIKE :search";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([
+                ':search' => '%' . $search . '%',
+            ]);
+            $row = $stmt->fetch();
+            return (int)($row['total'] ?? 0);
+        }
+
         $sql = "SELECT COUNT(*) AS total
                 FROM events
                 WHERE LOWER(status) IN ('upcoming','ongoing')";
@@ -218,19 +231,42 @@ class EventDAO extends BaseDAO
         return (int)($row['total'] ?? 0);
     }
 
-    public function getCurrentEventsPaginated(int $limit, int $offset, string $order): array
-    {
-        if ($order === 'date_desc') $orderBy = 'e.start_date DESC';
-        else $orderBy = 'e.start_date ASC';
+    public function getCurrentEventsPaginated(
+        int $limit,
+        int $offset,
+        string $order,
+        ?string $search = null
+    ): array {
+        if ($order === 'date_desc') {
+            $orderBy = "CASE WHEN LOWER(e.status) = 'ongoing' THEN 1 ELSE 2 END,
+                        e.start_date DESC,
+                        e.id DESC";
+        } else {
+            $orderBy = "CASE WHEN LOWER(e.status) = 'ongoing' THEN 1 ELSE 2 END,
+                        e.start_date ASC,
+                        e.id ASC";
+        }
 
         $sql = "SELECT e.*
                 FROM events e
-                WHERE LOWER(e.status) IN ('upcoming','ongoing')
-                ORDER BY
-                    $orderBy
+                WHERE LOWER(e.status) IN ('upcoming','ongoing')";
+
+        $params = [];
+
+        if ($search !== null && $search !== '') {
+            $sql .= " AND e.name LIKE :search";
+            $params[':search'] = '%' . $search . '%';
+        }
+
+        $sql .= " ORDER BY $orderBy
                 LIMIT :limit OFFSET :offset";
 
         $stmt = $this->db->prepare($sql);
+
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value, PDO::PARAM_STR);
+        }
+
         $stmt->bindValue(':limit',  $limit,  PDO::PARAM_INT);
         $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
         $stmt->execute();
@@ -238,33 +274,120 @@ class EventDAO extends BaseDAO
         return $stmt->fetchAll();
     }
 
-    public function countCompletedEvents(): int
+
+    public function countCompletedEvents(?string $search = null): int
     {
-         $sql = "SELECT COUNT(*) AS total
+        if ($search !== null && $search !== '') {
+            $sql = "SELECT COUNT(*) AS total
+                    FROM events
+                    WHERE LOWER(status) = 'completed'
+                    AND name LIKE :search";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([
+                ':search' => '%' . $search . '%',
+            ]);
+            $row = $stmt->fetch();
+            return (int)($row['total'] ?? 0);
+        }
+
+        $sql = "SELECT COUNT(*) AS total
                 FROM events
                 WHERE LOWER(status) = 'completed'";
         $stmt = $this->db->query($sql);
         $row = $stmt->fetch();
-
         return (int)($row['total'] ?? 0);
     }
 
-    public function getCompletedEventsPaginated(int $limit, int $offset, string $order): array
-    {
-        if ($order === 'date_desc') $orderBy = 'e.start_date DESC';
-        else $orderBy = 'e.start_date ASC';
+
+    public function getCompletedEventsPaginated(
+        int $limit,
+        int $offset,
+        string $order,
+        ?string $search = null
+    ): array {
+        if ($order === 'date_desc') {
+            $orderBy = 'e.start_date DESC, e.id DESC';
+        } else {
+            $orderBy = 'e.start_date ASC, e.id ASC';
+        }
 
         $sql = "SELECT e.*
                 FROM events e
-                WHERE LOWER(e.status) = 'completed'
-                ORDER BY $orderBy
+                WHERE LOWER(e.status) = 'completed'";
+
+        $params = [];
+
+        if ($search !== null && $search !== '') {
+            $sql .= " AND e.name LIKE :search";
+            $params[':search'] = '%' . $search . '%';
+        }
+
+        $sql .= " ORDER BY $orderBy
                 LIMIT :limit OFFSET :offset";
 
         $stmt = $this->db->prepare($sql);
+
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value, PDO::PARAM_STR);
+        }
+
         $stmt->bindValue(':limit',  $limit,  PDO::PARAM_INT);
         $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
         $stmt->execute();
 
+        return $stmt->fetchAll();
+    }
+
+
+
+    public function searchCurrentEvents(string $term): array
+    {
+        $like = '%' . $term . '%';
+
+        $sql = "SELECT 
+                    e.id,
+                    e.name,
+                    e.start_date,
+                    e.end_date,
+                    e.status,
+                    e.prize,
+                    e.region,
+                    e.logo
+                FROM events e
+                WHERE LOWER(e.status) IN ('upcoming','ongoing')
+                  AND e.name LIKE :search
+                ORDER BY
+                    CASE
+                        WHEN LOWER(e.status) = 'ongoing' THEN 1
+                        ELSE 2
+                    END,
+                    e.start_date ASC";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':search' => $like]);
+        return $stmt->fetchAll();
+    }
+
+    public function searchCompletedEvents(string $term): array
+    {
+        $like = '%' . $term . '%';
+
+        $sql = "SELECT 
+                    e.id,
+                    e.name,
+                    e.start_date,
+                    e.end_date,
+                    e.status,
+                    e.prize,
+                    e.region,
+                    e.logo
+                FROM events e
+                WHERE LOWER(e.status) = 'completed'
+                  AND e.name LIKE :search
+                ORDER BY e.start_date DESC";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':search' => $like]);
         return $stmt->fetchAll();
     }
 }

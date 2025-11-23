@@ -38,45 +38,54 @@ $pageCss   = $pageCss   ?? null;
                 <li><a href="index.php?page=events">Events</a></li>
             </ul>
             <?php if (!empty($_SESSION['user_id'])): ?>
-            <div class="user-menu">
-                <button class="user-avatar-btn" id="userMenuBtn" type="button">
-                    <img src="assets/img/default-avatar.png" alt="User">
-                </button>
-                <div class="user-dropdown" id="userDropdown">
-                    <div class="user-dropdown-header">
-                        <span class="user-name">
-                            <?= htmlspecialchars($_SESSION['username']) ?>
-                        </span>
+                <div class="user-menu">
+                    <?php
+                        $avatarFilename = $_SESSION['user_logo'] ?? null;
+
+                        if (!empty($avatarFilename)) {
+                            $headerAvatarSrc = 'assets/img/user-avatars/' . htmlspecialchars($avatarFilename);
+                        } else {
+                            $headerAvatarSrc = 'assets/img/default-avatar.png';
+                        }
+                    ?>
+                    <button id="userMenuBtn" class="user-avatar-btn">
+                        <img src="<?= $headerAvatarSrc ?>" alt="User avatar">
+                    </button>
+                    <div class="user-dropdown" id="userDropdown">
+                        <div class="user-dropdown-header">
+                            <span class="user-name">
+                                <?= htmlspecialchars($_SESSION['username']) ?>
+                            </span>
+
+                            <?php if (!empty($_SESSION['is_admin'])): ?>
+                                <span class="user-role">Admin</span>
+                            <?php endif; ?>
+                        </div>
+
+                        <a href="index.php?page=profile" class="dropdown-item">Profile</a>
+                        <a href="index.php?page=my_predictions" class="dropdown-item">My predictions</a>
 
                         <?php if (!empty($_SESSION['is_admin'])): ?>
-                            <span class="user-role">Admin</span>
+                            <a href="index.php?action=toggle_edit_mode"
+                            class="dropdown-item edit-toggle <?= !empty($_SESSION['edit_mode']) ? 'on' : 'off' ?>">
+                                <span class="toggle-label">Edit mode</span>
+                                <span class="toggle-pill">
+                                    <span class="toggle-knob"></span>
+                                </span>
+                                <span class="toggle-state">
+                                    <?= !empty($_SESSION['edit_mode']) ? 'ON' : 'OFF' ?>
+                                </span>
+                            </a>
+
+                            <a href="index.php?page=admin" class="dropdown-item">Admin panel</a>
                         <?php endif; ?>
+
+                        <a href="index.php?page=logout" class="dropdown-item logout-item">Log out</a>
                     </div>
-
-                    <a href="index.php?page=profile" class="dropdown-item">Profile</a>
-                    <a href="index.php?page=my_predictions" class="dropdown-item">My predictions</a>
-
-                    <?php if (!empty($_SESSION['is_admin'])): ?>
-                        <a href="index.php?action=toggle_edit_mode"
-                        class="dropdown-item edit-toggle <?= !empty($_SESSION['edit_mode']) ? 'on' : 'off' ?>">
-                            <span class="toggle-label">Edit mode</span>
-                            <span class="toggle-pill">
-                                <span class="toggle-knob"></span>
-                            </span>
-                            <span class="toggle-state">
-                                <?= !empty($_SESSION['edit_mode']) ? 'ON' : 'OFF' ?>
-                            </span>
-                        </a>
-
-                        <a href="index.php?page=admin" class="dropdown-item">Admin panel</a>
-                    <?php endif; ?>
-
-                    <a href="index.php?page=logout" class="dropdown-item logout-item">Log out</a>
                 </div>
-            </div>
-        <?php else: ?>
-            <a class="login-button" href="index.php?page=login">Log in</a>
-        <?php endif; ?>
+            <?php else: ?>
+                <a class="login-button" href="index.php?page=login">Log in</a>
+            <?php endif; ?>
         </div>
     </nav>
 </header>

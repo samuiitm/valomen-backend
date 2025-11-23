@@ -32,6 +32,7 @@ class LoginController
         $_SESSION['user_id']  = $user['id'];
         $_SESSION['username'] = $user['username'];
         $_SESSION['is_admin'] = (bool) $user['admin'];
+        $_SESSION['user_logo'] = $user['logo'] ?? null;
 
         return ['success' => true];
     }

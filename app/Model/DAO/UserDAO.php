@@ -6,7 +6,7 @@ class UserDAO extends BaseDAO
 {
     public function findByUsername(string $username): ?array
     {
-        $sql = "SELECT id, username, email, admin, passwd_hash
+        $sql = "SELECT id, username, email, admin, passwd_hash, logo
                 FROM users
                 WHERE username = :username";
 
@@ -19,25 +19,12 @@ class UserDAO extends BaseDAO
 
     public function findByEmail(string $email): ?array
     {
-        $sql = "SELECT id, username, email, admin, passwd_hash
+        $sql = "SELECT id, username, email, admin, passwd_hash, logo
                 FROM users
                 WHERE email = :email";
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute([':email' => $email]);
-        $user = $stmt->fetch();
-
-        return $user ?: null;
-    }
-
-    public function findById(int $id): ?array
-    {
-        $sql = "SELECT id, username, email, admin
-                FROM users
-                WHERE id = :id";
-
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([':id' => $id]);
         $user = $stmt->fetch();
 
         return $user ?: null;
@@ -113,6 +100,32 @@ class UserDAO extends BaseDAO
         $row = $stmt->fetch();
 
         return $row ?: null;
+    }
+
+    public function isUsernameTaken(string $username, int $excludeId = 0): bool
+    {
+        $sql = "SELECT id FROM users WHERE username = :username AND id <> :id LIMIT 1";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([
+            ':username' => $username,
+            ':id'       => $excludeId,
+        ]);
+        return (bool)$stmt->fetch();
+    }
+
+    public function updateUserProfile(int $id, string $username, ?string $logo): bool
+    {
+        $sql = "UPDATE users
+                SET username = :username,
+                    logo     = :logo
+                WHERE id = :id";
+
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':username' => $username,
+            ':logo'     => $logo,
+            ':id'       => $id,
+        ]);
     }
 
     public function updateUser(

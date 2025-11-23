@@ -53,6 +53,36 @@ if ($view !== 'results') {
 }
 
 switch ($page) {
+    case 'profile':
+    if (empty($_SESSION['user_id'])) {
+        header('Location: index.php?page=login');
+        exit;
+    }
+
+    require __DIR__ . '/../app/Controller/UserProfileController.php';
+
+    $controller = new UserProfileController($db);
+    $userId     = (int)$_SESSION['user_id'];
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $data = $controller->updateProfile($userId);
+    } else {
+        $data = $controller->getProfileData($userId);
+    }
+
+    $user    = $data['user'];
+    $errors  = $data['errors'];
+    $success = $data['success'];
+
+    $pageTitle = 'Valomen.gg | Profile';
+    $pageCss   = 'profile.css';
+
+    require __DIR__ . '/../app/View/partials/header.php';
+    require __DIR__ . '/../app/View/user_profile.view.php';
+    require __DIR__ . '/../app/View/partials/footer.php';
+    break;
+
+
     case 'matches':
         require __DIR__ . '/../app/Model/DAO/MatchDAO.php';
         require __DIR__ . '/../app/Model/DAO/PredictionDAO.php';
@@ -472,6 +502,7 @@ switch ($page) {
                 $_SESSION['username']  = $user['username'];
                 $_SESSION['is_admin']  = (int)$user['admin'] === 1;
                 $_SESSION['edit_mode'] = $_SESSION['edit_mode'] ?? false;
+                $_SESSION['user_logo'] = $user['logo'] ?? null;
                 exit;
             } else {
                 $loginError = $result['error'];

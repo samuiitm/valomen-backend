@@ -12,10 +12,23 @@
                     <div class="matches-header-right">
                         <div class="matches-tabs">
                             <a href="index.php?page=matches&view=schedule" 
-                                class="tab <?= $view === 'schedule' ? 'active' : '' ?>">SCHEDULE</a>
+                            class="tab <?= $view === 'schedule' ? 'active' : '' ?>">SCHEDULE</a>
                             <a href="index.php?page=matches&view=results" 
-                                class="tab <?= $view === 'results' ? 'active' : '' ?>">RESULTS</a>
+                            class="tab <?= $view === 'results' ? 'active' : '' ?>">RESULTS</a>
                         </div>
+
+                        <form class="search-elements" id="matchesSearchForm" action="index.php" method="get">
+                            <input type="hidden" name="page" value="matches">
+                            <input type="hidden" name="view" value="<?= htmlspecialchars($view) ?>">
+                            <input type="hidden" name="perPage" value="<?= htmlspecialchars((string)$perPage) ?>">
+                            <input type="hidden" name="order" value="<?= htmlspecialchars($orderMatches) ?>">
+                            <input type="text"
+                                name="search"
+                                id="searchInput"
+                                placeholder="Search..."
+                                class="searchInput"
+                                value="<?= htmlspecialchars($searchMatches) ?>">
+                        </form>
 
                         <?php if (!empty($_SESSION['is_admin']) && !empty($_SESSION['edit_mode'])): ?>
                             <a href="index.php?page=match_create" class="add-match-btn">
@@ -39,10 +52,23 @@
                             <div class="matches-header-right">
                                 <div class="matches-tabs">
                                     <a href="index.php?page=matches&view=schedule" 
-                                        class="tab <?= $view === 'schedule' ? 'active' : '' ?>">SCHEDULE</a>
+                                    class="tab <?= $view === 'schedule' ? 'active' : '' ?>">SCHEDULE</a>
                                     <a href="index.php?page=matches&view=results" 
-                                        class="tab <?= $view === 'results' ? 'active' : '' ?>">RESULTS</a>
+                                    class="tab <?= $view === 'results' ? 'active' : '' ?>">RESULTS</a>
                                 </div>
+
+                                <form class="matches-search" id="matchesSearchForm" action="index.php" method="get">
+                                    <input type="hidden" name="page" value="matches">
+                                    <input type="hidden" name="view" value="<?= htmlspecialchars($view) ?>">
+                                    <input type="hidden" name="perPage" value="<?= htmlspecialchars((string)$perPage) ?>">
+                                    <input type="hidden" name="order" value="<?= htmlspecialchars($orderMatches) ?>">
+                                    <input type="text"
+                                        name="search"
+                                        id="searchInput"
+                                        placeholder="Search..."
+                                        class="searchInput"
+                                        value="<?= htmlspecialchars($searchMatches) ?>">
+                                </form>
 
                                 <?php if (!empty($_SESSION['is_admin']) && !empty($_SESSION['edit_mode'])): ?>
                                     <a href="index.php?page=match_create" class="add-match-btn">
@@ -167,10 +193,23 @@
                     <div class="matches-header-right">
                         <div class="matches-tabs">
                             <a href="index.php?page=matches&view=schedule" 
-                                class="tab <?= $view === 'schedule' ? 'active' : '' ?>">SCHEDULE</a>
+                            class="tab <?= $view === 'schedule' ? 'active' : '' ?>">SCHEDULE</a>
                             <a href="index.php?page=matches&view=results" 
-                                class="tab <?= $view === 'results' ? 'active' : '' ?>">RESULTS</a>
+                            class="tab <?= $view === 'results' ? 'active' : '' ?>">RESULTS</a>
                         </div>
+
+                        <form class="matches-search" id="matchesSearchForm" action="index.php" method="get">
+                            <input type="hidden" name="page" value="matches">
+                            <input type="hidden" name="view" value="<?= htmlspecialchars($view) ?>">
+                            <input type="hidden" name="perPage" value="<?= htmlspecialchars((string)$perPage) ?>">
+                            <input type="hidden" name="order" value="<?= htmlspecialchars($orderMatches) ?>">
+                            <input type="text"
+                                name="search"
+                                id="searchInput"
+                                placeholder="Search..."
+                                class="searchInput"
+                                value="<?= htmlspecialchars($searchMatches) ?>">
+                        </form>
 
                         <?php if (!empty($_SESSION['is_admin']) && !empty($_SESSION['edit_mode'])): ?>
                             <a href="index.php?page=match_create" class="add-match-btn">
@@ -193,10 +232,23 @@
                             <div class="matches-header-right">
                                 <div class="matches-tabs">
                                     <a href="index.php?page=matches&view=schedule" 
-                                        class="tab <?= $view === 'schedule' ? 'active' : '' ?>">SCHEDULE</a>
+                                    class="tab <?= $view === 'schedule' ? 'active' : '' ?>">SCHEDULE</a>
                                     <a href="index.php?page=matches&view=results" 
-                                        class="tab <?= $view === 'results' ? 'active' : '' ?>">RESULTS</a>
+                                    class="tab <?= $view === 'results' ? 'active' : '' ?>">RESULTS</a>
                                 </div>
+
+                                <form class="matches-search" id="matchesSearchForm" action="index.php" method="get">
+                                    <input type="hidden" name="page" value="matches">
+                                    <input type="hidden" name="view" value="<?= htmlspecialchars($view) ?>">
+                                    <input type="hidden" name="perPage" value="<?= htmlspecialchars((string)$perPage) ?>">
+                                    <input type="hidden" name="order" value="<?= htmlspecialchars($orderMatches) ?>">
+                                    <input type="text"
+                                        name="search"
+                                        id="searchInput"
+                                        placeholder="Search..."
+                                        class="searchInput"
+                                        value="<?= htmlspecialchars($searchMatches) ?>">
+                                </form>
 
                                 <?php if (!empty($_SESSION['is_admin']) && !empty($_SESSION['edit_mode'])): ?>
                                     <a href="index.php?page=match_create" class="add-match-btn">
@@ -284,7 +336,7 @@
                 <span>Items per page:</span>
                 <select class="filter-select" onchange="location.href='index.php?page=matches&view=<?= htmlspecialchars($view) ?>&p=1&order=<?= htmlspecialchars($orderMatches) ?>&perPage=' + this.value;">
                     <?php foreach ([5,10,20,50] as $opt): ?>
-                        <option value="<?= $opt ?>" <?= $opt === (int)$perPageMatches ? 'selected' : '' ?>>
+                        <option value="<?= $opt ?>" <?= $opt === (int)$perPage ? 'selected' : '' ?>>
                             <?= $opt ?>
                         </option>
                     <?php endforeach; ?>
@@ -292,35 +344,37 @@
             </label>
             <label class="filter-label">
                 <span>Order:</span>
-                <select class="filter-select" onchange="location.href='index.php?page=matches&view=<?= htmlspecialchars($view) ?>&p=1&perPage=<?= htmlspecialchars($perPageMatches) ?>&order=' + this.value;">
+                <select class="filter-select" onchange="location.href='index.php?page=matches&view=<?= htmlspecialchars($view) ?>&p=1&perPage=<?= htmlspecialchars($perPage) ?>&order=' + this.value;">
                     <option value="date_asc" <?= $orderMatches === 'date_asc' ? 'selected' : '' ?>>Date ASC</option>
                     <option value="date_desc" <?= $orderMatches === 'date_desc' ? 'selected' : '' ?>>Date DESC</option>
                 </select>
             </label>
         </div>
 
-        <div class="pagination-numbers">
-            <a href="<?= build_matches_url(1, $perPageMatches, $view, $orderMatches) ?>"
-            class="btn<?= $currentPage === 1 ? ' is-disabled' : '' ?>">« First</a>
+        <?php if ($totalPagesMb > 1 && $searchMatches === ''): ?>
+            <nav class="pager">
+                <a href="<?= build_matches_url(1, $perPage, $view, $orderMatches, $searchMatches) ?>"
+                class="btn<?= $currentPage === 1 ? ' is-disabled' : '' ?>">« First</a>
 
-            <a href="<?= build_matches_url(max(1, $currentPage - 1), $perPageMatches, $view, $orderMatches) ?>"
-            class="btn<?= $currentPage === 1 ? ' is-disabled' : '' ?>">‹ Prev</a>
+                <a href="<?= build_matches_url(max(1, $currentPage - 1), $perPage, $view, $orderMatches, $searchMatches) ?>"
+                class="btn<?= $currentPage === 1 ? ' is-disabled' : '' ?>">‹ Prev</a>
 
-            <?php for ($p = $startPage; $p <= $endPage; $p++): ?>
-                <?php if ($p === $currentPage): ?>
-                    <span class="page current"><?= htmlspecialchars((string)$p) ?></span>
-                <?php else: ?>
-                    <a href="<?= build_matches_url($p, $perPageMatches, $view, $orderMatches) ?>" class="page">
-                        <?= htmlspecialchars((string)$p) ?>
-                    </a>
-                <?php endif; ?>
-            <?php endfor; ?>
+                <?php for ($p = $startPage; $p <= $endPage; $p++): ?>
+                    <?php if ($p === $currentPage): ?>
+                        <span class="page current"><?= htmlspecialchars((string)$p) ?></span>
+                    <?php else: ?>
+                        <a href="<?= build_matches_url($p, $perPage, $view, $orderMatches, $searchMatches) ?>" class="page">
+                            <?= htmlspecialchars((string)$p) ?>
+                        </a>
+                    <?php endif; ?>
+                <?php endfor; ?>
 
-            <a href="<?= build_matches_url(min($totalPagesMb, $currentPage + 1), $perPageMatches, $view, $orderMatches) ?>"
-            class="btn<?= $currentPage === $totalPagesMb ? ' is-disabled' : '' ?>">Next ›</a>
+                <a href="<?= build_matches_url(min($totalPagesMb, $currentPage + 1), $perPage, $view, $orderMatches, $searchMatches) ?>"
+                class="btn<?= $currentPage === $totalPagesMb ? ' is-disabled' : '' ?>">Next ›</a>
 
-            <a href="<?= build_matches_url($totalPagesMb, $perPageMatches, $view, $orderMatches) ?>"
-            class="btn<?= $currentPage === $totalPagesMb ? ' is-disabled' : '' ?>">Last »</a>
-        </div>
+                <a href="<?= build_matches_url($totalPagesMb, $perPage, $view, $orderMatches, $searchMatches) ?>"
+                class="btn<?= $currentPage === $totalPagesMb ? ' is-disabled' : '' ?>">Last »</a>
+            </nav>
+        <?php endif; ?>
     </nav>
 </main>

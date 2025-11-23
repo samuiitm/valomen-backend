@@ -70,4 +70,16 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     });
+
+    const searchInput = document.getElementById('matchesSearchInput');
+    const searchForm = document.getElementById('matchesSearchForm');
+
+    if (searchInput && searchForm) {
+        searchInput.addEventListener('keyup', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                searchForm.submit();
+            }
+        });
+    }
 });

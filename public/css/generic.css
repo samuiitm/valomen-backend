@@ -395,6 +395,53 @@ footer {
   opacity: .4;
 }
 
+.search-bar {
+    width: 260px;
+    position: relative;
+}
+
+.search-bar input[type="text"] {
+    width: 100%;
+    padding: 10px 36px 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #5553;
+    background: #1a1a1c;
+    color: #fff;
+    font-size: 14px;
+    transition: all .2s ease;
+}
+
+.search-bar input[type="text"]::placeholder {
+    color: #aaa;
+}
+
+.search-bar input[type="text"]:focus {
+    outline: none;
+    border-color: #e639ff;
+    box-shadow: 0 0 8px #e639ff55;
+}
+
+.search-bar .icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    color: #aaa;
+    pointer-events: none;
+}
+
+.searchInput{
+    padding: 6px 10px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,.15);
+    background: #111827;
+    color: #020202;
+    text-decoration: none;
+    display: inline-block;
+    font-family: inherit;
+}
+
 /* RESPONSIVE CSS*/
 @media (max-width: 1024px) {
   nav {

@@ -48,6 +48,14 @@ $loginController = new LoginController(new UserDAO($db));
 $page = $_GET['page'] ?? 'home';
 $view = $_GET['view'] ?? 'schedule';
 
+$orderMatches = $_GET['order'] ?? 'date_asc';
+$validOrders = ['date_asc', 'date_desc'];
+if (!in_array($orderMatches, $validOrders, true)) {
+    $orderMatches = 'date_asc';
+}
+
+$searchMatches = trim($_GET['search'] ?? '');
+
 if ($view !== 'results') {
     $view = 'schedule';
 }
@@ -92,72 +100,101 @@ switch ($page) {
 
         $matchDao->updateMatchStatuses();
 
-        $view = $_GET['view'] ?? 'schedule';
-        if ($view !== 'results') {
-            $view = 'schedule';
-        }
-
-        $orderMatches = $_GET['order'] ?? 'date_asc';
-        $validOrder = ['date_asc','date_desc'];
-        if (!in_array($orderMatches, $validOrder, true)) {
-            $orderMatches = 'date_asc';
-        }
-
-        $perPageMatches = filter_input(
+        $perPage = filter_input(
             INPUT_GET,
             'perPage',
             FILTER_VALIDATE_INT,
             ['options' => ['default' => 5, 'min_range' => 1]]
         );
 
+        $orderMatches = $_GET['order'] ?? 'date_asc';
+        $validOrders  = ['date_asc', 'date_desc'];
+        if (!in_array($orderMatches, $validOrders, true)) {
+            $orderMatches = 'date_asc';
+        }
+
+        $searchMatches = trim($_GET['search'] ?? '');
+
         if ($view === 'results') {
-            $total       = $matchDao->countCompletedMatches();
-            $totalPages  = max(1, (int)ceil($total / $perPageMatches));
-            $p           = filter_input(
-                INPUT_GET,
-                'p',
-                FILTER_VALIDATE_INT,
-                ['options' => ['default' => 1, 'min_range' => 1]]
-            );
-            $p           = min($p, $totalPages);
-            $offset      = ($p - 1) * $perPageMatches;
+            if ($searchMatches !== '') {
+                $completedMatches = $matchDao->searchCompletedMatches($searchMatches, $orderMatches);
 
-            $completedMatches = $matchDao->getCompletedMatchesPaginated($perPageMatches, $offset, $orderMatches);
+                $completedByDate = [];
+                foreach ($completedMatches as $m) {
+                    $completedByDate[$m['date']][] = $m;
+                }
 
-            $completedByDate = [];
-            foreach ($completedMatches as $m) {
-                $completedByDate[$m['date']][] = $m;
+                $total        = count($completedMatches);
+                $totalPages   = 1;
+                $currentPage  = 1;
+                $totalPagesMb = 1;
+                $startPage    = 1;
+                $endPage      = 1;
+            } else {
+                $total       = $matchDao->countCompletedMatches();
+                $totalPages  = max(1, (int)ceil($total / $perPage));
+                $p           = filter_input(
+                    INPUT_GET,
+                    'p',
+                    FILTER_VALIDATE_INT,
+                    ['options' => ['default' => 1, 'min_range' => 1]]
+                );
+                $p      = min($p, $totalPages);
+                $p      = max(1, $p);
+                $offset = ($p - 1) * $perPage;
+
+                $completedMatches = $matchDao->getCompletedMatchesPaginated($perPage, $offset, $orderMatches);
+
+                $completedByDate = [];
+                foreach ($completedMatches as $m) {
+                    $completedByDate[$m['date']][] = $m;
+                }
+
+                $startPage    = max(1, $p - 2);
+                $endPage      = min($totalPages, $p + 4);
+                $currentPage  = $p;
+                $totalPagesMb = $totalPages;
             }
-
-            $startPage = max(1, $p - 2);
-            $endPage   = min($totalPages, $p + 4);
-
-            $currentPage  = $p;
-            $totalPagesMb = $totalPages;
         } else {
-            $total       = $matchDao->countUpcomingMatches();
-            $totalPages  = max(1, (int)ceil($total / $perPageMatches));
-            $p           = filter_input(
-                INPUT_GET,
-                'p',
-                FILTER_VALIDATE_INT,
-                ['options' => ['default' => 1, 'min_range' => 1]]
-            );
-            $p           = min($p, $totalPages);
-            $offset      = ($p - 1) * $perPageMatches;
+            if ($searchMatches !== '') {
+                $upcomingMatches = $matchDao->searchUpcomingMatches($searchMatches, $orderMatches);
 
-            $upcomingMatches = $matchDao->getUpcomingMatchesPaginated($perPageMatches, $offset, $orderMatches);
+                $upcomingByDate = [];
+                foreach ($upcomingMatches as $m) {
+                    $upcomingByDate[$m['date']][] = $m;
+                }
 
-            $upcomingByDate = [];
-            foreach ($upcomingMatches as $m) {
-                $upcomingByDate[$m['date']][] = $m;
+                $total        = count($upcomingMatches);
+                $totalPages   = 1;
+                $currentPage  = 1;
+                $totalPagesMb = 1;
+                $startPage    = 1;
+                $endPage      = 1;
+            } else {
+                $total       = $matchDao->countUpcomingMatches();
+                $totalPages  = max(1, (int)ceil($total / $perPage));
+                $p           = filter_input(
+                    INPUT_GET,
+                    'p',
+                    FILTER_VALIDATE_INT,
+                    ['options' => ['default' => 1, 'min_range' => 1]]
+                );
+                $p      = min($p, $totalPages);
+                $p      = max(1, $p);
+                $offset = ($p - 1) * $perPage;
+
+                $upcomingMatches = $matchDao->getUpcomingMatchesPaginated($perPage, $offset, $orderMatches);
+
+                $upcomingByDate = [];
+                foreach ($upcomingMatches as $m) {
+                    $upcomingByDate[$m['date']][] = $m;
+                }
+
+                $startPage    = max(1, $p - 2);
+                $endPage      = min($totalPages, $p + 4);
+                $currentPage  = $p;
+                $totalPagesMb = $totalPages;
             }
-
-            $startPage = max(1, $p - 2);
-            $endPage   = min($totalPages, $p + 4);
-
-            $currentPage  = $p;
-            $totalPagesMb = $totalPages;
         }
 
         $userPredictedMatchIds = [];
@@ -168,14 +205,23 @@ switch ($page) {
             }
         }
 
-        function build_matches_url(int $p, int $perPage, string $view, string $order): string {
+        function build_matches_url(int $p, int $perPage, string $view, string $order, string $search): string {
             $p       = max(1, $p);
             $perPage = max(1, $perPage);
-            $view    = $view === 'results' ? 'results' : 'schedule';
-            return 'index.php?page=matches&view=' . urlencode($view)
-                . '&p=' . $p
-                . '&perPage=' . $perPage
-                . '&order=' . urlencode($order);
+
+            $params = [
+                'page'    => 'matches',
+                'view'    => $view,
+                'p'       => $p,
+                'perPage' => $perPage,
+                'order'   => $order,
+            ];
+
+            if ($search !== '') {
+                $params['search'] = $search;
+            }
+
+            return 'index.php?' . http_build_query($params);
         }
 
         $pageTitle = 'Valomen.gg | Matches';

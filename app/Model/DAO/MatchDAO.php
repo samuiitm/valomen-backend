@@ -225,4 +225,64 @@ class MatchDAO extends BaseDAO
       $stmt = $this->db->prepare($sql);
       return $stmt->execute([':id' => $id]);
   }
+
+  public function searchUpcomingMatches(string $term, string $order): array
+  {
+      $orderBy = ($order === 'date_desc')
+          ? 'm.date DESC, m.hour DESC'
+          : 'm.date ASC, m.hour ASC';
+
+      $like = '%' . $term . '%';
+
+      $sql = "SELECT m.*,
+                    t1.name AS team_1_name, t1.country AS team_1_country,
+                    t2.name AS team_2_name, t2.country AS team_2_country, m.status,
+                    e.name AS event_name, e.logo AS event_logo
+              FROM matches m
+              LEFT JOIN teams t1 ON m.team_1 = t1.id
+              LEFT JOIN teams t2 ON m.team_2 = t2.id
+              JOIN events e ON m.event_id = e.id
+              WHERE (m.status = 'Upcoming' OR m.status = 'Live')
+                AND (
+                      t1.name LIKE :like
+                  OR t2.name LIKE :like
+                  OR e.name LIKE :like
+                  OR m.event_stage LIKE :like
+                )
+              ORDER BY $orderBy";
+
+      $stmt = $this->db->prepare($sql);
+      $stmt->execute([':like' => $like]);
+      return $stmt->fetchAll();
+  }
+
+  public function searchCompletedMatches(string $term, string $order): array
+  {
+      $orderBy = ($order === 'date_desc')
+          ? 'm.date DESC, m.hour DESC'
+          : 'm.date ASC, m.hour ASC';
+
+      $like = '%' . $term . '%';
+
+      $sql = "SELECT m.*,
+                    t1.name AS team_1_name, t1.country AS team_1_country,
+                    t2.name AS team_2_name, t2.country AS team_2_country,
+                    e.name AS event_name, e.logo AS event_logo
+              FROM matches m
+              LEFT JOIN teams t1 ON m.team_1 = t1.id
+              LEFT JOIN teams t2 ON m.team_2 = t2.id
+              JOIN events e ON m.event_id = e.id
+              WHERE m.status = 'Completed'
+                AND (
+                      t1.name LIKE :like
+                  OR t2.name LIKE :like
+                  OR e.name LIKE :like
+                  OR m.event_stage LIKE :like
+                )
+              ORDER BY $orderBy";
+
+      $stmt = $this->db->prepare($sql);
+      $stmt->execute([':like' => $like]);
+      return $stmt->fetchAll();
+  }
 }

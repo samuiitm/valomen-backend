@@ -379,6 +379,8 @@ switch ($page) {
             $section = 'users';
         }
 
+        $searchAdmin = trim($_GET['search'] ?? '');
+
         $perPageAdmin = filter_input(
             INPUT_GET,
             'perPage',
@@ -393,13 +395,13 @@ switch ($page) {
             ['options' => ['default' => 1, 'min_range' => 1]]
         );
 
-        $userDao = new UserDAO($db);
         $teamDao = new TeamDAO($db);
+        $userDao = new UserDAO($db);
 
         if ($section === 'users') {
-            $total = $userDao->countUsers();
+            $total = $userDao->countUsers($searchAdmin);
         } else {
-            $total = $teamDao->countTeams();
+            $total = $teamDao->countTeams($searchAdmin);
         }
 
         $totalPagesAdmin = max(1, (int)ceil($total / $perPageAdmin));
@@ -409,10 +411,10 @@ switch ($page) {
         $offset = ($pAdmin - 1) * $perPageAdmin;
 
         if ($section === 'users') {
-            $users = $userDao->getUsersPaginated($perPageAdmin, $offset);
+            $users = $userDao->getUsersPaginated($perPageAdmin, $offset, $searchAdmin);
             $teams = [];
         } else {
-            $teams = $teamDao->getTeamsPaginated($perPageAdmin, $offset);
+            $teams = $teamDao->getTeamsPaginated($perPageAdmin, $offset, $searchAdmin);
             $users = [];
         }
 
@@ -422,14 +424,15 @@ switch ($page) {
         $currentPageAdmin  = $pAdmin;
         $totalPagesAdminMb = $totalPagesAdmin;
 
-        if (!function_exists('build_admin_url')) {
-            function build_admin_url(string $section, int $p, int $perPage): string {
-                $p       = max(1, $p);
-                $perPage = max(1, $perPage);
-                $section = $section === 'teams' ? 'teams' : 'users';
-                return 'index.php?page=admin&section=' . urlencode($section)
-                    . '&p=' . $p . '&perPage=' . $perPage;
+        function build_admin_url(string $section, int $p, int $perPage, string $search = ''): string {
+            $p       = max(1, $p);
+            $perPage = max(1, $perPage);
+            $section = $section === 'teams' ? 'teams' : 'users';
+            $url = 'index.php?page=admin&section=' . urlencode($section) . '&p=' . $p . '&perPage=' . $perPage;
+            if ($search !== '') {
+                $url .= '&search=' . urlencode($search);
             }
+            return $url;
         }
 
         $pageTitle = 'Valomen.gg | Admin panel';

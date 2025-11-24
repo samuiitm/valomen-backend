@@ -66,22 +66,38 @@ class UserDAO extends BaseDAO
         return $stmt->execute([':id' => $id]);
     }
 
-    public function countUsers(): int
+    public function countUsers(string $search = ''): int
     {
-        $sql = "SELECT COUNT(*) AS total FROM users";
-        $stmt = $this->db->query($sql);
+        if ($search !== '') {
+            $sql = "SELECT COUNT(*) AS total FROM users WHERE username LIKE :search";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([':search' => '%' . $search . '%']);
+        } else {
+            $sql = "SELECT COUNT(*) AS total FROM users";
+            $stmt = $this->db->query($sql);
+        }
         $row = $stmt->fetch();
         return (int)($row['total'] ?? 0);
     }
 
-    public function getUsersPaginated(int $limit, int $offset): array
+    public function getUsersPaginated(int $limit, int $offset, string $search = ''): array
     {
-        $sql = "SELECT id, username, email, points, admin
-                FROM users
-                ORDER BY username ASC
-                LIMIT :limit OFFSET :offset";
+        if ($search !== '') {
+            $sql = "SELECT id, username, email, points, admin
+                    FROM users
+                    WHERE username LIKE :search
+                    ORDER BY username ASC
+                    LIMIT :limit OFFSET :offset";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindValue(':search', '%' . $search . '%', PDO::PARAM_STR);
+        } else {
+            $sql = "SELECT id, username, email, points, admin
+                    FROM users
+                    ORDER BY username ASC
+                    LIMIT :limit OFFSET :offset";
+            $stmt = $this->db->prepare($sql);
+        }
 
-        $stmt = $this->db->prepare($sql);
         $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
         $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
         $stmt->execute();

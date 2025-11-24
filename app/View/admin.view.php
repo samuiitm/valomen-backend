@@ -6,18 +6,19 @@
     </div>
     
     <div class="admin-tabs">
-        <a href="<?= build_admin_url('users', 1, $perPageAdmin) ?>"
+        <a href="<?= build_admin_url('users', 1, $perPageAdmin, $searchAdmin) ?>"
            class="admin-tab <?= $section === 'users' ? 'active' : '' ?>">
             Users
         </a>
-        <a href="<?= build_admin_url('teams', 1, $perPageAdmin) ?>"
+        <a href="<?= build_admin_url('teams', 1, $perPageAdmin, $searchAdmin) ?>"
            class="admin-tab <?= $section === 'teams' ? 'active' : '' ?>">
             Teams
         </a>
     </div>
 
     <?php
-        $basePerPageUrl = 'index.php?page=admin&section=' . urlencode($section) . '&p=1&perPage=';
+        $basePerPageUrl = 'index.php?page=admin&section=' . urlencode($section)
+                        . '&p=1&search=' . urlencode($searchAdmin) . '&perPage=';
     ?>
 
     <div class="admin-filters">
@@ -38,10 +39,23 @@
         <section class="admin-section">
             <div class="admin-section-header">
                 <h2>Teams</h2>
-                <a href="index.php?page=team_create" class="admin-add-btn">
-                    <span class="add-match-plus">+</span>
-                    <span>Add team</span>
-                </a>
+                <div class="admin-container">
+                    <a href="index.php?page=team_create" class="admin-add-btn">
+                        <span class="add-match-plus">+</span>
+                        <span>Add team</span>
+                    </a>
+                    <form class="admin-search" action="index.php" method="get">
+                        <input type="hidden" name="page" value="admin">
+                        <input type="hidden" name="section" value="teams">
+                        <input type="hidden" name="p" value="1">
+                        <input type="hidden" name="perPage" value="<?= htmlspecialchars((string)$perPageAdmin) ?>">
+                        <input type="text"
+                            name="search"
+                            placeholder="Search teams..."
+                            class="searchInput"
+                            value="<?= htmlspecialchars($searchAdmin) ?>">
+                    </form>
+                </div>
             </div>
 
             <?php if (empty($teams)): ?>
@@ -86,6 +100,18 @@
         <section class="admin-section">
             <div class="admin-section-header">
                 <h2>Users</h2>
+
+                <form class="admin-search" action="index.php" method="get">
+                    <input type="hidden" name="page" value="admin">
+                    <input type="hidden" name="section" value="users">
+                    <input type="hidden" name="p" value="1">
+                    <input type="hidden" name="perPage" value="<?= htmlspecialchars((string)$perPageAdmin) ?>">
+                    <input type="text"
+                           name="search"
+                           placeholder="Search users..."
+                           class="searchInput"
+                           value="<?= htmlspecialchars($searchAdmin) ?>">
+                </form>
             </div>
 
             <?php if (empty($users)): ?>
@@ -134,27 +160,27 @@
     <?php endif; ?>
 
     <?php if ($totalPagesAdminMb > 1): ?>
-        <nav class="pager">
-            <a href="<?= build_admin_url($section, 1, $perPageAdmin) ?>"
+        <nav class="pager admin-pager">
+            <a href="<?= build_admin_url($section, 1, $perPageAdmin, $searchAdmin) ?>"
                class="btn<?= $currentPageAdmin === 1 ? ' is-disabled' : '' ?>">« First</a>
 
-            <a href="<?= build_admin_url($section, max(1, $currentPageAdmin - 1), $perPageAdmin) ?>"
+            <a href="<?= build_admin_url($section, max(1, $currentPageAdmin - 1), $perPageAdmin, $searchAdmin) ?>"
                class="btn<?= $currentPageAdmin === 1 ? ' is-disabled' : '' ?>">‹ Prev</a>
 
             <?php for ($p = $startPageAdmin; $p <= $endPageAdmin; $p++): ?>
                 <?php if ($p === $currentPageAdmin): ?>
                     <span class="page current"><?= htmlspecialchars((string)$p) ?></span>
                 <?php else: ?>
-                    <a href="<?= build_admin_url($section, $p, $perPageAdmin) ?>" class="page">
+                    <a href="<?= build_admin_url($section, $p, $perPageAdmin, $searchAdmin) ?>" class="page">
                         <?= htmlspecialchars((string)$p) ?>
                     </a>
                 <?php endif; ?>
             <?php endfor; ?>
 
-            <a href="<?= build_admin_url($section, min($totalPagesAdminMb, $currentPageAdmin + 1), $perPageAdmin) ?>"
+            <a href="<?= build_admin_url($section, min($totalPagesAdminMb, $currentPageAdmin + 1), $perPageAdmin, $searchAdmin) ?>"
                class="btn<?= $currentPageAdmin === $totalPagesAdminMb ? ' is-disabled' : '' ?>">Next ›</a>
 
-            <a href="<?= build_admin_url($section, $totalPagesAdminMb, $perPageAdmin) ?>"
+            <a href="<?= build_admin_url($section, $totalPagesAdminMb, $perPageAdmin, $searchAdmin) ?>"
                class="btn<?= $currentPageAdmin === $totalPagesAdminMb ? ' is-disabled' : '' ?>">Last »</a>
         </nav>
     <?php endif; ?>

@@ -66,22 +66,38 @@ class TeamDAO extends BaseDAO
         return (bool)$stmt->fetchColumn();
     }
 
-    public function countTeams(): int
+    public function countTeams(string $search = ''): int
     {
-        $sql = "SELECT COUNT(*) AS total FROM teams";
-        $stmt = $this->db->query($sql);
+        if ($search !== '') {
+            $sql = "SELECT COUNT(*) AS total FROM teams WHERE name LIKE :search";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([':search' => '%' . $search . '%']);
+        } else {
+            $sql = "SELECT COUNT(*) AS total FROM teams";
+            $stmt = $this->db->query($sql);
+        }
         $row = $stmt->fetch();
         return (int)($row['total'] ?? 0);
     }
 
-    public function getTeamsPaginated(int $limit, int $offset): array
+    public function getTeamsPaginated(int $limit, int $offset, string $search = ''): array
     {
-        $sql = "SELECT id, name, country
-                FROM teams
-                ORDER BY name ASC
-                LIMIT :limit OFFSET :offset";
+        if ($search !== '') {
+            $sql = "SELECT id, name, country
+                    FROM teams
+                    WHERE name LIKE :search
+                    ORDER BY name ASC
+                    LIMIT :limit OFFSET :offset";
+            $stmt = $this->db->prepare($sql);
+            $stmt->bindValue(':search', '%' . $search . '%', PDO::PARAM_STR);
+        } else {
+            $sql = "SELECT id, name, country
+                    FROM teams
+                    ORDER BY name ASC
+                    LIMIT :limit OFFSET :offset";
+            $stmt = $this->db->prepare($sql);
+        }
 
-        $stmt = $this->db->prepare($sql);
         $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
         $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
         $stmt->execute();

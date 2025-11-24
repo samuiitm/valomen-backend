@@ -159,3 +159,12 @@
     padding: 4px 8px;
     color: var(--text);
 }
+
+.admin-pager {
+    margin: 0 auto;
+}
+
+.admin-container {
+    display: flex;
+    gap: 10px;
+}

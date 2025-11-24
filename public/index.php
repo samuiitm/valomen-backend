@@ -492,6 +492,28 @@ switch ($page) {
         require __DIR__ . '/../app/View/team_edit.view.php';
         require __DIR__ . '/../app/View/partials/footer.php';
         break;
+    
+    case 'team_create':
+        require __DIR__ . '/../app/Controller/AdminPanelController.php';
+        $controller = new AdminPanelController($db);
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $data = $controller->createTeamFromPost();
+        } else {
+            $data = $controller->showCreateTeam();
+        }
+
+        $old    = $data['old'];
+        $errors = $data['errors'];
+
+        $pageTitle = 'Create team';
+        $pageCss   = 'admin.css';
+
+        require __DIR__ . '/../app/View/partials/header.php';
+        require __DIR__ . '/../app/View/team_create.view.php';
+        require __DIR__ . '/../app/View/partials/footer.php';
+        break;
+
 
     case 'register':
         require __DIR__ . '/../app/Controller/RegisterController.php';

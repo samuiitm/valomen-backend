@@ -258,4 +258,63 @@ class AdminPanelController
         header('Location: index.php?page=admin&section=teams');
         exit;
     }
+
+    public function showCreateTeam(): array
+    {
+        return [
+            'old'    => [
+                'name'    => '',
+                'country' => '',
+            ],
+            'errors' => [
+                'name'    => '',
+                'country' => '',
+                'global'  => '',
+            ]
+        ];
+    }
+
+    public function createTeamFromPost(): array
+    {
+        $name    = trim($_POST['name'] ?? '');
+        $country = trim($_POST['country'] ?? '');
+
+        $errors = [
+            'name'    => '',
+            'country' => '',
+            'global'  => '',
+        ];
+
+        if ($name === '') {
+            $errors['name'] = 'Name is required.';
+        }
+
+        if ($country === '') {
+            $errors['country'] = 'Country is required.';
+        }
+
+        $hasErrors = false;
+        foreach ($errors as $e) {
+            if ($e !== '') {
+                $hasErrors = true;
+                break;
+            }
+        }
+
+        if ($hasErrors) {
+            return [
+                'old'    => [
+                    'name'    => $name,
+                    'country' => $country,
+                ],
+                'errors' => $errors
+            ];
+        }
+
+        $teamDao = new TeamDAO($this->db);
+        $teamDao->createTeam($name, $country);
+
+        header('Location: index.php?page=admin&section=teams');
+        exit;
+    }
 }

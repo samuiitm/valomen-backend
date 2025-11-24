@@ -4,6 +4,17 @@ require_once __DIR__ . '/BaseDAO.php';
 
 class TeamDAO extends BaseDAO
 {
+    public function createTeam(string $name, string $country): bool
+    {
+        $sql = "INSERT INTO teams (name, country) VALUES (:name, :country)";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':name'    => $name,
+            ':country' => $country,
+        ]);
+    }
+
+
     public function getAllTeams(): array
     {
         $sql = "SELECT id, name, country

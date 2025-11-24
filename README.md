@@ -23,7 +23,7 @@ També:
 - Validació de duplicats (email, username).
 
 ### ✔ Recordar sessió (Remember Me)
-- Implementació amb tokenW.
+- Implementació amb token.
 - Emmagatzemat a BD i cookie amb hash.
 - Requerit per seguretat: no es guarda mai la contrasenya.
 

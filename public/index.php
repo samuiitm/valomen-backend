@@ -70,6 +70,7 @@ if (isset($_SESSION['user_id'])) {
 }
 
 require __DIR__ . '/../config/db-connection.php';
+require __DIR__ . '/../config/recaptcha.php';
 require_once __DIR__ . '/../lib/DateFormat.php';
 require_once __DIR__ . '/../lib/FlagControl.php';
 require_once __DIR__ . '/../lib/CurrencyFormat.php';
@@ -78,6 +79,38 @@ require __DIR__ . '/../app/Model/DAO/UserDAO.php';
 require __DIR__ . '/../app/Model/DAO/TeamDAO.php';
 require __DIR__ . '/../app/Controller/LoginController.php';
 
+function verify_recaptcha(string $token): bool {
+    if ($token === '') {
+        return false;
+    }
+
+    $secret = RECAPTCHA_SECRET_KEY;
+
+    $url = 'https://www.google.com/recaptcha/api/siteverify';
+    $data = [
+        'secret'   => $secret,
+        'response' => $token,
+        'remoteip' => $_SERVER['REMOTE_ADDR'] ?? null,
+    ];
+
+    $options = [
+        'http' => [
+            'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+            'method'  => 'POST',
+            'content' => http_build_query($data),
+            'timeout' => 5,
+        ],
+    ];
+
+    $context  = stream_context_create($options);
+    $result   = file_get_contents($url, false, $context);
+    if ($result === false) {
+        return false;
+    }
+
+    $json = json_decode($result, true);
+    return !empty($json['success']);
+}
 
 $loginController = new LoginController(new UserDAO($db));
 
@@ -594,48 +627,54 @@ switch ($page) {
         $pageTitle = 'Valomen.gg | Login';
         $pageCss   = 'login.css';
 
-        $expired = !empty($_GET['expired']);
-
+        $expired    = !empty($_GET['expired']);
         $loginError = null;
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $username = $_POST['username'] ?? '';
-            $password = $_POST['password'] ?? '';
-            $result   = $loginController->login($username, $password);
+            $captchaToken = $_POST['g-recaptcha-response'] ?? '';
 
-            if ($result['success']) {
-
-                if (!empty($_POST['remember_me'])) {
-                    require __DIR__ . '/../app/Model/DAO/RememberTokenDAO.php';
-                    $tokenDao = new RememberTokenDAO($db);
-
-                    $userId = (int)$_SESSION['user_id'];
-
-                    $tokenDao->deleteByUserId($userId);
-
-                    $selector  = bin2hex(random_bytes(8));
-                    $validator = bin2hex(random_bytes(32));
-                    $hash      = hash('sha256', $validator);
-
-                    $expiresAt = (new DateTime('+30 days'))->format('Y-m-d H:i:s');
-
-                    $tokenDao->createToken($userId, $selector, $hash, $expiresAt);
-
-                    $cookieValue = $selector . ':' . $validator;
-
-                    setcookie('remember_me', $cookieValue, [
-                        'expires'  => time() + 60 * 60 * 24 * 30,
-                        'path'     => '/',
-                        'secure'   => !empty($_SERVER['HTTPS']),
-                        'httponly' => true,
-                        'samesite' => 'Lax',
-                    ]);
-                }
-
-                header('Location: index.php');
-                exit;
+            if (!verify_recaptcha($captchaToken)) {
+                $loginError = 'reCAPTCHA verification failed. Please try again.';
             } else {
-                $loginError = $result['error'];
+                $username = $_POST['username'] ?? '';
+                $password = $_POST['password'] ?? '';
+                $result   = $loginController->login($username, $password);
+
+                if ($result['success']) {
+                    if (!empty($_POST['remember_me'])) {
+                        require __DIR__ . '/../app/Model/DAO/RememberTokenDAO.php';
+                        $tokenDao = new RememberTokenDAO($db);
+
+                        $userId = (int)($_SESSION['user_id'] ?? 0);
+
+                        if ($userId > 0) {
+                            $tokenDao->deleteByUserId($userId);
+
+                            $selector  = bin2hex(random_bytes(8));
+                            $validator = bin2hex(random_bytes(32));
+                            $hash      = hash('sha256', $validator);
+
+                            $expiresAt = (new DateTime('+30 days'))->format('Y-m-d H:i:s');
+
+                            $tokenDao->createToken($userId, $selector, $hash, $expiresAt);
+
+                            $cookieValue = $selector . ':' . $validator;
+
+                            setcookie('remember_me', $cookieValue, [
+                                'expires'  => time() + 60 * 60 * 24 * 30,
+                                'path'     => '/',
+                                'secure'   => !empty($_SERVER['HTTPS']),
+                                'httponly' => true,
+                                'samesite' => 'Lax',
+                            ]);
+                        }
+                    }
+
+                    header('Location: index.php');
+                    exit;
+                } else {
+                    $loginError = $result['error'];
+                }
             }
         }
 
@@ -643,7 +682,6 @@ switch ($page) {
         require __DIR__ . '/../app/View/login.view.php';
         require __DIR__ . '/../app/View/partials/footer.php';
         break;
-
 
     case 'logout':
         if (!empty($_SESSION['user_id'])) {

@@ -35,6 +35,8 @@
                 <a class="forgot-password">Forgot your password?</a>  
             </div>
         </div>
+        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+        <div class="g-recaptcha" data-sitekey="<?= htmlspecialchars(RECAPTCHA_SITE_KEY) ?>"></div>
         <button class="send-button" type="submit">Log in</button>
     </form>
     <a href="index.php?page=register" class="register-link">Don't have an account? Click here</a>

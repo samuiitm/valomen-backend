@@ -2,42 +2,6 @@
 
 session_start();
 
-if (empty($_SESSION['user_id']) && !empty($_COOKIE['remember_me'])) {
-    $cookie = $_COOKIE['remember_me'];
-    $parts  = explode(':', $cookie, 2);
-
-    if (count($parts) === 2) {
-        [$selector, $validator] = $parts;
-
-        require __DIR__ . '/../app/Model/DAO/RememberTokenDAO.php';
-        $tokenDao = new RememberTokenDAO($db);
-        $token    = $tokenDao->findBySelector($selector);
-
-        if ($token && $token['expires_at'] >= date('Y-m-d H:i:s')) {
-            $calcHash = hash('sha256', $validator);
-
-            if (hash_equals($token['hashed_validator'], $calcHash)) {
-                $userDao = new UserDAO($db);
-                $user    = $userDao->getUserById((int)$token['user_id']);
-
-                if ($user) {
-                    $_SESSION['user_id']    = (int)$user['id'];
-                    $_SESSION['username']   = $user['username'];
-                    $_SESSION['is_admin']   = (bool)$user['admin'];
-                    $_SESSION['user_logo']  = $user['logo'] ?? null;
-                    $_SESSION['edit_mode']  = $_SESSION['edit_mode'] ?? false;
-                    $_SESSION['last_activity'] = time();
-                }
-            } else {
-                $tokenDao->deleteBySelector($selector);
-                setcookie('remember_me', '', time() - 3600, '/');
-            }
-        } else {
-            setcookie('remember_me', '', time() - 3600, '/');
-        }
-    }
-}
-
 if (
     isset($_GET['action']) &&
     $_GET['action'] === 'toggle_edit_mode' &&
@@ -78,6 +42,42 @@ require __DIR__ . '/../app/Model/DAO/BaseDAO.php';
 require __DIR__ . '/../app/Model/DAO/UserDAO.php';
 require __DIR__ . '/../app/Model/DAO/TeamDAO.php';
 require __DIR__ . '/../app/Controller/LoginController.php';
+
+if (empty($_SESSION['user_id']) && !empty($_COOKIE['remember_me'])) {
+    $cookie = $_COOKIE['remember_me'];
+    $parts  = explode(':', $cookie, 2);
+
+    if (count($parts) === 2) {
+        [$selector, $validator] = $parts;
+
+        require __DIR__ . '/../app/Model/DAO/RememberTokenDAO.php';
+        $tokenDao = new RememberTokenDAO($db);
+        $token    = $tokenDao->findBySelector($selector);
+
+        if ($token && $token['expires_at'] >= date('Y-m-d H:i:s')) {
+            $calcHash = hash('sha256', $validator);
+
+            if (hash_equals($token['hashed_validator'], $calcHash)) {
+                $userDao = new UserDAO($db);
+                $user    = $userDao->getUserById((int)$token['user_id']);
+
+                if ($user) {
+                    $_SESSION['user_id']    = (int)$user['id'];
+                    $_SESSION['username']   = $user['username'];
+                    $_SESSION['is_admin']   = (bool)$user['admin'];
+                    $_SESSION['user_logo']  = $user['logo'] ?? null;
+                    $_SESSION['edit_mode']  = $_SESSION['edit_mode'] ?? false;
+                    $_SESSION['last_activity'] = time();
+                }
+            } else {
+                $tokenDao->deleteBySelector($selector);
+                setcookie('remember_me', '', time() - 3600, '/');
+            }
+        } else {
+            setcookie('remember_me', '', time() - 3600, '/');
+        }
+    }
+}
 
 function verify_recaptcha(string $token): bool {
     if ($token === '') {
@@ -123,33 +123,33 @@ if ($view !== 'results') {
 
 switch ($page) {
     case 'profile':
-    if (empty($_SESSION['user_id'])) {
-        header('Location: index.php?page=login');
-        exit;
-    }
+        if (empty($_SESSION['user_id'])) {
+            header('Location: index.php?page=login');
+            exit;
+        }
 
-    require __DIR__ . '/../app/Controller/UserProfileController.php';
+        require __DIR__ . '/../app/Controller/UserProfileController.php';
 
-    $controller = new UserProfileController($db);
-    $userId     = (int)$_SESSION['user_id'];
+        $controller = new UserProfileController($db);
+        $userId     = (int)$_SESSION['user_id'];
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $data = $controller->updateProfile($userId);
-    } else {
-        $data = $controller->getProfileData($userId);
-    }
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $data = $controller->updateProfile($userId);
+        } else {
+            $data = $controller->getProfileData($userId);
+        }
 
-    $user    = $data['user'];
-    $errors  = $data['errors'];
-    $success = $data['success'];
+        $user    = $data['user'];
+        $errors  = $data['errors'];
+        $success = $data['success'];
 
-    $pageTitle = 'Valomen.gg | Profile';
-    $pageCss   = 'profile.css';
+        $pageTitle = 'Valomen.gg | Profile';
+        $pageCss   = 'profile.css';
 
-    require __DIR__ . '/../app/View/partials/header.php';
-    require __DIR__ . '/../app/View/user_profile.view.php';
-    require __DIR__ . '/../app/View/partials/footer.php';
-    break;
+        require __DIR__ . '/../app/View/partials/header.php';
+        require __DIR__ . '/../app/View/user_profile.view.php';
+        require __DIR__ . '/../app/View/partials/footer.php';
+        break;
 
 
     case 'matches':

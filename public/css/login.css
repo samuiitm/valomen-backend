@@ -81,11 +81,11 @@ label {
 }
 
 input {
-    background-color: #fff;
+    background-color: var(--container-card);
     border: 1px solid var(--borders);
     border-radius: 30px;
     padding: 20px;
-    color: #0B1020;
+    color: #FFF;
     font-family: inherit;
 }
 

@@ -96,9 +96,22 @@ input {
     padding-right: 20px;
 }
 
+.container-login {
+    display: flex;
+    justify-content: space-between;
+    padding: 0px 20px 0px 20px;
+}
+
 .forgot-password {
     color: #6B7FFF;
-    margin-left: 20px;
+}
+
+.remember-label {
+    display: flex;
+    gap: 3px;
+    align-items: center;
+    margin: 0;
+    font-weight: 400;
 }
 
 .send-button {

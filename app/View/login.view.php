@@ -12,11 +12,11 @@
             <div class="field-container">
                 <div class="block">
                     <label>Username <span class="obligatory">*</span></label>
-                    <input required type="text" name="username" placeholder="Username">
+                    <input type="text" name="username" placeholder="Username">
                 </div>
                 <div class="block">
                     <label>Password <span class="obligatory">*</span></label>
-                    <input required type="password" name="password" placeholder="Password">
+                    <input type="password" name="password" placeholder="Password">
                 </div>
             </div>    
             <?php if (!empty($loginError)): ?>
@@ -24,7 +24,16 @@
                 <?= htmlspecialchars($loginError) ?>
             </p>
             <?php endif; ?>
-            <a class="forgot-password">Forgot your password?</a>  
+            <div class="container-login">
+                <div class="field-block">
+                    <label class="remember-label">
+                        <input type="checkbox" name="remember_me" value="1">
+                        Remember me
+                    </label>
+                    
+                </div>
+                <a class="forgot-password">Forgot your password?</a>  
+            </div>
         </div>
         <button class="send-button" type="submit">Log in</button>
     </form>

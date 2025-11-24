@@ -44,13 +44,4 @@ class LoginController
             session_destroy();
         }
     }
-
-    public static function requireAdmin(): void
-    {
-        if (empty($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
-            http_response_code(403);
-            echo 'Access denied.';
-            exit;
-        }
-    }
 }

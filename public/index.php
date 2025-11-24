@@ -2,6 +2,42 @@
 
 session_start();
 
+if (empty($_SESSION['user_id']) && !empty($_COOKIE['remember_me'])) {
+    $cookie = $_COOKIE['remember_me'];
+    $parts  = explode(':', $cookie, 2);
+
+    if (count($parts) === 2) {
+        [$selector, $validator] = $parts;
+
+        require __DIR__ . '/../app/Model/DAO/RememberTokenDAO.php';
+        $tokenDao = new RememberTokenDAO($db);
+        $token    = $tokenDao->findBySelector($selector);
+
+        if ($token && $token['expires_at'] >= date('Y-m-d H:i:s')) {
+            $calcHash = hash('sha256', $validator);
+
+            if (hash_equals($token['hashed_validator'], $calcHash)) {
+                $userDao = new UserDAO($db);
+                $user    = $userDao->getUserById((int)$token['user_id']);
+
+                if ($user) {
+                    $_SESSION['user_id']    = (int)$user['id'];
+                    $_SESSION['username']   = $user['username'];
+                    $_SESSION['is_admin']   = (bool)$user['admin'];
+                    $_SESSION['user_logo']  = $user['logo'] ?? null;
+                    $_SESSION['edit_mode']  = $_SESSION['edit_mode'] ?? false;
+                    $_SESSION['last_activity'] = time();
+                }
+            } else {
+                $tokenDao->deleteBySelector($selector);
+                setcookie('remember_me', '', time() - 3600, '/');
+            }
+        } else {
+            setcookie('remember_me', '', time() - 3600, '/');
+        }
+    }
+}
+
 if (
     isset($_GET['action']) &&
     $_GET['action'] === 'toggle_edit_mode' &&
@@ -565,15 +601,38 @@ switch ($page) {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $username = $_POST['username'] ?? '';
             $password = $_POST['password'] ?? '';
-            $result = $loginController->login($username, $password);
+            $result   = $loginController->login($username, $password);
 
             if ($result['success']) {
+
+                if (!empty($_POST['remember_me'])) {
+                    require __DIR__ . '/../app/Model/DAO/RememberTokenDAO.php';
+                    $tokenDao = new RememberTokenDAO($db);
+
+                    $userId = (int)$_SESSION['user_id'];
+
+                    $tokenDao->deleteByUserId($userId);
+
+                    $selector  = bin2hex(random_bytes(8));
+                    $validator = bin2hex(random_bytes(32));
+                    $hash      = hash('sha256', $validator);
+
+                    $expiresAt = (new DateTime('+30 days'))->format('Y-m-d H:i:s');
+
+                    $tokenDao->createToken($userId, $selector, $hash, $expiresAt);
+
+                    $cookieValue = $selector . ':' . $validator;
+
+                    setcookie('remember_me', $cookieValue, [
+                        'expires'  => time() + 60 * 60 * 24 * 30,
+                        'path'     => '/',
+                        'secure'   => !empty($_SERVER['HTTPS']),
+                        'httponly' => true,
+                        'samesite' => 'Lax',
+                    ]);
+                }
+
                 header('Location: index.php');
-                $_SESSION['user_id']   = (int)$user['id'];
-                $_SESSION['username']  = $user['username'];
-                $_SESSION['is_admin']  = (int)$user['admin'] === 1;
-                $_SESSION['edit_mode'] = $_SESSION['edit_mode'] ?? false;
-                $_SESSION['user_logo'] = $user['logo'] ?? null;
                 exit;
             } else {
                 $loginError = $result['error'];
@@ -585,9 +644,23 @@ switch ($page) {
         require __DIR__ . '/../app/View/partials/footer.php';
         break;
 
+
     case 'logout':
-        $loginController->logout();
-        header('Location: index.php');
+        if (!empty($_SESSION['user_id'])) {
+            require __DIR__ . '/../app/Model/DAO/RememberTokenDAO.php';
+            $tokenDao = new RememberTokenDAO($db);
+            $tokenDao->deleteByUserId((int)$_SESSION['user_id']);
+        }
+
+        setcookie('remember_me', '', time() - 3600, '/', '', !empty($_SERVER['HTTPS']), true);
+
+        $_SESSION = [];
+        if (ini_get('session.use_cookies')) {
+            $params = session_get_cookie_params();
+            setcookie(session_name(), '', time() - 42000, $params['path'], $params['domain'], $params['secure'], $params['httponly']);
+        }
+        session_destroy();
+        header('Location: index.php?page=login');
         exit;
 
     case 'events':

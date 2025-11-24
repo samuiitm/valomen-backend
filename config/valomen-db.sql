@@ -97,6 +97,15 @@ CREATE TABLE event_teams (
 ) ENGINE=InnoDB
   DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE remember_tokens (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id INT UNSIGNED NOT NULL,
+    selector CHAR(16) NOT NULL UNIQUE,
+    hashed_validator CHAR(64) NOT NULL,
+    expires_at DATETIME NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 INSERT INTO users (username, passwd_hash, email, logo, admin)
 VALUES
 ('admin', '$2y$10$9NormUYn3BVGoyZjm5kUpuRY5eKk14iEGR6hPLB2BXh0FNZWEL2gq', 'samuelcanadas2711@gmail.com', NULL, 1);

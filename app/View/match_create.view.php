@@ -1,38 +1,40 @@
-<main class="main-matches editor-page">
-    <div class="matches-header">
-        <h1>Create match</h1>
-        <p>Select an event and its participants to create a new match.</p>
-    </div>
+<main class="form-page">
+    <section class="form-card">
+        <div class="form-header">
+            <h1>Create match</h1>
+            <p>Select an event and its participants to create a new match.</p>
+        </div>
 
-    <section class="match-create-section">
-
-        <form class="match-event-select" method="GET" action="index.php">
+        <form class="form" method="GET" action="index.php">
             <input type="hidden" name="page" value="match_create">
 
-            <label class="block">
-                <span>Event</span>
-                <select name="event_id" onchange="this.form.submit()">
-                    <option value="">Select event</option>
-                    <?php foreach ($events as $event): ?>
-                        <option value="<?= htmlspecialchars($event['id']) ?>"
-                            <?= ($selectedEventId ?? null) == $event['id'] ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($event['name']) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </label>
-
-            <?php if (!empty($errors['event_id'])): ?>
-                <p class="field-error"><?= htmlspecialchars($errors['event_id']) ?></p>
-            <?php endif; ?>
+            <div class="form-row">
+                <div class="form-field">
+                    <label for="event_id_select">
+                        Event <span class="obligatory">*</span>
+                    </label>
+                    <select id="event_id_select" name="event_id" onchange="this.form.submit()">
+                        <option value="">Select event</option>
+                        <?php foreach ($events as $event): ?>
+                            <option value="<?= htmlspecialchars($event['id']) ?>"
+                                <?= ($selectedEventId ?? null) == $event['id'] ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($event['name']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                    <?php if (!empty($errors['event_id'])): ?>
+                        <p class="field-error"><?= htmlspecialchars($errors['event_id']) ?></p>
+                    <?php endif; ?>
+                </div>
+            </div>
         </form>
 
         <?php if (!empty($selectedEventId)): ?>
-            <form class="match-create-form" method="POST" action="index.php?page=match_create">
+            <form class="form" method="POST" action="index.php?page=match_create">
                 <input type="hidden" name="event_id" value="<?= htmlspecialchars($selectedEventId) ?>">
 
                 <div class="form-row">
-                    <div class="field-block">
+                    <div class="form-field">
                         <label for="team_1">Team 1</label>
                         <select name="team_1" id="team_1">
                             <option value="">TBD</option>
@@ -45,13 +47,12 @@
                                 </option>
                             <?php endforeach; ?>
                         </select>
-
                         <?php if (!empty($errors['team_1'])): ?>
                             <p class="field-error"><?= htmlspecialchars($errors['team_1']) ?></p>
                         <?php endif; ?>
                     </div>
 
-                    <div class="field-block">
+                    <div class="form-field">
                         <label for="team_2">Team 2</label>
                         <select name="team_2" id="team_2">
                             <option value="">TBD</option>
@@ -64,7 +65,6 @@
                                 </option>
                             <?php endforeach; ?>
                         </select>
-
                         <?php if (!empty($errors['team_2'])): ?>
                             <p class="field-error"><?= htmlspecialchars($errors['team_2']) ?></p>
                         <?php endif; ?>
@@ -72,10 +72,11 @@
                 </div>
 
                 <div class="form-row">
-                    <div class="block">
-                        <label>Date</label>
+                    <div class="form-field">
+                        <label for="date">Date <span class="obligatory">*</span></label>
                         <input
                             type="date"
+                            id="date"
                             name="date"
                             value="<?= htmlspecialchars($old['date'] ?? '') ?>"
                             required
@@ -85,10 +86,11 @@
                         <?php endif; ?>
                     </div>
 
-                    <div class="block">
-                        <label>Hour</label>
+                    <div class="form-field">
+                        <label for="hour">Hour <span class="obligatory">*</span></label>
                         <input
                             type="time"
+                            id="hour"
                             name="hour"
                             value="<?= htmlspecialchars($old['hour'] ?? '') ?>"
                             required
@@ -100,10 +102,11 @@
                 </div>
 
                 <div class="form-row">
-                    <div class="block">
-                        <label>Score Team 1</label>
+                    <div class="form-field">
+                        <label for="score_team_1">Score Team 1</label>
                         <input
                             type="number"
+                            id="score_team_1"
                             name="score_team_1"
                             min="0"
                             max="5"
@@ -114,10 +117,11 @@
                         <?php endif; ?>
                     </div>
 
-                    <div class="block">
-                        <label>Score Team 2</label>
+                    <div class="form-field">
+                        <label for="score_team_2">Score Team 2</label>
                         <input
                             type="number"
+                            id="score_team_2"
                             name="score_team_2"
                             min="0"
                             max="5"
@@ -130,10 +134,10 @@
                 </div>
 
                 <div class="form-row">
-                    <div class="block">
-                        <label>Best of</label>
-                        <select name="best_of" required>
-                            <?php $bo = (int)($old['best_of'] ?? 3); ?>
+                    <div class="form-field">
+                        <label for="best_of">Best of <span class="obligatory">*</span></label>
+                        <?php $bo = (int)($old['best_of'] ?? 3); ?>
+                        <select id="best_of" name="best_of" required>
                             <option value="1" <?= $bo === 1 ? 'selected' : '' ?>>BO1</option>
                             <option value="3" <?= $bo === 3 ? 'selected' : '' ?>>BO3</option>
                             <option value="5" <?= $bo === 5 ? 'selected' : '' ?>>BO5</option>
@@ -143,10 +147,11 @@
                         <?php endif; ?>
                     </div>
 
-                    <div class="block">
-                        <label>Stage</label>
+                    <div class="form-field">
+                        <label for="event_stage">Stage <span class="obligatory">*</span></label>
                         <input
                             type="text"
+                            id="event_stage"
                             name="event_stage"
                             placeholder="Upper Round 1, Group A, etc."
                             value="<?= htmlspecialchars($old['event_stage'] ?? '') ?>"
@@ -159,10 +164,13 @@
                 </div>
 
                 <?php if (!empty($errors['global'])): ?>
-                    <p class="field-error"><?= htmlspecialchars($errors['global']) ?></p>
+                    <p class="field-error global-error"><?= htmlspecialchars($errors['global']) ?></p>
                 <?php endif; ?>
 
-                <button class="send-button" type="submit">Create match</button>
+                <div class="form-actions">
+                    <a href="index.php?page=matches" class="btn-secondary">Cancel</a>
+                    <button class="btn-primary" type="submit">Create match</button>
+                </div>
             </form>
         <?php endif; ?>
     </section>

@@ -316,7 +316,7 @@ switch ($page) {
         $controller = new MatchAdminController($db);
 
         $pageTitle = 'Valomen.gg | Create match';
-        $pageCss   = 'match_admin.css';
+        $pageCss   = 'elements_admin.css';
 
         require __DIR__ . '/../app/View/partials/header.php';
 
@@ -345,7 +345,7 @@ switch ($page) {
     $controller = new MatchAdminController($db);
 
     $pageTitle = 'Valomen.gg | Edit match';
-    $pageCss   = 'match_admin.css';
+    $pageCss   = 'elements_admin.css';
 
     require __DIR__ . '/../app/View/partials/header.php';
 
@@ -539,7 +539,7 @@ switch ($page) {
         $data = $controller->showEditUser($id);
 
         $pageTitle = 'Edit user';
-        $pageCss   = 'admin.css';
+        $pageCss   = 'elements_admin.css';
         require __DIR__ . '/../app/View/partials/header.php';
         require __DIR__ . '/../app/View/user_edit.view.php';
         require __DIR__ . '/../app/View/partials/footer.php';
@@ -559,7 +559,7 @@ switch ($page) {
         $data = $controller->showEditTeam($id);
 
         $pageTitle = 'Edit team';
-        $pageCss   = 'admin.css';
+        $pageCss   = 'elements_admin.css';
         require __DIR__ . '/../app/View/partials/header.php';
         require __DIR__ . '/../app/View/team_edit.view.php';
         require __DIR__ . '/../app/View/partials/footer.php';
@@ -579,7 +579,7 @@ switch ($page) {
         $errors = $data['errors'];
 
         $pageTitle = 'Create team';
-        $pageCss   = 'admin.css';
+        $pageCss   = 'elements_admin.css';
 
         require __DIR__ . '/../app/View/partials/header.php';
         require __DIR__ . '/../app/View/team_create.view.php';
@@ -829,7 +829,7 @@ switch ($page) {
         $controller = new EventAdminController($db);
 
         $pageTitle = 'Valomen.gg | Create event';
-        $pageCss   = 'match_admin.css';
+        $pageCss   = 'elements_admin.css';
 
         require __DIR__ . '/../app/View/partials/header.php';
 
@@ -862,7 +862,7 @@ switch ($page) {
         $controller = new EventAdminController($db);
 
         $pageTitle = 'Valomen.gg | Edit event';
-        $pageCss   = 'match_admin.css';
+        $pageCss   = 'elements_admin.css';
 
         require __DIR__ . '/../app/View/partials/header.php';
 

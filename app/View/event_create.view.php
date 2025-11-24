@@ -1,12 +1,13 @@
-<main class="admin-page">
-    <section class="admin-card">
-        <h1>Create event</h1>
-        <p>Create a new Valorant event and assign participating teams.</p>
+<main class="form-page">
+    <section class="form-card">
+        <div class="form-header">
+            <h1>Create event</h1>
+            <p>Create a new Valorant event and assign participating teams.</p>
+        </div>
 
-        <form method="POST" action="index.php?page=event_create" class="admin-form">
-
-            <div class="field-row">
-                <div class="field-block">
+        <form method="POST" action="index.php?page=event_create" class="form">
+            <div class="form-row">
+                <div class="form-field">
                     <label for="name">Name <span class="obligatory">*</span></label>
                     <input
                         type="text"
@@ -21,8 +22,8 @@
                 </div>
             </div>
 
-            <div class="field-row">
-                <div class="field-block">
+            <div class="form-row">
+                <div class="form-field">
                     <label for="start_date">Start date <span class="obligatory">*</span></label>
                     <input
                         type="date"
@@ -36,7 +37,7 @@
                     <?php endif; ?>
                 </div>
 
-                <div class="field-block">
+                <div class="form-field">
                     <label for="end_date">End date</label>
                     <input
                         type="date"
@@ -50,8 +51,8 @@
                 </div>
             </div>
 
-            <div class="field-row">
-                <div class="field-block">
+            <div class="form-row">
+                <div class="form-field">
                     <label for="prize">Prize pool (USD)</label>
                     <input
                         type="number"
@@ -65,7 +66,7 @@
                     <?php endif; ?>
                 </div>
 
-                <div class="field-block">
+                <div class="form-field">
                     <label for="region">Region <span class="obligatory">*</span></label>
                     <input
                         type="text"
@@ -81,8 +82,8 @@
                 </div>
             </div>
 
-            <div class="field-row">
-                <div class="field-block">
+            <div class="form-row">
+                <div class="form-field">
                     <label for="logo">Logo filename <span class="obligatory">*</span></label>
                     <input
                         type="text"
@@ -98,8 +99,8 @@
                 </div>
             </div>
 
-            <div class="field-row">
-                <div class="field-block full-width">
+            <div class="form-row">
+                <div class="form-field full-width">
                     <label for="teams">Participating teams</label>
                     <select id="teams" name="teams[]" multiple size="8">
                         <?php
@@ -121,7 +122,7 @@
                     <?php if (!empty($errors['teams'])): ?>
                         <p class="field-error"><?= htmlspecialchars($errors['teams']) ?></p>
                     <?php endif; ?>
-                    <p class="field-help">Hold Ctrl (Cmd en Mac) para seleccionar varios equipos.</p>
+                    <p class="field-help">Hold Ctrl (Cmd on Mac) to select multiple teams.</p>
                 </div>
             </div>
 
@@ -129,7 +130,10 @@
                 <p class="field-error global-error"><?= htmlspecialchars($errors['global']) ?></p>
             <?php endif; ?>
 
-            <button type="submit" class="send-button">Create event</button>
+            <div class="form-actions">
+                <a href="index.php?page=events" class="btn-secondary">Cancel</a>
+                <button type="submit" class="btn-primary">Create event</button>
+            </div>
         </form>
     </section>
 </main>

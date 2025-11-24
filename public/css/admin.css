@@ -105,23 +105,6 @@
     transform: translateY(-1px);
 }
 
-.admin-add-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 10px;
-    border-radius: 999px;
-    border: 1px solid var(--borders);
-    background-color: var(--active);
-    font-size: 13px;
-    text-decoration: none;
-    color: var(--text);
-}
-
-.admin-add-btn:hover {
-    background-color: var(--card-hover);
-}
-
 .admin-tabs {
     display: inline-flex;
     gap: 6px;
@@ -167,4 +150,36 @@
 .admin-container {
     display: flex;
     gap: 10px;
+}
+
+.add-team-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(79, 114, 230, 0.6);
+    background: rgba(79, 114, 230, 0.12);
+    color: var(--text);
+    font-size: 12px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.12s ease, box-shadow 0.15s ease;
+}
+
+.add-team-plus {
+    font-size: 14px;
+    line-height: 1;
+}
+
+.add-team-btn:hover {
+    background-color: rgba(79, 114, 230, 0.22);
+    border-color: rgba(79, 114, 230, 0.9);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.45);
+}
+
+.add-team-btn:active {
+    transform: translateY(0);
+    box-shadow: none;
 }

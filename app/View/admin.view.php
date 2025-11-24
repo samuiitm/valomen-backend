@@ -40,8 +40,8 @@
             <div class="admin-section-header">
                 <h2>Teams</h2>
                 <div class="admin-container">
-                    <a href="index.php?page=team_create" class="admin-add-btn">
-                        <span class="add-match-plus">+</span>
+                    <a href="index.php?page=team_create" class="add-team-btn">
+                        <span class="add-team-plus">+</span>
                         <span>Add team</span>
                     </a>
                     <form class="admin-search" action="index.php" method="get">

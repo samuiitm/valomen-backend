@@ -48,14 +48,6 @@ $loginController = new LoginController(new UserDAO($db));
 $page = $_GET['page'] ?? 'home';
 $view = $_GET['view'] ?? 'schedule';
 
-$orderMatches = $_GET['order'] ?? 'date_asc';
-$validOrders = ['date_asc', 'date_desc'];
-if (!in_array($orderMatches, $validOrders, true)) {
-    $orderMatches = 'date_asc';
-}
-
-$searchMatches = trim($_GET['search'] ?? '');
-
 if ($view !== 'results') {
     $view = 'schedule';
 }
@@ -94,6 +86,14 @@ switch ($page) {
     case 'matches':
         require __DIR__ . '/../app/Model/DAO/MatchDAO.php';
         require __DIR__ . '/../app/Model/DAO/PredictionDAO.php';
+
+        $orderMatches = $_GET['order'] ?? 'date_asc';
+        $validOrders = ['date_asc', 'date_desc'];
+        if (!in_array($orderMatches, $validOrders, true)) {
+            $orderMatches = 'date_asc';
+        }
+
+        $searchMatches = trim($_GET['search'] ?? '');
 
         $matchDao      = new MatchDAO($db);
         $predictionDao = new PredictionDAO($db);

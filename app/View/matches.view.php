@@ -134,9 +134,9 @@
                                         Prediction closed
                                     </a>
                                 <?php elseif ($userPredictedMatchIds[(int)$match['id']] ?? null): ?>
-                                    <a
-                                    class="predict-button closed">
-                                        Already predicted
+                                    <a href="index.php?page=predict&match_id=<?= (int)$match['id'] ?>"
+                                    class="predict-button">
+                                        Edit prediction
                                     </a>
                                 <?php elseif (empty($_SESSION['user_id'])): ?>
                                     <a href="index.php?page=login"

@@ -45,7 +45,7 @@
     font-size: 13px;
     color: var(--text2);
     background-color: rgba(255, 255, 255, 0.02);
-    border-radius: 10px;
+    border-radius: 0.5rem;
     border: 1px solid var(--borders);
     padding: 8px 10px;
 }
@@ -54,6 +54,20 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
+}
+
+.prediction-form input {
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.prediction-form input::placeholder {
+    color: #6b7280;
+}
+
+.prediction-form input:focus {
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.5);
+    background: #020617;
 }
 
 .teams-scores {
@@ -76,18 +90,45 @@
 }
 
 .team-score-block input {
-    background-color: #fff;
-    border: 1px solid var(--borders);
+    background-color: var(--card-hover);
+    border: 1px solid rgba(148, 163, 184, 0.4);
     border-radius: 12px;
     padding: 10px;
-    color: #0B1020;
+    color: #FFF;
     font-family: inherit;
-    width: 100%;
 }
 
 .team-score-block input:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+}
+
+.send-button {
+    display: inline-flex;
+    align-items: center;
+    font-family: inherit;;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(79, 114, 230, 0.6);
+    background: rgba(79, 114, 230, 0.12);
+    color: var(--text);
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.12s ease, box-shadow 0.15s ease;
+    width: fit-content;
+}
+
+.send-button:hover {
+    background-color: rgba(79, 114, 230, 0.22);
+    border-color: rgba(79, 114, 230, 0.9);
+    transform: translateY(-1px);
+    cursor: pointer;
+}
+
+.send-button:active {
+    transform: translateY(0);
+    box-shadow: none;
 }
 
 .prediction-form .send-button[disabled] {

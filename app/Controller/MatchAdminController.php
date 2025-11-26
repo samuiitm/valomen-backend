@@ -6,12 +6,14 @@ require_once __DIR__ . '/../Model/DAO/TeamDAO.php';
 
 class MatchAdminController
 {
+    private PDO $db;
     private MatchDAO $matchDao;
     private EventDAO $eventDao;
     private TeamDAO $teamDao;
 
     public function __construct(PDO $db)
     {
+        $this->db       = $db;
         $this->matchDao = new MatchDAO($db);
         $this->eventDao = new EventDAO($db);
         $this->teamDao  = new TeamDAO($db);
@@ -281,6 +283,8 @@ class MatchAdminController
 
     public function updateFromPost(int $matchId): void
     {
+        require_once __DIR__ . '/PredictionController.php';
+
         $match = $this->matchDao->getMatchById($matchId);
         if (!$match) {
             header('Location: index.php?page=matches');
@@ -458,6 +462,14 @@ class MatchAdminController
             $eventStage,
             $eventId
         );
+
+        if ($status === 'Completed') {
+            $updatedMatch = $this->matchDao->getMatchById($matchId);
+            if ($updatedMatch) {
+                $predictionController = new PredictionController($this->db);
+                $predictionController->processMatchResult($updatedMatch);
+            }
+        }
 
         header('Location: index.php?page=matches');
         exit;

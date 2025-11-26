@@ -82,4 +82,16 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
+
+    document.querySelectorAll('.js-delete-prediction').forEach(btn => {
+        btn.addEventListener('click', function (e) {
+            e.preventDefault();
+
+            const ok = confirm('Are you sure you want to delete this prediction?');
+
+            if (ok) {
+                window.location.href = this.href;
+            }
+        });
+    });
 });

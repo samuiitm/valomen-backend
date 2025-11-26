@@ -167,4 +167,17 @@ class UserDAO extends BaseDAO
             ':id'       => $id,
         ]);
     }
+
+    public function addPoints(int $userId, int $points): bool
+    {
+        $sql = "UPDATE users
+                SET points = points + :points
+                WHERE id = :id";
+
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':points' => $points,
+            ':id' => $userId
+        ]);
+    }
 }

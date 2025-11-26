@@ -103,7 +103,8 @@ nav {
 
 /* USER MENU */
 .user-menu {
-    position: relative;
+  display: flex;
+  position: relative;
 }
 
 .user-avatar-btn {

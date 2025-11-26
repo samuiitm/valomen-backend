@@ -35,6 +35,32 @@ class PredictionDAO extends BaseDAO
         return $prediction ?: null;
     }
 
+    public function getPredictionsByMatch(int $matchId): array
+    {
+        $sql = "SELECT *
+                FROM predictions
+                WHERE match_id = :match_id";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':match_id' => $matchId]);
+        return $stmt->fetchAll();
+    }
+
+    public function updatePredictionPoints(int $userId, int $matchId, int $points): bool
+    {
+        $sql = "UPDATE predictions
+                SET points_awarded = :points
+                WHERE user_id = :user_id AND match_id = :match_id";
+
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':points' => $points,
+            ':user_id' => $userId,
+            ':match_id' => $matchId,
+        ]);
+    }
+
+
     public function getPredictionsByUser(int $userId): array
     {
         $sql = "SELECT 
@@ -89,7 +115,7 @@ class PredictionDAO extends BaseDAO
         ]);
     }
 
-    public function deletePrediction(int $userId, int $matchId): bool
+    public function deletePrediction(int $matchId, int $userId): bool
     {
         $sql = "DELETE FROM predictions
                 WHERE user_id = :user_id AND match_id = :match_id";

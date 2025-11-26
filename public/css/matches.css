@@ -181,28 +181,37 @@
   background-color: rgba(79, 114, 230, 0.08);
   color: var(--text);
   text-decoration: none;
-  opacity: 0.6;
-  transition: opacity 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+  transition: transform 0.15s ease, opacity 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
 }
 
 .predict-button:hover {
-  opacity: 1 !important;
+  transform: translateY(-1px);
   background-color: hsla(226, 75%, 61%, 0.081);
   border-color: var(--section-title);
 }
 
+.predict-button:active {
+  transform: translateY(0);
+}
+
 .predict-button.closed {
-    background-color: hsla(355, 69%, 59%, 0.199);
-    border-color: var(--ongoing);
-    opacity: 0.5;         
+    background-color: hsla(355, 69%, 59%, 0.199);   
+    border-color: hsla(355, 69%, 59%, 0.199);
     cursor: not-allowed;
+}
+
+.predict-button.closed:hover {
+    border-color: var(--ongoing);        
 }
 
 .predict-button.pending {
     background-color: hsla(63, 64%, 62%, 0.100);
-    border-color: var(--pending);
-    opacity: 0.5;         
     cursor: not-allowed;
+    border-color: hsla(63, 64%, 62%, 0.199)
+}
+
+.predict-button.pending:hover {
+    border-color: var(--pending);        
 }
 
 .match-info {

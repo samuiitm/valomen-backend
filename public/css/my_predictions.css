@@ -108,13 +108,18 @@
     min-width: 70px;
 }
 
+.matches {
+    display: flex;
+    flex: 1;
+    gap: 0.5rem
+}
+
 .my-predictions-page .teams {
     display: flex;
     align-items: center;
     gap: 6px;
     font-weight: 600;
     color: var(--text);
-    flex: 1;
 }
 
 .my-predictions-page .teams .team {
@@ -126,6 +131,29 @@
 .my-predictions-page .teams .vs {
     font-weight: 400;
     color: var(--text2);
+}
+
+.my-predictions-page .container-status {
+    min-width: 26px;
+    text-align: center;
+    border-radius: 8px;
+    padding: 4px 6px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.container-status.upcoming {
+    background-color: rgba(92, 163, 108, 0.12);
+    border: 1px solid   rgba(92, 163, 108, 0.9);
+    color: rgba(92, 163, 108, 0.9);
+    font-size: 13px;
+}
+
+.live, .completed {
+    background-color: rgba(242, 89, 89, 0.12);
+    border: 1px solid rgba(242, 89, 89, 0.9);
+    color: rgba(242, 89, 89, 0.9);
+    font-size: 13px;
 }
 
 .my-predictions-page .scoreboard {
@@ -179,6 +207,80 @@
     font-weight: 600;
 }
 
+.my-predictions-page .manage-prediction-btn {
+    width: 25px;
+    height: 25px;
+    border-radius: 999px;
+    border: 1px solid var(--borders);
+    background-color: rgba(15, 23, 42, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    text-decoration: none;
+    color: var(--text2);
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.12s ease;
+}
+
+.my-predictions-page .manage-prediction:hover {
+    transform: translateY(-1px);
+}
+
+.my-predictions-page .manage-prediction:hover {
+    border-color: var(--section-title);
+    color: var(--section-title);
+}
+
+.my-predictions-page .event-admin-btn.delete:hover {
+    border-color: var(--ongoing);
+    color: var(--ongoing);
+}
+
+.my-predictions-page .edit-mode .event-block:hover {
+    box-shadow: 0 0 0 1px rgba(79, 114, 230, 0.7);
+}
+
+.my-predictions-page .prediction-manage-actions {
+    display: flex;
+    margin-top: 4px;
+    flex-direction: column;
+    gap: 4px;
+    transform: translateY(-2px);
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    justify-content: space-between;
+}
+
+.my-predictions-page .prediction-manage-btn {
+    width: 25px;
+    height: 25px;
+    border-radius: 999px;
+    border: 1px solid var(--borders);
+    background-color: rgba(15, 23, 42, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    text-decoration: none;
+    color: var(--text2);
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.12s ease;
+}
+
+.my-predictions-page .prediction-manage-btn:hover {
+    transform: translateY(-1px);
+}
+
+.my-predictions-page .prediction-manage-btn.edit:hover {
+    border-color: var(--section-title);
+    color: var(--section-title);
+}
+
+.my-predictions-page .prediction-manage-btn.delete:hover {
+    border-color: var(--ongoing);
+    color: var(--ongoing);
+}
+
 .my-predictions-page .badge-points {
     display: flex;
     width: 50%;
@@ -191,4 +293,14 @@
     justify-content: center;
     align-items: center;
     font-size: 13px;
+}
+
+.prediction-manage-btn.locked {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.prediction-manage-btn.locked:hover {
+    background-color: #111827 !important;
+    color: var(--text2);
 }

@@ -393,17 +393,23 @@ switch ($page) {
             exit;
         }
 
-        $matchId = (int) $_GET['match_id'];
+        $matchId = (int)$_GET['match_id'];
+        $userId  = (int)$_SESSION['user_id'];
 
-        require __DIR__ . '/../app/Model/DAO/MatchDAO.php';
+        require __DIR__ . '/../app/Controller/PredictionController.php';
 
-        $matchDao = new MatchDAO($db);
-        $match    = $matchDao->getMatchById($matchId);
+        $controller = new PredictionController($db);
 
-        if (!$match) {
-            header('Location: index.php?page=matches');
-            exit;
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $data = $controller->savePrediction($matchId, $userId);
+        } else {
+            $data = $controller->showForm($matchId, $userId);
         }
+
+        $match              = $data['match'];
+        $existingPrediction = $data['existingPrediction'];
+        $errors             = $data['errors'];
+        $success            = $data['success'];
 
         $pageTitle = 'Valomen.gg | Make prediction';
         $pageCss   = 'prediction_form.css';
@@ -436,6 +442,31 @@ switch ($page) {
         require __DIR__ . '/../app/View/my_predictions.view.php';
         require __DIR__ . '/../app/View/partials/footer.php';
         break;
+
+    case 'prediction_delete':
+        if (empty($_SESSION['user_id'])) {
+            header('Location: index.php?page=login');
+            exit;
+        }
+
+        $matchId = filter_input(
+            INPUT_GET,
+            'match_id',
+            FILTER_VALIDATE_INT,
+            ['options' => ['default' => 0, 'min_range' => 1]]
+        );
+
+        if ($matchId === 0) {
+            header('Location: index.php?page=my_predictions');
+            exit;
+        }
+
+        require __DIR__ . '/../app/Controller/PredictionController.php';
+        $controller = new PredictionController($db);
+        $controller->deletePrediction($matchId, (int)$_SESSION['user_id']);
+
+        header('Location: index.php?page=my_predictions');
+        exit;
 
     case 'admin':
         if (empty($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
@@ -585,7 +616,6 @@ switch ($page) {
         require __DIR__ . '/../app/View/team_create.view.php';
         require __DIR__ . '/../app/View/partials/footer.php';
         break;
-
 
     case 'register':
         require __DIR__ . '/../app/Controller/RegisterController.php';
@@ -895,7 +925,6 @@ switch ($page) {
         $controller = new EventAdminController($db);
         $controller->deleteEvent($id);
         break;
-
 
     default:
         $pageTitle = 'Valomen.gg | Home';

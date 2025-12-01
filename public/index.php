@@ -33,6 +33,11 @@ if (isset($_SESSION['user_id'])) {
     }
 }
 
+// Comptador intents del login
+if (!isset($_SESSION['login_attempts'])) {
+    $_SESSION['login_attempts'] = 0;
+}
+
 require __DIR__ . '/../config/db-connection.php';
 require __DIR__ . '/../config/recaptcha.php';
 require_once __DIR__ . '/../lib/DateFormat.php';
@@ -657,20 +662,29 @@ switch ($page) {
         $pageTitle = 'Valomen.gg | Login';
         $pageCss   = 'login.css';
 
-        $expired    = !empty($_GET['expired']);
-        $loginError = null;
+        $expired      = !empty($_GET['expired']);
+        $loginError   = null;
+        $username     = $_POST['username'] ?? '';
+        $rememberMe   = !empty($_POST['remember_me']);
+        $attempts     = $_SESSION['login_attempts'] ?? 0;
+        $showRecaptcha = $attempts >= 3;
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $captchaToken = $_POST['g-recaptcha-response'] ?? '';
+            if ($attempts >= 3) {
+                $captchaToken = $_POST['g-recaptcha-response'] ?? '';
 
-            if (!verify_recaptcha($captchaToken)) {
-                $loginError = 'reCAPTCHA verification failed. Please try again.';
-            } else {
-                $username = $_POST['username'] ?? '';
+                if (empty($captchaToken) || !verify_recaptcha($captchaToken)) {
+                    $loginError = 'Debes completar correctamente el reCAPTCHA.';
+                }
+            }
+
+            if ($loginError === null) {
                 $password = $_POST['password'] ?? '';
                 $result   = $loginController->login($username, $password);
 
                 if ($result['success']) {
+                    $_SESSION['login_attempts'] = 0;
+
                     if (!empty($_POST['remember_me'])) {
                         require __DIR__ . '/../app/Model/DAO/RememberTokenDAO.php';
                         $tokenDao = new RememberTokenDAO($db);
@@ -703,6 +717,10 @@ switch ($page) {
                     header('Location: index.php');
                     exit;
                 } else {
+                    $_SESSION['login_attempts'] = $attempts + 1;
+                    $attempts     = $_SESSION['login_attempts'];
+                    $showRecaptcha = $attempts >= 3;
+
                     $loginError = $result['error'];
                 }
             }

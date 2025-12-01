@@ -11,6 +11,9 @@ Contrasenya: **admin**<br>
 Usuari: **s.canadas**<br>
 Contrasenya: **s.canadas**
 
+## Inicialització de la base de dades
+El fitxer .sql es troba a la carpeta config
+
 ## 1. Descripció general del projecte
 
 Aquest projecte simula el backend d’un portal relacionat amb eSports, on es poden veure partits, esdeveniments, equips, i on els usuaris poden registrar-se, iniciar sessió i participar en prediccions. El sistema incorpora rols (usuari i administrador), gestió de perfils, panell d’administració, ordenació, paginació, cerca i opcions de seguretat.

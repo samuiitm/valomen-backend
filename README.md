@@ -2,6 +2,15 @@
 
 Gestor de contingut, esdeveniments, equips, partits, prediccions i administració amb PHP, sessions, cookies, seguretat i tractament d’imatges.
 
+## Credencials Usuaris
+### Administrador
+Usuari: **admin**<br>
+Contrasenya: **admin**<br>
+
+### Usuari Normal
+Usuari: **s.canadas**<br>
+Contrasenya: **s.canadas**
+
 ## 1. Descripció general del projecte
 
 Aquest projecte simula el backend d’un portal relacionat amb eSports, on es poden veure partits, esdeveniments, equips, i on els usuaris poden registrar-se, iniciar sessió i participar en prediccions. El sistema incorpora rols (usuari i administrador), gestió de perfils, panell d’administració, ordenació, paginació, cerca i opcions de seguretat.

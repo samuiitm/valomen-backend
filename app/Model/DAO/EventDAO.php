@@ -4,9 +4,9 @@ require_once __DIR__ . '/BaseDAO.php';
 
 class EventDAO extends BaseDAO
 {
-
     public function getAllEventsForSelect(): array
     {
+        // agafo tots els events només amb id i nom per omplir selects
         $sql = "SELECT id, name
                 FROM events
                 ORDER BY start_date DESC, name ASC";
@@ -17,6 +17,7 @@ class EventDAO extends BaseDAO
 
     public function getEventById(int $id): ?array
     {
+        // busco un event concret per id
         $sql = "SELECT *
                 FROM events
                 WHERE id = :id";
@@ -25,6 +26,7 @@ class EventDAO extends BaseDAO
         $stmt->execute([':id' => $id]);
         $row = $stmt->fetch();
 
+        // si no trobo res, retorno null
         return $row ?: null;
     }
 
@@ -38,6 +40,7 @@ class EventDAO extends BaseDAO
         string $logo,
         ?int $postAuthor
     ): int {
+        // inserto un event nou a la taula events
         $sql = "INSERT INTO events (
                     name,
                     start_date,
@@ -70,6 +73,7 @@ class EventDAO extends BaseDAO
             ':post_author' => $postAuthor,
         ]);
 
+        // retorno l'últim id inserit
         return (int)$this->db->lastInsertId();
     }
 
@@ -83,6 +87,7 @@ class EventDAO extends BaseDAO
         string $region,
         string $logo
     ): bool {
+        // faig un update de totes les dades de l'event
         $sql = "UPDATE events
                 SET name       = :name,
                     start_date = :start_date,
@@ -108,6 +113,7 @@ class EventDAO extends BaseDAO
 
     public function deleteEventById(int $id): bool
     {
+        // elimino un event per id
         $sql = "DELETE FROM events WHERE id = :id";
         $stmt = $this->db->prepare($sql);
 
@@ -116,6 +122,7 @@ class EventDAO extends BaseDAO
 
     public function getTeamIdsForEvent(int $eventId): array
     {
+        // agafo tots els team_id que estan associats a l'event
         $sql = "SELECT team_id
                 FROM event_teams
                 WHERE event_id = :event_id";
@@ -124,17 +131,21 @@ class EventDAO extends BaseDAO
         $stmt->execute([':event_id' => $eventId]);
         $rows = $stmt->fetchAll();
 
+        // retorno només els ids en un array d'enters
         return array_map(fn($row) => (int)$row['team_id'], $rows);
     }
 
     public function setEventTeams(int $eventId, array $teamIds): void
     {
+        // faig la operació en una transacció per si falla alguna cosa
         $this->db->beginTransaction();
 
+        // primer esborro tots els equips d'aquest event
         $sqlDelete = "DELETE FROM event_teams WHERE event_id = :event_id";
         $stmtDel   = $this->db->prepare($sqlDelete);
         $stmtDel->execute([':event_id' => $eventId]);
 
+        // i després torno a inserir els que m'han passat
         if (!empty($teamIds)) {
             $sqlIns = "INSERT INTO event_teams (event_id, team_id)
                        VALUES (:event_id, :team_id)";
@@ -153,6 +164,7 @@ class EventDAO extends BaseDAO
 
     public function getOngoingEvents(): array
     {
+        // tots els events que estan en estat Ongoing
         $sql = "SELECT 
                     e.id,
                     e.name,
@@ -172,6 +184,7 @@ class EventDAO extends BaseDAO
 
     public function getUpcomingEvents(): array
     {
+        // tots els events en estat Upcoming
         $sql = "SELECT 
                     e.id,
                     e.name,
@@ -191,6 +204,7 @@ class EventDAO extends BaseDAO
 
     public function getCompletedEvents(): array
     {
+        // tots els events ja completats
         $sql = "SELECT 
                     e.id,
                     e.name,
@@ -210,6 +224,7 @@ class EventDAO extends BaseDAO
 
     public function countCurrentEvents(?string $search = null): int
     {
+        // compte d'events (Upcoming + Ongoing), amb o sense cerca
         if ($search !== null && $search !== '') {
             $sql = "SELECT COUNT(*) AS total
                     FROM events
@@ -237,6 +252,7 @@ class EventDAO extends BaseDAO
         string $order,
         ?string $search = null
     ): array {
+        // ordre per data, però posant els Ongoing primer
         if ($order === 'date_desc') {
             $orderBy = "CASE WHEN LOWER(e.status) = 'ongoing' THEN 1 ELSE 2 END,
                         e.start_date DESC,
@@ -253,6 +269,7 @@ class EventDAO extends BaseDAO
 
         $params = [];
 
+        // si hi ha cerca, afegeixo el LIKE
         if ($search !== null && $search !== '') {
             $sql .= " AND e.name LIKE :search";
             $params[':search'] = '%' . $search . '%';
@@ -274,9 +291,9 @@ class EventDAO extends BaseDAO
         return $stmt->fetchAll();
     }
 
-
     public function countCompletedEvents(?string $search = null): int
     {
+        // compta events completats, amb filtre de cerca opcional
         if ($search !== null && $search !== '') {
             $sql = "SELECT COUNT(*) AS total
                     FROM events
@@ -298,13 +315,13 @@ class EventDAO extends BaseDAO
         return (int)($row['total'] ?? 0);
     }
 
-
     public function getCompletedEventsPaginated(
         int $limit,
         int $offset,
         string $order,
         ?string $search = null
     ): array {
+        // ordre per data pels completats
         if ($order === 'date_desc') {
             $orderBy = 'e.start_date DESC, e.id DESC';
         } else {
@@ -338,10 +355,9 @@ class EventDAO extends BaseDAO
         return $stmt->fetchAll();
     }
 
-
-
     public function searchCurrentEvents(string $term): array
     {
+        // cerca d'events actuals (Upcoming/Ongoing) pel nom
         $like = '%' . $term . '%';
 
         $sql = "SELECT 
@@ -370,6 +386,7 @@ class EventDAO extends BaseDAO
 
     public function searchCompletedEvents(string $term): array
     {
+        // cerca d'events completats pel nom
         $like = '%' . $term . '%';
 
         $sql = "SELECT 

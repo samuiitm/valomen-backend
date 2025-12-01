@@ -6,6 +6,7 @@ class TeamDAO extends BaseDAO
 {
     public function createTeam(string $name, string $country): bool
     {
+        // creo un nou equip amb nom i país
         $sql = "INSERT INTO teams (name, country) VALUES (:name, :country)";
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([
@@ -14,9 +15,9 @@ class TeamDAO extends BaseDAO
         ]);
     }
 
-
     public function getAllTeams(): array
     {
+        // tots els equips ordenats alfabèticament
         $sql = "SELECT id, name, country
                 FROM teams
                 ORDER BY name ASC";
@@ -27,18 +28,21 @@ class TeamDAO extends BaseDAO
 
     public function deleteTeamById(int $id): bool
     {
+        // intento eliminar un equip per id
         $sql = "DELETE FROM teams WHERE id = :id";
         $stmt = $this->db->prepare($sql);
 
         try {
             return $stmt->execute([':id' => $id]);
         } catch (PDOException $e) {
+            // si hi ha FK o alguna història, retorno false
             return false;
         }
     }
 
     public function getTeamsByEvent(int $eventId): array
     {
+        // equips que estan associats a un event concret
         $sql = "SELECT t.*
                 FROM teams t
                 JOIN event_teams et ON t.id = et.team_id
@@ -52,6 +56,7 @@ class TeamDAO extends BaseDAO
 
     public function teamBelongsToEvent(int $teamId, int $eventId): bool
     {
+        // comprovo si un equip forma part d’un event
         $sql = "SELECT 1
                 FROM event_teams
                 WHERE event_id = :event_id
@@ -68,6 +73,7 @@ class TeamDAO extends BaseDAO
 
     public function countTeams(string $search = ''): int
     {
+        // compto equips, amb filtre pel nom si hi ha cerca
         if ($search !== '') {
             $sql = "SELECT COUNT(*) AS total FROM teams WHERE name LIKE :search";
             $stmt = $this->db->prepare($sql);
@@ -82,6 +88,7 @@ class TeamDAO extends BaseDAO
 
     public function getTeamsPaginated(int $limit, int $offset, string $search = ''): array
     {
+        // obtinc equips amb paginació i opcionalment cerca pel nom
         if ($search !== '') {
             $sql = "SELECT id, name, country
                     FROM teams
@@ -107,6 +114,7 @@ class TeamDAO extends BaseDAO
 
     public function getTeamById(int $id): ?array
     {
+        // un equip concret per id
         $sql = "SELECT id, name, country
                 FROM teams
                 WHERE id = :id";
@@ -120,6 +128,7 @@ class TeamDAO extends BaseDAO
 
     public function updateTeam(int $id, string $name, string $country): bool
     {
+        // faig update del nom i país d’un equip
         $sql = "UPDATE teams
                 SET name    = :name,
                     country = :country

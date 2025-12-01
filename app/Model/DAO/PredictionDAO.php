@@ -6,6 +6,7 @@ class PredictionDAO extends BaseDAO
 {
     public function createPrediction(int $userId, int $matchId, int $score1, int $score2): bool
     {
+        // inserto una predicció nova per un usuari i un partit
         $sql = "INSERT INTO predictions
                     (user_id, match_id, score_team_1_pred, score_team_2_pred)
                 VALUES (:user_id, :match_id, :score1, :score2)";
@@ -22,6 +23,7 @@ class PredictionDAO extends BaseDAO
 
     public function getPredictionForUserAndMatch(int $userId, int $matchId): ?array
     {
+        // agafo una predicció concreta d'un usuari per un partit
         $sql = "SELECT * FROM predictions
                 WHERE user_id = :user_id AND match_id = :match_id";
 
@@ -37,6 +39,7 @@ class PredictionDAO extends BaseDAO
 
     public function getPredictionsByMatch(int $matchId): array
     {
+        // totes les prediccions d'un partit
         $sql = "SELECT *
                 FROM predictions
                 WHERE match_id = :match_id";
@@ -48,6 +51,7 @@ class PredictionDAO extends BaseDAO
 
     public function updatePredictionPoints(int $userId, int $matchId, int $points): bool
     {
+        // guardo els punts que s'han donat a una predicció
         $sql = "UPDATE predictions
                 SET points_awarded = :points
                 WHERE user_id = :user_id AND match_id = :match_id";
@@ -60,9 +64,9 @@ class PredictionDAO extends BaseDAO
         ]);
     }
 
-
     public function getPredictionsByUser(int $userId): array
     {
+        // totes les prediccions d'un usuari amb info del partit i equips
         $sql = "SELECT 
                     p.*,
                     m.date,
@@ -86,6 +90,7 @@ class PredictionDAO extends BaseDAO
 
     public function userHasPrediction(int $userId, int $matchId): bool
     {
+        // miro si aquest usuari ja té una predicció per aquest partit
         $sql = "SELECT 1 FROM predictions
                 WHERE user_id = :user_id AND match_id = :match_id
                 LIMIT 1";
@@ -101,6 +106,7 @@ class PredictionDAO extends BaseDAO
 
     public function updatePrediction(int $userId, int $matchId, int $score1, int $score2): bool
     {
+        // update del marcador predit
         $sql = "UPDATE predictions
                 SET score_team_1_pred = :score1,
                     score_team_2_pred = :score2
@@ -117,6 +123,7 @@ class PredictionDAO extends BaseDAO
 
     public function deletePrediction(int $matchId, int $userId): bool
     {
+        // elimino una predicció concreta
         $sql = "DELETE FROM predictions
                 WHERE user_id = :user_id AND match_id = :match_id";
 

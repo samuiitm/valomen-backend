@@ -371,4 +371,98 @@ class AdminPanelController
         header('Location: index.php?page=admin&section=teams');
         exit;
     }
+
+    public function deleteUserAction(): void
+    {
+        $id = (int)($_GET['id'] ?? 0);
+        $this->deleteUser($id);
+    }
+
+    public function deleteTeamAction(): void
+    {
+        $id = (int)($_GET['id'] ?? 0);
+        $this->deleteTeam($id);
+    }
+
+    public function editUserFormAction(): void
+    {
+        $id = (int)($_GET['id'] ?? 0);
+
+        $data = $this->showEditUser($id);
+
+        $pageTitle = 'Edit user';
+        $pageCss   = 'elements_admin.css';
+
+        $old    = $data['old'];
+        $errors = $data['errors'];
+        $user   = $data['user'];
+
+        require __DIR__ . '/../View/partials/header.php';
+        require __DIR__ . '/../View/user_edit.view.php';
+        require __DIR__ . '/../View/partials/footer.php';
+    }
+
+    public function editUserPostAction(): void
+    {
+        $id = (int)($_GET['id'] ?? 0);
+        $this->updateUser($id);
+    }
+
+    public function editTeamFormAction(): void
+    {
+        $id = (int)($_GET['id'] ?? 0);
+
+        $data = $this->showEditTeam($id);
+
+        $pageTitle = 'Edit team';
+        $pageCss   = 'elements_admin.css';
+
+        $old    = $data['old'];
+        $errors = $data['errors'];
+        $team   = $data['team'];
+
+        require __DIR__ . '/../View/partials/header.php';
+        require __DIR__ . '/../View/team_edit.view.php';
+        require __DIR__ . '/../View/partials/footer.php';
+    }
+
+    public function editTeamPostAction(): void
+    {
+        $id = (int)($_GET['id'] ?? 0);
+        $this->updateTeam($id);
+    }
+
+    public function createTeamFormAction(): void
+    {
+        $data = $this->showCreateTeam();
+
+        $old    = $data['old'];
+        $errors = $data['errors'];
+
+        $pageTitle = 'Create team';
+        $pageCss   = 'elements_admin.css';
+
+        require __DIR__ . '/../View/partials/header.php';
+        require __DIR__ . '/../View/team_create.view.php';
+        require __DIR__ . '/../View/partials/footer.php';
+    }
+
+    public function createTeamPostAction(): void
+    {
+        $data = $this->createTeamFromPost();
+        // si hi ha errors, createTeamFromPost retorna dades, així que les tornem a pintar
+        if (is_array($data)) {
+            $old    = $data['old'];
+            $errors = $data['errors'];
+
+            $pageTitle = 'Create team';
+            $pageCss   = 'elements_admin.css';
+
+            require __DIR__ . '/../View/partials/header.php';
+            require __DIR__ . '/../View/team_create.view.php';
+            require __DIR__ . '/../View/partials/footer.php';
+        }
+        // si no hi ha errors, ja fa header() i exit dins del mètode
+    }
+
 }

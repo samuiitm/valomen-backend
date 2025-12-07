@@ -380,4 +380,103 @@ class EventAdminController
             echo "Cannot delete event. It may have matches associated.";
         }
     }
+
+    public function createFormAction(): void
+    {
+        if (
+            empty($_SESSION['user_id']) ||
+            empty($_SESSION['is_admin']) ||
+            empty($_SESSION['edit_mode'])
+        ) {
+            header('Location: index.php?page=events');
+            exit;
+        }
+
+        $pageTitle = 'Valomen.gg | Create event';
+        $pageCss   = 'elements_admin.css';
+
+        require __DIR__ . '/../View/partials/header.php';
+        $this->showCreateForm();
+        require __DIR__ . '/../View/partials/footer.php';
+    }
+
+    public function createPostAction(): void
+    {
+        if (
+            empty($_SESSION['user_id']) ||
+            empty($_SESSION['is_admin']) ||
+            empty($_SESSION['edit_mode'])
+        ) {
+            header('Location: index.php?page=events');
+            exit;
+        }
+
+        $this->createFromPost();
+    }
+
+    public function editFormAction(): void
+    {
+        if (
+            empty($_SESSION['user_id']) ||
+            empty($_SESSION['is_admin']) ||
+            empty($_SESSION['edit_mode'])
+        ) {
+            header('Location: index.php?page=events');
+            exit;
+        }
+
+        $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+        if ($id <= 0) {
+            header('Location: index.php?page=events');
+            exit;
+        }
+
+        $pageTitle = 'Valomen.gg | Edit event';
+        $pageCss   = 'elements_admin.css';
+
+        require __DIR__ . '/../View/partials/header.php';
+        $this->showEditForm($id);
+        require __DIR__ . '/../View/partials/footer.php';
+    }
+
+    public function editPostAction(): void
+    {
+        if (
+            empty($_SESSION['user_id']) ||
+            empty($_SESSION['is_admin']) ||
+            empty($_SESSION['edit_mode'])
+        ) {
+            header('Location: index.php?page=events');
+            exit;
+        }
+
+        $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+        if ($id <= 0) {
+            header('Location: index.php?page=events');
+            exit;
+        }
+
+        $this->updateFromPost($id);
+    }
+
+    public function deleteAction(): void
+    {
+        if (
+            empty($_SESSION['user_id']) ||
+            empty($_SESSION['is_admin']) ||
+            empty($_SESSION['edit_mode'])
+        ) {
+            header('Location: index.php?page=events');
+            exit;
+        }
+
+        $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+        if ($id <= 0) {
+            header('Location: index.php?page=events');
+            exit;
+        }
+
+        $this->deleteEvent($id);
+    }
+
 }

@@ -246,4 +246,48 @@ class UserProfileController
         // retorno només el nom del fitxer (això és el que es guarda a la bd)
         return $safeName;
     }
+
+    public function showProfile(): void
+    {
+        if (empty($_SESSION['user_id'])) {
+            header('Location: index.php?page=login');
+            exit;
+        }
+
+        $userId = (int)$_SESSION['user_id'];
+        $data   = $this->getProfileData($userId);
+
+        $user    = $data['user'];
+        $errors  = $data['errors'];
+        $success = $data['success'];
+
+        $pageTitle = 'Valomen.gg | Profile';
+        $pageCss   = 'profile.css';
+
+        require __DIR__ . '/../View/partials/header.php';
+        require __DIR__ . '/../View/user_profile.view.php';
+        require __DIR__ . '/../View/partials/footer.php';
+    }
+
+    public function updateProfileAction(): void
+    {
+        if (empty($_SESSION['user_id'])) {
+            header('Location: index.php?page=login');
+            exit;
+        }
+
+        $userId = (int)$_SESSION['user_id'];
+        $data   = $this->updateProfile($userId);
+
+        $user    = $data['user'];
+        $errors  = $data['errors'];
+        $success = $data['success'];
+
+        $pageTitle = 'Valomen.gg | Profile';
+        $pageCss   = 'profile.css';
+
+        require __DIR__ . '/../View/partials/header.php';
+        require __DIR__ . '/../View/user_profile.view.php';
+        require __DIR__ . '/../View/partials/footer.php';
+    }
 }

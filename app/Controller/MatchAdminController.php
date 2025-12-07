@@ -561,4 +561,103 @@ class MatchAdminController
         header('Location: index.php?page=matches&view=' . $view);
         exit;
     }
+
+    public function createFormAction(): void
+    {
+        if (
+            empty($_SESSION['user_id']) ||
+            empty($_SESSION['is_admin']) ||
+            empty($_SESSION['edit_mode'])
+        ) {
+            header('Location: index.php?page=matches');
+            exit;
+        }
+
+        $pageTitle = 'Valomen.gg | Create match';
+        $pageCss   = 'elements_admin.css';
+
+        require __DIR__ . '/../View/partials/header.php';
+
+        $eventId = isset($_GET['event_id']) ? (int) $_GET['event_id'] : null;
+        $this->showCreateForm($eventId);
+
+        require __DIR__ . '/../View/partials/footer.php';
+    }
+
+    public function createPostAction(): void
+    {
+        if (
+            empty($_SESSION['user_id']) ||
+            empty($_SESSION['is_admin']) ||
+            empty($_SESSION['edit_mode'])
+        ) {
+            header('Location: index.php?page=matches');
+            exit;
+        }
+
+        $this->createFromPost();
+    }
+
+    public function editFormAction(): void
+    {
+        if (
+            empty($_SESSION['user_id']) ||
+            empty($_SESSION['is_admin']) ||
+            empty($_SESSION['edit_mode'])
+        ) {
+            header('Location: index.php?page=matches');
+            exit;
+        }
+
+        $matchId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+
+        $pageTitle = 'Valomen.gg | Edit match';
+        $pageCss   = 'elements_admin.css';
+
+        require __DIR__ . '/../View/partials/header.php';
+
+        if ($matchId <= 0) {
+            echo '<p>Invalid match.</p>';
+        } else {
+            $this->showEditForm($matchId);
+        }
+
+        require __DIR__ . '/../View/partials/footer.php';
+    }
+
+    public function editPostAction(): void
+    {
+        if (
+            empty($_SESSION['user_id']) ||
+            empty($_SESSION['is_admin']) ||
+            empty($_SESSION['edit_mode'])
+        ) {
+            header('Location: index.php?page=matches');
+            exit;
+        }
+
+        $matchId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+        if ($matchId <= 0) {
+            header('Location: index.php?page=matches');
+            exit;
+        }
+
+        $this->updateFromPost($matchId);
+    }
+
+    public function deleteAction(): void
+    {
+        if (
+            empty($_SESSION['user_id']) ||
+            empty($_SESSION['is_admin']) ||
+            empty($_SESSION['edit_mode'])
+        ) {
+            header('Location: index.php?page=matches&view=schedule');
+            exit;
+        }
+
+        $matchId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+        $this->deleteMatch($matchId);
+    }
+
 }

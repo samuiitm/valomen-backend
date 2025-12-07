@@ -208,4 +208,112 @@ class PredictionController
         }
     }
 
+    public function showPredictFormAction(): void
+    {
+        if (empty($_SESSION['user_id'])) {
+            header('Location: index.php?page=login');
+            exit;
+        }
+
+        if (empty($_GET['match_id']) || !ctype_digit($_GET['match_id'])) {
+            header('Location: index.php?page=matches');
+            exit;
+        }
+
+        $matchId = (int)$_GET['match_id'];
+        $userId  = (int)$_SESSION['user_id'];
+
+        $data = $this->showForm($matchId, $userId);
+
+        $match              = $data['match'];
+        $existingPrediction = $data['existingPrediction'];
+        $errors             = $data['errors'];
+        $success            = $data['success'];
+
+        $pageTitle = 'Valomen.gg | Make prediction';
+        $pageCss   = 'prediction_form.css';
+
+        require __DIR__ . '/../View/partials/header.php';
+        require __DIR__ . '/../View/prediction_form.view.php';
+        require __DIR__ . '/../View/partials/footer.php';
+    }
+
+    public function savePredictAction(): void
+    {
+        if (empty($_SESSION['user_id'])) {
+            header('Location: index.php?page=login');
+            exit;
+        }
+
+        if (empty($_GET['match_id']) || !ctype_digit($_GET['match_id'])) {
+            header('Location: index.php?page=matches');
+            exit;
+        }
+
+        $matchId = (int)$_GET['match_id'];
+        $userId  = (int)$_SESSION['user_id'];
+
+        $data = $this->savePrediction($matchId, $userId);
+
+        $match              = $data['match'];
+        $existingPrediction = $data['existingPrediction'];
+        $errors             = $data['errors'];
+        $success            = $data['success'];
+
+        $pageTitle = 'Valomen.gg | Make prediction';
+        $pageCss   = 'prediction_form.css';
+
+        require __DIR__ . '/../View/partials/header.php';
+        require __DIR__ . '/../View/prediction_form.view.php';
+        require __DIR__ . '/../View/partials/footer.php';
+    }
+
+    public function myPredictionsAction(): void
+    {
+        if (empty($_SESSION['user_id'])) {
+            header('Location: index.php?page=login');
+            exit;
+        }
+
+        $predictionDao    = new PredictionDAO($this->db);
+        $userPredictions  = $predictionDao->getPredictionsByUser((int)$_SESSION['user_id']);
+
+        $predictionsByDate = [];
+        foreach ($userPredictions as $prediction) {
+            $predictionsByDate[$prediction['date']][] = $prediction;
+        }
+
+        $pageTitle = 'Valomen.gg | My Predictions';
+        $pageCss   = 'my_predictions.css';
+
+        require __DIR__ . '/../View/partials/header.php';
+        require __DIR__ . '/../View/my_predictions.view.php';
+        require __DIR__ . '/../View/partials/footer.php';
+    }
+
+    public function deletePredictionAction(): void
+    {
+        if (empty($_SESSION['user_id'])) {
+            header('Location: index.php?page=login');
+            exit;
+        }
+
+        $matchId = filter_input(
+            INPUT_GET,
+            'match_id',
+            FILTER_VALIDATE_INT,
+            ['options' => ['default' => 0, 'min_range' => 1]]
+        );
+
+        if ($matchId === 0) {
+            header('Location: index.php?page=my_predictions');
+            exit;
+        }
+
+        $this->deletePrediction($matchId, (int)$_SESSION['user_id']);
+
+        header('Location: index.php?page=my_predictions');
+        exit;
+    }
+
 }

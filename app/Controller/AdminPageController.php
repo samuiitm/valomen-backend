@@ -16,7 +16,7 @@ class AdminPageController
     public function index(): void
     {
         if (empty($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
-            header('Location: index.php?page=home');
+            header('Location: ../');
             exit;
         }
 
@@ -68,15 +68,24 @@ class AdminPageController
         $totalPagesAdminMb = $totalPagesAdmin;
 
         if (!function_exists('build_admin_url')) {
-            function build_admin_url(string $section, int $p, int $perPage, string $search = ''): string {
-                $p       = max(1, $p);
-                $perPage = max(1, $perPage);
-                $section = $section === 'teams' ? 'teams' : 'users';
-                $url = 'index.php?page=admin&section=' . urlencode($section) . '&p=' . $p . '&perPage=' . $perPage;
-                if ($search !== '') {
-                    $url .= '&search=' . urlencode($search);
+            if (!function_exists('build_admin_url')) {
+                function build_admin_url(string $section, int $p, int $perPage, string $search = ''): string {
+                    $p       = max(1, $p);
+                    $perPage = max(1, $perPage);
+                    $section = $section === 'teams' ? 'teams' : 'users';
+
+                    $params = [
+                        'section' => $section,
+                        'p'       => $p,
+                        'perPage' => $perPage,
+                    ];
+
+                    if ($search !== '') {
+                        $params['search'] = $search;
+                    }
+
+                    return 'admin?' . http_build_query($params);
                 }
-                return $url;
             }
         }
 

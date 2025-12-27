@@ -7,7 +7,7 @@ class EventsController
 
     public function __construct(PDO $db)
     {
-        $this->db      = $db;
+        $this->db       = $db;
         $this->eventDao = new EventDAO($db);
     }
 
@@ -109,8 +109,8 @@ class EventsController
                     $order = 'date_asc';
                 }
 
-                return 'index.php?page=events'
-                    . '&p=' . $p
+                return '/events'
+                    . '?p=' . $p
                     . '&perPage=' . $perPage
                     . '&order=' . urlencode($order);
             }

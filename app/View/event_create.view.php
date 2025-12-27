@@ -5,7 +5,7 @@
             <p>Create a new Valorant event and assign participating teams.</p>
         </div>
 
-        <form method="POST" action="index.php?page=event_create" class="form">
+        <form method="POST" action="event_create" class="form">
             <div class="form-row">
                 <div class="form-field">
                     <label for="name">Name <span class="obligatory">*</span></label>
@@ -131,7 +131,7 @@
             <?php endif; ?>
 
             <div class="form-actions">
-                <a href="index.php?page=events" class="btn-secondary">Cancel</a>
+                <a href="events" class="btn-secondary">Cancel</a>
                 <button type="submit" class="btn-primary">Create event</button>
             </div>
         </form>

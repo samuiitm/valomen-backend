@@ -20,15 +20,20 @@ class AdminPanelController
 
     public function deleteUser(int $id): void
     {
+        if (empty($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
+            header('Location: ../');
+            exit;
+        }
+
         // si l'id no és vàlid, torno a la pàgina d'usuaris
         if ($id <= 0) {
-            header('Location: index.php?page=admin&section=users');
+            header('Location: ../admin?section=users');
             exit;
         }
 
         // no deixo que un usuari es borri ell mateix
         if (!empty($_SESSION['user_id']) && (int)$_SESSION['user_id'] === $id) {
-            header('Location: index.php?page=admin&section=users');
+            header('Location: ../admin?section=users');
             exit;
         }
 
@@ -36,15 +41,20 @@ class AdminPanelController
         $this->userDao->deleteUserById($id);
 
         // un cop eliminat, torno al llistat d'usuaris
-        header('Location: index.php?page=admin&section=users');
+        header('Location: ../admin?section=users');
         exit;
     }
 
     public function deleteTeam(int $id): void
     {
+        if (empty($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
+            header('Location: ../');
+            exit;
+        }
+
         // comprovo que l'id d'equip sigui correcte
         if ($id <= 0) {
-            header('Location: index.php?page=admin&section=teams');
+            header('Location: ../admin?section=teams');
             exit;
         }
 
@@ -52,17 +62,22 @@ class AdminPanelController
         $this->teamDao->deleteTeamById($id);
 
         // torno al llistat d'equips
-        header('Location: index.php?page=admin&section=teams');
+        header('Location: ../admin?section=teams');
         exit;
     }
 
     public function showEditUser(int $id): array
     {
+        if (empty($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
+            header('Location: ../');
+            exit;
+        }
+        
         // busco l'usuari a la bd
         $user = $this->userDao->getUserById($id);
         if (!$user) {
             // si no existeix, el envio a la llista d'usuaris
-            header('Location: index.php?page=admin&section=users');
+            header('Location: ../admin?section=users');
             exit;
         }
 
@@ -93,10 +108,15 @@ class AdminPanelController
 
     public function updateUser(int $id): void
     {
+        if (empty($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
+            header('Location: ../');
+            exit;
+        }
+
         // comprovo que l'usuari existeix abans d'editar
         $user = $this->userDao->getUserById($id);
         if (!$user) {
-            header('Location: index.php?page=admin&section=users');
+            header('Location: ../admin?section=users');
             exit;
         }
 
@@ -192,17 +212,22 @@ class AdminPanelController
         );
 
         // després de guardar, torno al llistat d'usuaris
-        header('Location: index.php?page=admin&section=users');
+        header('Location: ../admin?section=users');
         exit;
     }
 
     public function showEditTeam(int $id): array
     {
+        if (empty($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
+            header('Location: ../');
+            exit;
+        }
+    
         // busco l'equip per id
         $team = $this->teamDao->getTeamById($id);
         if (!$team) {
             // si no existeix, torno a la secció d'equips
-            header('Location: index.php?page=admin&section=teams');
+            header('Location: ../admin?section=teams');
             exit;
         }
 
@@ -229,10 +254,15 @@ class AdminPanelController
 
     public function updateTeam(int $id): void
     {
+        if (empty($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
+            header('Location: ../');
+            exit;
+        }
+
         // comprovo que l'equip existeix
         $team = $this->teamDao->getTeamById($id);
         if (!$team) {
-            header('Location: index.php?page=admin&section=teams');
+            header('Location: ../admin?section=teams');
             exit;
         }
 
@@ -300,12 +330,17 @@ class AdminPanelController
         );
 
         // redirecció al llistat d'equips
-        header('Location: index.php?page=admin&section=teams');
+        header('Location: ../admin?section=teams');
         exit;
     }
 
     public function showCreateTeam(): array
     {
+        if (empty($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
+            header('Location: ../');
+            exit;
+        }
+
         // valors buits per quan creem un equip nou
         return [
             'old'    => [
@@ -322,6 +357,11 @@ class AdminPanelController
 
     public function createTeamFromPost(): array
     {
+        if (empty($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
+            header('Location: ../');
+            exit;
+        }
+
         // agafo els valors del formulari de creació
         $name    = trim($_POST['name'] ?? '');
         $country = trim($_POST['country'] ?? '');
@@ -368,24 +408,39 @@ class AdminPanelController
         $teamDao->createTeam($name, $country);
 
         // i redirigeixo a la secció d'equips
-        header('Location: index.php?page=admin&section=teams');
+        header('Location: ../admin?section=teams');
         exit;
     }
 
     public function deleteUserAction(): void
     {
+        if (empty($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
+            header('Location: ../');
+            exit;
+        }
+
         $id = (int)($_GET['id'] ?? 0);
         $this->deleteUser($id);
     }
 
     public function deleteTeamAction(): void
     {
+        if (empty($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
+            header('Location: ../');
+            exit;
+        }
+
         $id = (int)($_GET['id'] ?? 0);
         $this->deleteTeam($id);
     }
 
     public function editUserFormAction(): void
     {
+        if (empty($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
+            header('Location: ../');
+            exit;
+        }
+
         $id = (int)($_GET['id'] ?? 0);
 
         $data = $this->showEditUser($id);
@@ -404,12 +459,22 @@ class AdminPanelController
 
     public function editUserPostAction(): void
     {
+        if (empty($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
+            header('Location: ../');
+            exit;
+        }
+
         $id = (int)($_GET['id'] ?? 0);
         $this->updateUser($id);
     }
 
     public function editTeamFormAction(): void
     {
+        if (empty($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
+            header('Location: ../');
+            exit;
+        }
+
         $id = (int)($_GET['id'] ?? 0);
 
         $data = $this->showEditTeam($id);
@@ -428,12 +493,22 @@ class AdminPanelController
 
     public function editTeamPostAction(): void
     {
+        if (empty($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
+            header('Location: ../');
+            exit;
+        }
+
         $id = (int)($_GET['id'] ?? 0);
         $this->updateTeam($id);
     }
 
     public function createTeamFormAction(): void
     {
+        if (empty($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
+            header('Location: ../');
+            exit;
+        }
+
         $data = $this->showCreateTeam();
 
         $old    = $data['old'];
@@ -449,6 +524,11 @@ class AdminPanelController
 
     public function createTeamPostAction(): void
     {
+        if (empty($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
+            header('Location: ../');
+            exit;
+        }
+
         $data = $this->createTeamFromPost();
         // si hi ha errors, createTeamFromPost retorna dades, així que les tornem a pintar
         if (is_array($data)) {

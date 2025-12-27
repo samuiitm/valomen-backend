@@ -92,12 +92,12 @@
                                             🗑
                                         </a>
                                     <?php else: ?>
-                                        <a href="index.php?page=predict&match_id=<?= (int)$prediction['match_id'] ?>"
+                                        <a href="predict?match_id=<?= (int)$prediction['match_id'] ?>"
                                         class="prediction-manage-btn edit"
                                         title="Edit prediction">
                                             ✎
                                         </a>
-                                        <a href="index.php?page=prediction_delete&match_id=<?= (int)$prediction['match_id'] ?>"
+                                        <a href="prediction_delete?match_id=<?= (int)$prediction['match_id'] ?>"
                                         class="prediction-manage-btn delete js-delete-prediction"
                                         title="Delete prediction">
                                             🗑

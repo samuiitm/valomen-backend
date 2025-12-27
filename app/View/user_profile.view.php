@@ -5,15 +5,17 @@ if (!empty($avatarFilename)) {
 } else {
     $avatarSrc = 'assets/img/default-avatar.png';
 }
+
+$successMessage = !empty($success) ? $success : '';
 ?>
 
 <main class="profile-page">
     <section class="profile-card">
         <h1>Your profile</h1>
 
-        <?php if (!empty($success)): ?>
+        <?php if (!empty($successMessage)): ?>
             <div class="profile-success">
-                Profile updated successfully.
+                <?= htmlspecialchars($successMessage) ?>
             </div>
         <?php endif; ?>
 
@@ -23,7 +25,7 @@ if (!empty($avatarFilename)) {
             </div>
         <?php endif; ?>
 
-        <form action="index.php?page=profile" method="post" enctype="multipart/form-data" class="profile-form">
+        <form action="profile/avatar" method="post" enctype="multipart/form-data" class="profile-form">
             <div class="profile-avatar-block">
                 <div class="avatar-preview">
                     <img src="<?= $avatarSrc ?>" alt="User avatar">
@@ -39,38 +41,35 @@ if (!empty($avatarFilename)) {
                 </div>
             </div>
 
-            <div class="profile-fields">
-                <div class="field-block">
-                    <label for="username">Username</label>
-                    <input
-                        type="text"
-                        name="username"
-                        id="username"
-                        maxlength="50"
-                        value="<?= htmlspecialchars($user['username'] ?? '') ?>"
-                        required
-                    >
-                    <?php if (!empty($errors['username'])): ?>
-                        <p class="field-error"><?= htmlspecialchars($errors['username']) ?></p>
-                    <?php endif; ?>
-                </div>
-
-                <div class="field-block">
-                    <label for="email">Email</label>
-                    <input
-                        type="email"
-                        id="email"
-                        value="<?= htmlspecialchars($user['email'] ?? '') ?>"
-                        readonly
-                        disabled
-                    >
-                    <p class="field-hint">Email change will be available in the future.</p>
-                </div>
-            </div>
-
-            <div class="profile-actions">
-                <button type="submit" class="btn-primary">Save changes</button>
+            <div class="avatar-actions">
+                <button type="submit" class="btn-primary">Upload new picture</button>
             </div>
         </form>
+
+        <div class="profile-fields">
+            <a href="profile/username" class="field-block">
+                <div class="info-block">
+                    <span class="profile-label">Username</span>
+                    <span class="label-value"><?= htmlspecialchars($user['username'] ?? '') ?></span>
+                </div>
+                <span class="arrow"></span>
+            </a>
+
+            <a href="profile/email" class="field-block">
+                <div class="info-block">
+                    <span class="profile-label">Email</span>
+                    <span class="label-value"><?= htmlspecialchars($user['email'] ?? '') ?></span>
+                </div>
+                <span class="arrow"></span>
+            </a>
+
+            <a href="profile/password" class="field-block">
+                <div class="info-block">
+                    <span class="profile-label">Password</span>
+                    <span class="label-value">**********</span>
+                </div>
+                <span class="arrow"></span>
+            </a>
+        </div>
     </section>
 </main>

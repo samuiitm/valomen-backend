@@ -1,51 +1,60 @@
 <?php
 
+Router::get('',  'HomeController@index');
 Router::get('/', 'HomeController@index');
 
-Router::get('/login',    'AuthController@showLoginForm');
-Router::post('/login',   'AuthController@processLogin');
-Router::get('/logout',   'AuthController@logout');
-Router::get('/register', 'AuthController@showRegisterForm');
-Router::post('/register','AuthController@processRegister');
+Router::get('login',    'AuthController@showLoginForm');
+Router::post('login',   'AuthController@processLogin');
+Router::get('logout',   'AuthController@logout');
+Router::get('register', 'AuthController@showRegisterForm');
+Router::post('register','AuthController@processRegister');
 
-Router::get('/profile',  'UserProfileController@showProfile');
-Router::post('/profile', 'UserProfileController@updateProfileAction');
+Router::get('profile',  'UserProfileController@showProfile');
 
-Router::get('/matches',  'MatchesController@index');
+Router::get('profile/username',  'UserProfileController@showChangeUsernameForm');
+Router::post('profile/username', 'UserProfileController@changeUsernameAction');
 
-Router::get('/match_create', 'MatchAdminController@createFormAction');
-Router::post('/match_create','MatchAdminController@createPostAction');
+Router::get('profile/password',  'UserProfileController@showChangePasswordForm');
+Router::post('profile/password', 'UserProfileController@changePasswordAction');
 
-Router::get('/match_edit',   'MatchAdminController@editFormAction');
-Router::post('/match_edit',  'MatchAdminController@editPostAction');
+Router::post('profile/avatar',          'UserProfileController@uploadAvatarAction');
+Router::post('profile/avatar/confirm',  'UserProfileController@confirmAvatarAction');
 
-Router::get('/match_delete', 'MatchAdminController@deleteAction');
+Router::get('matches',  'MatchesController@index');
 
-Router::get('/predict',            'PredictionController@showPredictFormAction');
-Router::post('/predict',           'PredictionController@savePredictAction');
-Router::get('/my_predictions',     'PredictionController@myPredictionsAction');
-Router::get('/prediction_delete',  'PredictionController@deletePredictionAction');
+Router::get('match_create', 'MatchAdminController@createFormAction');
+Router::post('match_create','MatchAdminController@createPostAction');
 
-Router::get('/admin', 'AdminPageController@index');
+Router::get('match_edit',   'MatchAdminController@editFormAction');
+Router::post('match_edit',  'MatchAdminController@editPostAction');
 
-Router::get('/user_delete', 'AdminPanelController@deleteUserAction');
-Router::get('/team_delete', 'AdminPanelController@deleteTeamAction');
+Router::get('match_delete', 'MatchAdminController@deleteAction');
 
-Router::get('/user_edit',   'AdminPanelController@editUserFormAction');
-Router::post('/user_edit',  'AdminPanelController@editUserPostAction');
+Router::get('predict',            'PredictionController@showPredictFormAction');
+Router::post('predict',           'PredictionController@savePredictAction');
+Router::get('my_predictions',     'PredictionController@myPredictionsAction');
+Router::get('prediction_delete',  'PredictionController@deletePredictionAction');
 
-Router::get('/team_edit',   'AdminPanelController@editTeamFormAction');
-Router::post('/team_edit',  'AdminPanelController@editTeamPostAction');
+Router::get('admin', 'AdminPageController@index');
 
-Router::get('/team_create', 'AdminPanelController@createTeamFormAction');
-Router::post('/team_create','AdminPanelController@createTeamPostAction');
+Router::get('admin/user_delete', 'AdminPanelController@deleteUserAction');
+Router::get('admin/team_delete', 'AdminPanelController@deleteTeamAction');
 
-Router::get('/events', 'EventsController@index');
+Router::get('admin/user_edit',   'AdminPanelController@editUserFormAction');
+Router::post('admin/user_edit',  'AdminPanelController@editUserPostAction');
 
-Router::get('/event_create', 'EventAdminController@createFormAction');
-Router::post('/event_create','EventAdminController@createPostAction');
+Router::get('admin/team_edit',   'AdminPanelController@editTeamFormAction');
+Router::post('admin/team_edit',  'AdminPanelController@editTeamPostAction');
 
-Router::get('/event_edit',   'EventAdminController@editFormAction');
-Router::post('/event_edit',  'EventAdminController@editPostAction');
+Router::get('admin/team_create', 'AdminPanelController@createTeamFormAction');
+Router::post('admin/team_create','AdminPanelController@createTeamPostAction');
 
-Router::get('/event_delete', 'EventAdminController@deleteAction');
+Router::get('events', 'EventsController@index');
+
+Router::get('event_create', 'EventAdminController@createFormAction');
+Router::post('event_create','EventAdminController@createPostAction');
+
+Router::get('event_edit',   'EventAdminController@editFormAction');
+Router::post('event_edit',  'EventAdminController@editPostAction');
+
+Router::get('event_delete', 'EventAdminController@deleteAction');

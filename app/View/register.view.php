@@ -1,9 +1,9 @@
 <main class="main-register">
-    <form class="register-form" method="POST" action="index.php?page=register" novalidate>
+    <form class="register-form" method="POST" action="register" novalidate>
         <?php if (!empty($registerSuccess)): ?>
             <p class="success-message">
                 Account created successfully. You can now
-                <a href="index.php?page=login" class="inline-link">log in</a>.
+                <a href="login" class="inline-link">log in</a>.
             </p>
         <?php endif; ?>
 
@@ -74,6 +74,6 @@
             <button class="send-button" type="submit">Register</button>
         </form>
 
-        <a href="index.php?page=login" class="login-link">Already have an account? Click here</a>
+        <a href="login" class="login-link">Already have an account? Click here</a>
         <?php endif; ?>
 </main>

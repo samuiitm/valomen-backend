@@ -17,9 +17,10 @@
     </div>
 
     <?php
-        $basePerPageUrl = 'index.php?page=admin&section=' . urlencode($section)
+        $basePerPageUrl = 'admin?section=' . urlencode($section)
                         . '&p=1&search=' . urlencode($searchAdmin) . '&perPage=';
     ?>
+
 
     <div class="admin-filters">
         <label>
@@ -40,12 +41,11 @@
             <div class="admin-section-header">
                 <h2>Teams</h2>
                 <div class="admin-container">
-                    <a href="index.php?page=team_create" class="add-team-btn">
+                    <a href="admin/team_create" class="add-team-btn">
                         <span class="add-team-plus">+</span>
                         <span>Add team</span>
                     </a>
-                    <form class="admin-search" action="index.php" method="get">
-                        <input type="hidden" name="page" value="admin">
+                    <form class="admin-search" action="./" method="get">
                         <input type="hidden" name="section" value="teams">
                         <input type="hidden" name="p" value="1">
                         <input type="hidden" name="perPage" value="<?= htmlspecialchars((string)$perPageAdmin) ?>">
@@ -77,11 +77,11 @@
                                 <td><?= htmlspecialchars($team['name']) ?></td>
                                 <td><?= htmlspecialchars($team['country']) ?></td>
                                 <td class="admin-actions-col">
-                                    <a href="index.php?page=team_edit&id=<?= (int)$team['id'] ?>"
+                                    <a href="admin/team_edit?id=<?= (int)$team['id'] ?>"
                                        class="admin-icon-btn edit"
                                        title="Edit team">✎</a>
 
-                                    <a href="index.php?page=team_delete&id=<?= (int)$team['id'] ?>&section=teams"
+                                    <a href="admin/team_delete?id=<?= (int)$team['id'] ?>"
                                     class="admin-icon-btn delete js-delete-team"
                                     data-team-label="<?= htmlspecialchars($team['name']) ?>"
                                     title="Delete team">
@@ -101,8 +101,7 @@
             <div class="admin-section-header">
                 <h2>Users</h2>
 
-                <form class="admin-search" action="index.php" method="get">
-                    <input type="hidden" name="page" value="admin">
+                <form class="admin-search" action="./" method="get">
                     <input type="hidden" name="section" value="users">
                     <input type="hidden" name="p" value="1">
                     <input type="hidden" name="perPage" value="<?= htmlspecialchars((string)$perPageAdmin) ?>">
@@ -138,11 +137,11 @@
                                 <td><?= !empty($user['admin']) ? 'Admin' : 'User' ?></td>
                                 <td class="admin-actions-col">
                                     <?php if ((int)$user['id'] !== (int)($_SESSION['user_id'] ?? 0)): ?>
-                                        <a href="index.php?page=user_edit&id=<?= (int)$user['id'] ?>"
+                                        <a href="admin/user_edit?id=<?= (int)$user['id'] ?>"
                                         class="admin-icon-btn edit"
                                         title="Edit user">✎</a>
 
-                                        <a href="index.php?page=user_delete&id=<?= (int)$user['id'] ?>&section=users"
+                                        <a href="admin/user_delete?id=<?= (int)$user['id'] ?>"
                                         class="admin-icon-btn delete js-delete-user"
                                         data-user-label="<?= htmlspecialchars($user['username']) ?>"
                                         title="Delete user">🗑</a>

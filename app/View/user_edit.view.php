@@ -7,7 +7,7 @@ $errors = $data['errors'] ?? [];
     <section class="form-card">
         <div class="form-header">
             <h1>Edit user</h1>
-            <a href="index.php?page=admin&section=users" class="btn-secondary">← Back to users</a>
+            <a href="admin?section=users" class="btn-secondary">← Back to users</a>
         </div>
 
         <form method="post" class="form">
@@ -79,7 +79,7 @@ $errors = $data['errors'] ?? [];
             <?php endif; ?>
 
             <div class="form-actions">
-                <a href="index.php?page=admin&section=users" class="btn-secondary">Cancel</a>
+                <a href="admin?section=users" class="btn-secondary">Cancel</a>
                 <button type="submit" class="btn-primary">Save changes</button>
             </div>
         </form>

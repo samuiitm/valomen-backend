@@ -272,7 +272,7 @@ class MatchAdminController
         );
 
         // redirigeixo a la pàgina de partits
-        header('Location: index.php?page=matches');
+        header('Location: matches');
         exit;
     }
 
@@ -338,7 +338,7 @@ class MatchAdminController
         // primer miro si el partit existeix
         $match = $this->matchDao->getMatchById($matchId);
         if (!$match) {
-            header('Location: index.php?page=matches');
+            header('Location: matches');
             exit;
         }
 
@@ -536,7 +536,7 @@ class MatchAdminController
         }
 
         // torno a la pàgina de partits
-        header('Location: index.php?page=matches');
+        header('Location: matches');
         exit;
     }
 
@@ -544,7 +544,7 @@ class MatchAdminController
     {
         // comprovo que l'id sigui vàlid
         if ($matchId <= 0) {
-            header('Location: index.php?page=matches&view=schedule');
+            header('Location: matches?view=schedule');
             exit;
         }
 
@@ -558,7 +558,7 @@ class MatchAdminController
             $view = 'schedule';
         }
 
-        header('Location: index.php?page=matches&view=' . $view);
+        header('Location: matches?view=' . urlencode($view));
         exit;
     }
 
@@ -569,7 +569,7 @@ class MatchAdminController
             empty($_SESSION['is_admin']) ||
             empty($_SESSION['edit_mode'])
         ) {
-            header('Location: index.php?page=matches');
+            header('Location: matches');
             exit;
         }
 
@@ -591,7 +591,7 @@ class MatchAdminController
             empty($_SESSION['is_admin']) ||
             empty($_SESSION['edit_mode'])
         ) {
-            header('Location: index.php?page=matches');
+            header('Location: matches');
             exit;
         }
 
@@ -605,7 +605,7 @@ class MatchAdminController
             empty($_SESSION['is_admin']) ||
             empty($_SESSION['edit_mode'])
         ) {
-            header('Location: index.php?page=matches');
+            header('Location: matches');
             exit;
         }
 
@@ -632,13 +632,13 @@ class MatchAdminController
             empty($_SESSION['is_admin']) ||
             empty($_SESSION['edit_mode'])
         ) {
-            header('Location: index.php?page=matches');
+            header('Location: matches');
             exit;
         }
 
         $matchId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
         if ($matchId <= 0) {
-            header('Location: index.php?page=matches');
+            header('Location: matches');
             exit;
         }
 
@@ -652,7 +652,7 @@ class MatchAdminController
             empty($_SESSION['is_admin']) ||
             empty($_SESSION['edit_mode'])
         ) {
-            header('Location: index.php?page=matches&view=schedule');
+            header('Location: matches?view=schedule');
             exit;
         }
 

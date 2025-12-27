@@ -1,5 +1,5 @@
 <main class="main-login">
-    <form class="login-form" method="POST" action="index.php?page=login">
+    <form class="login-form" method="POST" action="login">
         <h1>Login to Valomen.gg</h1>
         <p>Continue earning points, making pick’ems, and proving who really runs the game.</p>
 
@@ -44,5 +44,5 @@
 
         <button class="send-button" type="submit">Log in</button>
     </form>
-    <a href="index.php?page=register" class="register-link">Don't have an account? Click here</a>
+    <a href="register" class="register-link">Don't have an account? Click here</a>
 </main>

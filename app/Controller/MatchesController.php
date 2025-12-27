@@ -132,12 +132,17 @@ class MatchesController
         }
 
         if (!function_exists('build_matches_url')) {
-            function build_matches_url(int $p, int $perPage, string $view, string $order, string $search): string {
+            function build_matches_url(
+                int $p,
+                int $perPage,
+                string $view,
+                string $order,
+                string $search
+            ): string {
                 $p       = max(1, $p);
                 $perPage = max(1, $perPage);
 
                 $params = [
-                    'page'    => 'matches',
                     'view'    => $view,
                     'p'       => $p,
                     'perPage' => $perPage,
@@ -148,7 +153,7 @@ class MatchesController
                     $params['search'] = $search;
                 }
 
-                return 'index.php?' . http_build_query($params);
+                return 'matches?' . http_build_query($params);
             }
         }
 

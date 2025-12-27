@@ -15,7 +15,7 @@ $matchId = (int)($match['id'] ?? 0);
             </p>
         <?php endif; ?>
 
-        <form id="match-edit-form" method="POST" action="index.php?page=match_edit&id=<?= $matchId ?>" class="form">
+        <form id="match-edit-form" method="POST" action="match_edit?id=<?= $matchId ?>" class="form">
             <div class="form-row">
                 <div class="form-field">
                     <label for="event_id">Event <span class="obligatory">*</span></label>
@@ -161,7 +161,7 @@ $matchId = (int)($match['id'] ?? 0);
             </div>
 
             <div class="form-actions">
-                <a href="index.php?page=matches" class="btn-secondary">Cancel</a>
+                <a href="matches" class="btn-secondary">Cancel</a>
                 <button type="submit" class="btn-primary">Save changes</button>
             </div>
         </form>

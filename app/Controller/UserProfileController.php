@@ -8,86 +8,96 @@ class UserProfileController
 
     public function __construct(PDO $db)
     {
-        // creo el DAO d'usuaris amb la connexió que em passen
         $this->userDao = new UserDAO($db);
     }
 
-    public function getProfileData(int $userId): array
+    private function requireLogin(): int
     {
-        // busco l'usuari per id
-        $user = $this->userDao->getUserById($userId);
-        if (!$user) {
-            // si no existeix, el mando a la home
-            header('Location: index.php?page=home');
+        if (empty($_SESSION['user_id'])) {
+            header('Location: login');
             exit;
         }
-
-        // retorno l'usuari i estructura bàsica per errors i success
-        return [
-            'user'    => $user,
-            'errors'  => [
-                'username' => '',
-                'avatar'   => '',
-                'global'   => '',
-            ],
-            'success' => false,
-        ];
+        return (int)$_SESSION['user_id'];
     }
 
-    public function updateProfile(int $userId): array
+    private function loadUserOrRedirect(int $userId): array
     {
-        // comprovo que l'usuari loguejat coincideix amb l'id del perfil
-        if (empty($_SESSION['user_id']) || (int)$_SESSION['user_id'] !== $userId) {
-            return [
-                'user'    => null,
-                'errors'  => ['global' => 'Not authorized.'],
-                'success' => false,
-            ];
-        }
-
-        // torno a agafar l'usuari de la bd
         $user = $this->userDao->getUserById($userId);
         if (!$user) {
-            return [
-                'user'    => null,
-                'errors'  => ['global' => 'User not found.'],
-                'success' => false,
-            ];
+            header('Location: ');
+            exit;
         }
+        return $user;
+    }
 
-        // agafo el nou username del formulari
-        $username = trim($_POST['username'] ?? '');
+    public function showProfile(): void
+    {
+        $userId = $this->requireLogin();
+        $user   = $this->loadUserOrRedirect($userId);
 
-        // inicialitzo els errors en blanc
+        $success = $_SESSION['profile_success'] ?? '';
+        unset($_SESSION['profile_success']);
+
         $errors = [
             'username' => '',
             'avatar'   => '',
             'global'   => '',
         ];
 
-        // una validació molt simple del username (només que no estigui buit)
-        if ($username === '') {
+        $pageTitle = 'Valomen.gg | Profile';
+        $pageCss   = 'profile.css';
+
+        require __DIR__ . '/../View/partials/header.php';
+        require __DIR__ . '/../View/user_profile.view.php';
+        require __DIR__ . '/../View/partials/footer.php';
+    }
+
+    public function showChangeUsernameForm(): void
+    {
+        $userId = $this->requireLogin();
+        $user   = $this->loadUserOrRedirect($userId);
+
+        $errors = [
+            'username' => '',
+            'global'   => '',
+        ];
+
+        $pageTitle = 'Change username';
+        $pageCss   = 'profile_form.css';
+
+        require __DIR__ . '/../View/partials/header.php';
+        require __DIR__ . '/../View/change_username.view.php';
+        require __DIR__ . '/../View/partials/footer.php';
+    }
+
+    public function changeUsernameAction(): void
+    {
+        $userId = $this->requireLogin();
+        $user   = $this->loadUserOrRedirect($userId);
+
+        $newUsername = trim($_POST['username'] ?? '');
+
+        $errors = [
+            'username' => '',
+            'global'   => '',
+        ];
+
+        if ($newUsername === '') {
             $errors['username'] = 'Username is required.';
+        } elseif (strlen($newUsername) < 4 || strlen($newUsername) > 20) {
+            $errors['username'] = 'Username must be between 4 and 20 characters.';
+        } elseif (!preg_match('/^[a-z0-9._]+$/', $newUsername)) {
+            $errors['username'] = 'Username can only contain lowercase letters, numbers, "." or "_".';
+        } elseif (preg_match('/^[._]/', $newUsername)) {
+            $errors['username'] = 'Username cannot start with "." or "_".';
+        } elseif (preg_match('/[._]$/', $newUsername)) {
+            $errors['username'] = 'Username cannot end with "." or "_".';
+        } elseif (preg_match('/[._]{2}/', $newUsername)) {
+            $errors['username'] = 'Username cannot contain consecutive symbol characters.';
+        } elseif ($this->userDao->isUsernameTaken($newUsername, $userId)) {
+            $errors['username'] = 'That username is already taken.';
         }
 
-        $newAvatarFilename = null;
-
-        // miro si m'han pujat una imatge nova d'avatar
-        if (!empty($_FILES['avatar']) && is_array($_FILES['avatar'])) {
-            if ($_FILES['avatar']['error'] !== UPLOAD_ERR_NO_FILE) {
-                // delego tota la lògica de pujada i tractament a aquesta funció
-                $result = $this->handleAvatarUpload($_FILES['avatar'], $userId);
-                if ($result === null) {
-                    // si retorna null és que hi ha hagut algun problema
-                    $errors['avatar'] = 'Invalid avatar image.';
-                } else {
-                    // si està bé, guardo el nom del fitxer nou
-                    $newAvatarFilename = $result;
-                }
-            }
-        }
-
-        // comprovo si hi ha algun error
         $hasErrors = false;
         foreach ($errors as $e) {
             if ($e !== '') {
@@ -97,62 +107,219 @@ class UserProfileController
         }
 
         if ($hasErrors) {
-            // si hi ha errors, preparo les dades per tornar a pintar el formulari
-            $userData = [
-                'id'       => $user['id'],
-                'username' => $username !== '' ? $username : $user['username'],
-                'email'    => $user['email'],
-                'logo'     => $user['logo'],
-            ];
+            $pageTitle = 'Change username';
+            $pageCss   = 'profile_form.css';
 
-            return [
-                'user'    => $userData,
-                'errors'  => $errors,
-                'success' => false,
-            ];
+            $user['username'] = $newUsername;
+
+            require __DIR__ . '/../View/partials/header.php';
+            require __DIR__ . '/../View/change_username.view.php';
+            require __DIR__ . '/../View/partials/footer.php';
+            return;
         }
 
-        // si no hi ha errors, decideixo quin logo quedarà al final
-        $finalLogo = $newAvatarFilename !== null ? $newAvatarFilename : $user['logo'];
+        $this->userDao->updateUserProfile($userId, $newUsername, $user['logo'] ?? null);
+        $_SESSION['username'] = $newUsername;
 
-        // actualitzo el perfil a la base de dades
-        $this->userDao->updateUserProfile($userId, $username, $finalLogo);
+        $_SESSION['profile_success'] = 'Username updated successfully.';
 
-        // també actualitzo la sessió perquè es vegi el canvi a la navbar, etc.
-        $_SESSION['username']  = $username;
-        $_SESSION['user_logo'] = $finalLogo;
+        header('Location: profile');
+        exit;
+    }
 
-        // torno a carregar l'usuari actualitzat
-        $updatedUser = $this->userDao->getUserById($userId);
+    public function showChangePasswordForm(): void
+    {
+        $userId = $this->requireLogin();
+        $user   = $this->loadUserOrRedirect($userId);
 
-        return [
-            'user'    => $updatedUser,
-            'errors'  => [
-                'username' => '',
-                'avatar'   => '',
-                'global'   => '',
-            ],
-            'success' => true,
+        $errors = [
+            'current_password' => '',
+            'new_password'     => '',
+            'confirm_password' => '',
+            'global'           => '',
         ];
+
+        $pageTitle = 'Change password';
+        $pageCss   = 'profile_form.css';
+
+        require __DIR__ . '/../View/partials/header.php';
+        require __DIR__ . '/../View/change_password.view.php';
+        require __DIR__ . '/../View/partials/footer.php';
+    }
+
+    public function changePasswordAction(): void
+    {
+        $userId = $this->requireLogin();
+        $user   = $this->loadUserOrRedirect($userId);
+
+        $currentPassword = $_POST['current_password'] ?? '';
+        $newPassword     = $_POST['new_password'] ?? '';
+        $confirmPassword = $_POST['confirm_password'] ?? '';
+
+        $errors = [
+            'current_password' => '',
+            'new_password'     => '',
+            'confirm_password' => '',
+            'global'           => '',
+        ];
+
+        if ($currentPassword === '') {
+            $errors['current_password'] = 'Please enter your current password.';
+        } elseif (!password_verify($currentPassword, $user['passwd_hash'])) {
+            $errors['current_password'] = 'Current password is incorrect.';
+        }
+
+        $validPassword = '/^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/';
+
+        if ($newPassword === '') {
+            $errors['new_password'] = 'New password is required.';
+        } elseif (!preg_match($validPassword, $newPassword)) {
+            $errors['new_password'] = 'Password must have at least 8 chars, 1 letter, 1 number and 1 symbol.';
+        } elseif ($newPassword === $currentPassword) {
+            $errors['new_password'] = 'New password must be different from current password.';
+        }
+
+        if ($confirmPassword === '') {
+            $errors['confirm_password'] = 'Please confirm your new password.';
+        } elseif ($newPassword !== $confirmPassword) {
+            $errors['confirm_password'] = 'Passwords do not match.';
+        }
+
+        $hasErrors = false;
+        foreach ($errors as $e) {
+            if ($e !== '') {
+                $hasErrors = true;
+                break;
+            }
+        }
+
+        if ($hasErrors) {
+            $pageTitle = 'Change password';
+            $pageCss   = 'profile_form.css';
+
+            require __DIR__ . '/../View/partials/header.php';
+            require __DIR__ . '/../View/change_password.view.php';
+            require __DIR__ . '/../View/partials/footer.php';
+            return;
+        }
+
+        $this->userDao->updatePassword($userId, $newPassword);
+
+        $_SESSION['profile_success'] = 'Password updated successfully.';
+
+        header('Location: profile');
+        exit;
+    }
+
+    public function uploadAvatarAction(): void
+    {
+        $userId = $this->requireLogin();
+        $user   = $this->loadUserOrRedirect($userId);
+
+        $errors = [
+            'avatar' => '',
+            'global' => '',
+        ];
+
+        if (empty($_FILES['avatar']) || $_FILES['avatar']['error'] === UPLOAD_ERR_NO_FILE) {
+            $errors['avatar'] = 'Please select an image.';
+            $success = '';
+            $user    = $this->userDao->getUserById($userId);
+
+            $pageTitle = 'Valomen.gg | Profile';
+            $pageCss   = 'profile.css';
+
+            require __DIR__ . '/../View/partials/header.php';
+            require __DIR__ . '/../View/user_profile.view.php';
+            require __DIR__ . '/../View/partials/footer.php';
+            return;
+        }
+
+        $newAvatarFilename = $this->handleAvatarUpload($_FILES['avatar'], $userId);
+
+        if ($newAvatarFilename === null) {
+            $errors['avatar'] = 'Invalid avatar image.';
+            $success          = '';
+            $user             = $this->userDao->getUserById($userId);
+
+            $pageTitle = 'Valomen.gg | Profile';
+            $pageCss   = 'profile.css';
+
+            require __DIR__ . '/../View/partials/header.php';
+            require __DIR__ . '/../View/user_profile.view.php';
+            require __DIR__ . '/../View/partials/footer.php';
+            return;
+        }
+
+        $oldAvatar = $user['logo'] ?? null;
+        $pageTitle = 'Confirm new avatar';
+        $pageCss   = 'profile_form.css';
+
+        require __DIR__ . '/../View/partials/header.php';
+        require __DIR__ . '/../View/avatar_confirm.view.php';
+        require __DIR__ . '/../View/partials/footer.php';
+    }
+
+    public function confirmAvatarAction(): void
+    {
+        $userId = $this->requireLogin();
+        $user   = $this->loadUserOrRedirect($userId);
+
+        $newAvatar = trim($_POST['avatar_filename'] ?? '');
+        $decision  = $_POST['decision'] ?? 'cancel';
+
+        $folder = __DIR__ . '/../../public/assets/img/user-avatars/';
+        $fullPath = $folder . $newAvatar;
+
+        if ($decision === 'cancel') {
+            if ($newAvatar !== '' && is_file($fullPath)) {
+                @unlink($fullPath);
+            }
+            header('Location: profile');
+            exit;
+        }
+
+        if ($newAvatar === '' || !is_file($fullPath)) {
+            $_SESSION['profile_success'] = '';
+            $_SESSION['profile_error']   = 'Avatar file not found.';
+            header('Location: profile');
+            exit;
+        }
+
+        $this->userDao->updateUserProfile($userId, $user['username'], $newAvatar);
+
+        if (!empty($user['logo'])) {
+            $oldPath = $folder . $user['logo'];
+            if (is_file($oldPath)) {
+                @unlink($oldPath);
+            }
+        }
+
+        $_SESSION['user_logo']       = $newAvatar;
+        $_SESSION['profile_success'] = 'Profile picture updated successfully.';
+
+        header('Location: profile');
+        exit;
     }
 
     private function handleAvatarUpload(array $file, int $userId): ?string
     {
-        // primer miro si hi ha hagut algun error bàsic amb la pujada
         if ($file['error'] !== UPLOAD_ERR_OK) {
             return null;
         }
 
-        // només accepto aquests tipus de fitxer
-        $allowed = ['image/jpeg', 'image/png', 'image/gif'];
-        if (!in_array($file['type'], $allowed, true)) {
+        if (!empty($file['size']) && $file['size'] > 4 * 1024 * 1024) {
             return null;
         }
 
-        // ruta temporal on PHP ha guardat el fitxer
+        $allowedMime = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        if (!in_array($file['type'], $allowedMime, true)) {
+            return null;
+        }
+
         $srcPath = $file['tmp_name'];
 
-        // creo la imatge font segons el tipus
+        $src = null;
         switch ($file['type']) {
             case 'image/jpeg':
                 $src = imagecreatefromjpeg($srcPath);
@@ -163,43 +330,37 @@ class UserProfileController
             case 'image/gif':
                 $src = imagecreatefromgif($srcPath);
                 break;
-            default:
-                return null;
+            case 'image/webp':
+                $src = imagecreatefromwebp($srcPath);
+                break;
         }
 
-        // si no s'ha pogut crear la imatge, fallo
         if (!$src) {
             return null;
         }
 
-        // agafo amplada i alçada originals
         $origW = imagesx($src);
         $origH = imagesy($src);
 
-        // si per lo que sigui són 0, no té sentit continuar
         if ($origW <= 0 || $origH <= 0) {
             imagedestroy($src);
             return null;
         }
 
-        // decideixo quin tros quadrat tallo (centre)
         if ($origW > $origH) {
-            // més ample que alt → tallo pels costats
             $cropSize = $origH;
-            $cropX = (int)(($origW - $origH) / 2);
-            $cropY = 0;
+            $cropX    = (int)(($origW - $origH) / 2);
+            $cropY    = 0;
         } else {
-            // més alt que ample → tallo per dalt/baix
             $cropSize = $origW;
-            $cropX = 0;
-            $cropY = (int)(($origH - $origW) / 2);
+            $cropX    = 0;
+            $cropY    = (int)(($origH - $origW) / 2);
         }
 
-        // faig el crop quadrat
         $crop = imagecrop($src, [
-            'x' => $cropX,
-            'y' => $cropY,
-            'width' => $cropSize,
+            'x'      => $cropX,
+            'y'      => $cropY,
+            'width'  => $cropSize,
             'height' => $cropSize
         ]);
 
@@ -208,86 +369,32 @@ class UserProfileController
             return null;
         }
 
-        // creo una imatge nova de mida final (per ex. 500x500)
         $finalSize = 500;
-        $final = imagecreatetruecolor($finalSize, $finalSize);
+        $final     = imagecreatetruecolor($finalSize, $finalSize);
 
-        // redimensiono el quadrat al tamany final
         imagecopyresampled(
             $final,
             $crop,
             0, 0, 0, 0,
             $finalSize, $finalSize,
-            $cropSize, $cropSize
+            $cropSize,  $cropSize
         );
 
-        // allibero memòria de les imatges temporals
         imagedestroy($src);
         imagedestroy($crop);
 
-        // creo un nom de fitxer bastant simple i únic
         $safeName = 'user_' . $userId . '_' . time() . '.png';
 
-        // carpeta on guardaré els avatars
         $folder = __DIR__ . '/../../public/assets/img/user-avatars/';
         if (!is_dir($folder)) {
-            // si la carpeta no existeix, la creo
             mkdir($folder, 0777, true);
         }
 
-        // ruta completa on es guardarà la imatge final
         $savePath = $folder . $safeName;
 
-        // guardo la imatge com a PNG
         imagepng($final, $savePath);
-        // allibero també aquesta imatge
         imagedestroy($final);
 
-        // retorno només el nom del fitxer (això és el que es guarda a la bd)
         return $safeName;
-    }
-
-    public function showProfile(): void
-    {
-        if (empty($_SESSION['user_id'])) {
-            header('Location: index.php?page=login');
-            exit;
-        }
-
-        $userId = (int)$_SESSION['user_id'];
-        $data   = $this->getProfileData($userId);
-
-        $user    = $data['user'];
-        $errors  = $data['errors'];
-        $success = $data['success'];
-
-        $pageTitle = 'Valomen.gg | Profile';
-        $pageCss   = 'profile.css';
-
-        require __DIR__ . '/../View/partials/header.php';
-        require __DIR__ . '/../View/user_profile.view.php';
-        require __DIR__ . '/../View/partials/footer.php';
-    }
-
-    public function updateProfileAction(): void
-    {
-        if (empty($_SESSION['user_id'])) {
-            header('Location: index.php?page=login');
-            exit;
-        }
-
-        $userId = (int)$_SESSION['user_id'];
-        $data   = $this->updateProfile($userId);
-
-        $user    = $data['user'];
-        $errors  = $data['errors'];
-        $success = $data['success'];
-
-        $pageTitle = 'Valomen.gg | Profile';
-        $pageCss   = 'profile.css';
-
-        require __DIR__ . '/../View/partials/header.php';
-        require __DIR__ . '/../View/user_profile.view.php';
-        require __DIR__ . '/../View/partials/footer.php';
     }
 }

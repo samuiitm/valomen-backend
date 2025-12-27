@@ -16,12 +16,12 @@
                                 <h3><?= htmlspecialchars($event['name']) ?></h3>    
                                 <?php if (!empty($_SESSION['is_admin']) && !empty($_SESSION['edit_mode'])): ?>
                                     <div class="event-admin-actions">
-                                        <a href="index.php?page=event_edit&id=<?= (int)$event['id'] ?>"
+                                        <a href="event_edit?id=<?= (int)$event['id'] ?>"
                                         class="event-admin-btn edit"
                                         title="Edit event">
                                             ✎
                                         </a>
-                                        <a href="index.php?page=event_delete&id=<?= (int)$event['id'] ?>"
+                                        <a href="event_delete?id=<?= (int)$event['id'] ?>"
                                         class="event-admin-btn delete js-delete-event"
                                         data-event-label="<?= htmlspecialchars($event['name']) ?>"
                                         title="Delete event">
@@ -65,12 +65,12 @@
                                 <h3><?= htmlspecialchars($event['name']) ?></h3>    
                                 <?php if (!empty($_SESSION['is_admin']) && !empty($_SESSION['edit_mode'])): ?>
                                     <div class="event-admin-actions">
-                                        <a href="index.php?page=event_edit&id=<?= (int)$event['id'] ?>"
+                                        <a href="event_edit?id=<?= (int)$event['id'] ?>"
                                         class="event-admin-btn edit"
                                         title="Edit event">
                                             ✎
                                         </a>
-                                        <a href="index.php?page=event_delete&id=<?= (int)$event['id'] ?>"
+                                        <a href="event_delete?id=<?= (int)$event['id'] ?>"
                                         class="event-admin-btn delete js-delete-event"
                                         data-event-label="<?= htmlspecialchars($event['name']) ?>"
                                         title="Delete event">
@@ -113,7 +113,7 @@
                 <span>COMPLETED EVENTS</span>
                 <div class="events-header-right">
                     <div class="container">
-                        <form class="events-search" id="eventsSearchForm" action="index.php" method="get">
+                        <form class="events-search" id="eventsSearchForm" action="events" method="get">
                             <input type="hidden" name="page" value="events">
                             <input type="hidden" name="p" value="1">
                             <input type="hidden" name="perPage" value="<?= htmlspecialchars((string)$perPageEvents) ?>">
@@ -126,7 +126,7 @@
                                 value="<?= htmlspecialchars($searchEvents ?? '') ?>">
                         </form>
                         <?php if (!empty($_SESSION['is_admin']) && !empty($_SESSION['edit_mode'])): ?>
-                            <a href="index.php?page=event_create" class="add-event-btn">
+                            <a href="event_create" class="add-event-btn">
                                 <span class="add-event-plus">+</span>
                                 <span>Add event</span>
                             </a>
@@ -144,12 +144,12 @@
                                 <h3><?= htmlspecialchars($event['name']) ?></h3>    
                                 <?php if (!empty($_SESSION['is_admin']) && !empty($_SESSION['edit_mode'])): ?>
                                     <div class="event-admin-actions">
-                                        <a href="index.php?page=event_edit&id=<?= (int)$event['id'] ?>"
+                                        <a href="event_edit?id=<?= (int)$event['id'] ?>"
                                         class="event-admin-btn edit"
                                         title="Edit event">
                                             ✎
                                         </a>
-                                        <a href="index.php?page=event_delete&id=<?= (int)$event['id'] ?>"
+                                        <a href="event_delete?id=<?= (int)$event['id'] ?>"
                                         class="event-admin-btn delete js-delete-event"
                                         data-event-label="<?= htmlspecialchars($event['name']) ?>"
                                         title="Delete event">
@@ -190,7 +190,7 @@
             <label class="filter-label">
                 <span>Items per page:</span>
                 <select class="filter-select"
-                        onchange="location.href='index.php?page=events&p=1&order=<?= htmlspecialchars($orderEvents) ?>&perPage=' + this.value;">
+                        onchange="location.href='events?p=1&order=<?= htmlspecialchars($orderEvents) ?>&perPage=' + this.value;">
                     <?php foreach ([5,10,20,50] as $opt): ?>
                         <option value="<?= $opt ?>" <?= $opt === (int)$perPageEvents ? 'selected' : '' ?>>
                             <?= $opt ?>
@@ -201,7 +201,7 @@
             <label class="filter-label">
                 <span>Order:</span>
                 <select class="filter-select"
-                        onchange="location.href='index.php?page=events&p=1&perPage=<?= htmlspecialchars($perPageEvents) ?>&order=' + this.value;">
+                        onchange="location.href='events?p=1&perPage=<?= htmlspecialchars($perPageEvents) ?>&order=' + this.value;">
                     <option value="date_asc"  <?= $orderEvents === 'date_asc'  ? 'selected' : '' ?>>Date ASC</option>
                     <option value="date_desc" <?= $orderEvents === 'date_desc' ? 'selected' : '' ?>>Date DESC</option>
                 </select>

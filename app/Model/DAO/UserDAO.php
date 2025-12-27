@@ -193,4 +193,19 @@ class UserDAO extends BaseDAO
             ':id'     => $userId
         ]);
     }
+
+    public function updatePassword(int $id, string $newPassword): bool
+    {
+        $hash = password_hash($newPassword, PASSWORD_BCRYPT);
+
+        $sql = "UPDATE users
+                SET passwd_hash = :hash
+                WHERE id = :id";
+
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':hash' => $hash,
+            ':id'   => $id,
+        ]);
+    }
 }

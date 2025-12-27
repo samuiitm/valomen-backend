@@ -24,7 +24,7 @@ class PredictionController
         $match = $this->matchDao->getMatchById($matchId);
         if (!$match) {
             // si no existeix, envio a la pàgina de partits
-            header('Location: index.php?page=matches');
+            header('Location: matches');
             exit;
         }
         // retorno el partit perquè altres funcions el fan servir
@@ -211,12 +211,12 @@ class PredictionController
     public function showPredictFormAction(): void
     {
         if (empty($_SESSION['user_id'])) {
-            header('Location: index.php?page=login');
+            header('Location: login');
             exit;
         }
 
         if (empty($_GET['match_id']) || !ctype_digit($_GET['match_id'])) {
-            header('Location: index.php?page=matches');
+            header('Location: matches');
             exit;
         }
 
@@ -241,12 +241,12 @@ class PredictionController
     public function savePredictAction(): void
     {
         if (empty($_SESSION['user_id'])) {
-            header('Location: index.php?page=login');
+            header('Location: login');
             exit;
         }
 
         if (empty($_GET['match_id']) || !ctype_digit($_GET['match_id'])) {
-            header('Location: index.php?page=matches');
+            header('Location: matches');
             exit;
         }
 
@@ -271,7 +271,7 @@ class PredictionController
     public function myPredictionsAction(): void
     {
         if (empty($_SESSION['user_id'])) {
-            header('Location: index.php?page=login');
+            header('Location: login');
             exit;
         }
 
@@ -294,7 +294,7 @@ class PredictionController
     public function deletePredictionAction(): void
     {
         if (empty($_SESSION['user_id'])) {
-            header('Location: index.php?page=login');
+            header('Location: login');
             exit;
         }
 
@@ -306,13 +306,13 @@ class PredictionController
         );
 
         if ($matchId === 0) {
-            header('Location: index.php?page=my_predictions');
+            header('Location: my_predictions');
             exit;
         }
 
         $this->deletePrediction($matchId, (int)$_SESSION['user_id']);
 
-        header('Location: index.php?page=my_predictions');
+        header('Location: my_predictions');
         exit;
     }
 

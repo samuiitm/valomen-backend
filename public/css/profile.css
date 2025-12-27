@@ -99,30 +99,63 @@
 .profile-fields {
     display: flex;
     flex-direction: column;
-    gap: 16px;
 }
 
 .field-block {
     display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.field-block input[type="text"],
-.field-block input[type="email"],
-.field-block input[type="file"] {
+    justify-content: space-between;
     background-color: var(--background);
     border-radius: 12px;
-    border: 1px solid var(--borders);
-    padding: 8px 10px;
+    padding: 20px 14px;
     font-size: 0.9rem;
-    background-color: var(--card-hover);
     font-family: inherit;
+    text-decoration: none;
+    color: var(--text);
+    border: 1px solid #00000000;
+}
+
+.field-block:hover {
+    background-color: var(--card-hover);
+    border: 1px solid var(--borders);
+    cursor: pointer;
+}
+
+.info-block {
+    display: flex;
+    flex-direction: column;
+}
+
+.field-block .profile-label {
+    font-weight: 500;
+    color: var(--text2);
+}
+
+.field-block .label-value {
+    font-weight: 600;
 }
 
 .field-block input[disabled] {
     opacity: 0.5;
     cursor: not-allowed;
+}
+
+.arrow {
+  position: relative;
+  display: block;
+  align-items: center;
+  transition: 0.2s;
+}
+
+.arrow::before {
+  content: "";
+  box-sizing: border-box;
+  border: solid var(--text);
+  border-width: 0 2px 2px 0;
+  display: inline-block;
+  transition: 0.2s;
+  padding: 4px;
+  margin-top: 14px;
+  transform: rotate(-45deg);
 }
 
 .field-error {

@@ -30,15 +30,14 @@ class Router
     {
         $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
-        $page = $_GET['page'] ?? null;
+        $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
 
-        if ($page === null || $page === '' || $page === 'home') {
-            $routeKey = '/';
-        } else {
-            $routeKey = '/' . $page;
+        $base = rtrim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/');
+        if ($base !== '' && str_starts_with($path, $base)) {
+            $path = substr($path, strlen($base)) ?: '/';
         }
 
-        $routeKey = self::normalizePath($routeKey);
+        $routeKey = self::normalizePath($path);
 
         if (!isset(self::$routes[$method][$routeKey])) {
             http_response_code(404);
@@ -66,7 +65,6 @@ class Router
         }
 
         global $db;
-
         $controller = new $class($db);
 
         if (!method_exists($controller, $action)) {

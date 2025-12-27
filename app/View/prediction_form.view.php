@@ -92,6 +92,6 @@ $isCompleted = $status === 'completed';
 
         <?php endif; ?>
 
-        <a href="index.php?page=matches" class="back-link">Back to matches</a>
+        <a href="matches" class="back-link">Back to matches</a>
     </section>
 </main>

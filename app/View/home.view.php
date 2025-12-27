@@ -3,7 +3,7 @@
         <div class="hero-content">
             <h1>Your Favourite Valorant Esports Zone</h1>
             <p>Here you don't just watch matches… you live them, predict them, and win them. Make your pick'ems and prove you're smarter than an Omen with his ult ready.</p>
-            <a class="get-started-button" href="index.php?page=matches">Get Started</a>
+            <a class="get-started-button" href="matches">Get Started</a>
         </div>
         <img src="assets/img/main/hero_image.webp" class="hero-image">
     </section>

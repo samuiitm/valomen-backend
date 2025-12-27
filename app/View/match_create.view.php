@@ -5,7 +5,7 @@
             <p>Select an event and its participants to create a new match.</p>
         </div>
 
-        <form class="form" method="GET" action="index.php">
+        <form class="form" method="GET" action="match_create">
             <input type="hidden" name="page" value="match_create">
 
             <div class="form-row">
@@ -30,7 +30,7 @@
         </form>
 
         <?php if (!empty($selectedEventId)): ?>
-            <form class="form" method="POST" action="index.php?page=match_create">
+            <form class="form" method="POST" action="match_create">
                 <input type="hidden" name="event_id" value="<?= htmlspecialchars($selectedEventId) ?>">
 
                 <div class="form-row">
@@ -168,7 +168,7 @@
                 <?php endif; ?>
 
                 <div class="form-actions">
-                    <a href="index.php?page=matches" class="btn-secondary">Cancel</a>
+                    <a href="matches" class="btn-secondary">Cancel</a>
                     <button class="btn-primary" type="submit">Create match</button>
                 </div>
             </form>

@@ -17,7 +17,7 @@
                             class="tab <?= $view === 'results' ? 'active' : '' ?>">RESULTS</a>
                         </div>
 
-                        <form class="search-elements" id="matchesSearchForm" action="index.php" method="get">
+                        <form class="search-elements" id="matchesSearchForm" action="matches" method="get">
                             <input type="hidden" name="page" value="matches">
                             <input type="hidden" name="view" value="<?= htmlspecialchars($view) ?>">
                             <input type="hidden" name="perPage" value="<?= htmlspecialchars((string)$perPage) ?>">
@@ -57,7 +57,7 @@
                                     class="tab <?= $view === 'results' ? 'active' : '' ?>">RESULTS</a>
                                 </div>
 
-                                <form class="matches-search" id="matchesSearchForm" action="index.php" method="get">
+                                <form class="matches-search" id="matchesSearchForm" action="matches" method="get">
                                     <input type="hidden" name="page" value="matches">
                                     <input type="hidden" name="view" value="<?= htmlspecialchars($view) ?>">
                                     <input type="hidden" name="perPage" value="<?= htmlspecialchars((string)$perPage) ?>">
@@ -119,34 +119,32 @@
                                     <?php endif; ?>
                                 </div>
                                 
-                                <?php if (!empty($_SESSION['user_id'])
-                                        && !empty($match['team_1_name'])
-                                        && !empty($match['team_2_name'])
-                                        && ($match['status'] !== 'Live')
-                                        && empty($userPredictedMatchIds[(int)$match['id']] ?? null)): ?>
-                                    <a href="predict?match_id=<?= (int)$match['id'] ?>"
-                                    class="predict-button">
-                                        Make prediction
-                                    </a>
-                                <?php elseif ($match['status'] === 'Live'): ?>
-                                    <a
-                                    class="predict-button closed">
+                                <?php
+                                    $teamsReady = !empty($match['team_1_name']) && !empty($match['team_2_name']);
+                                    $isLive     = ($match['status'] === 'Live');
+                                    $hasPred    = !empty($userPredictedMatchIds[(int)$match['id']] ?? null);
+                                ?>
+
+                                <?php if ($isLive): ?>
+                                    <a class="predict-button closed">
                                         Prediction closed
                                     </a>
-                                <?php elseif ($userPredictedMatchIds[(int)$match['id']] ?? null): ?>
+
+                                <?php elseif (!$teamsReady): ?>
+                                    <a class="predict-button pending">
+                                        Pending teams
+                                    </a>
+
+                                <?php elseif ($hasPred): ?>
                                     <a href="predict?match_id=<?= (int)$match['id'] ?>"
                                     class="predict-button">
                                         Edit prediction
                                     </a>
-                                <?php elseif (empty($_SESSION['user_id'])): ?>
-                                    <a href="login"
-                                    class="predict-button">
-                                        LOG IN TO PREDICT
-                                    </a>
+
                                 <?php else: ?>
-                                    <a
-                                    class="predict-button pending">
-                                        Pending teams
+                                    <a href="<?= !empty($_SESSION['user_id']) ? 'predict?match_id=' . (int)$match['id'] : 'login' ?>"
+                                    class="predict-button">
+                                        Make prediction
                                     </a>
                                 <?php endif; ?>
 

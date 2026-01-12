@@ -5,7 +5,7 @@
             <p>Keep your account secure with a strong password.</p>
         </div>
 
-        <form class="form" method="post" action="profile/password">
+        <form class="form" method="post">
             <div class="form-row">
                 <div class="form-field full-width">
                     <label for="current_password">

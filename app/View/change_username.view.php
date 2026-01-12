@@ -5,7 +5,7 @@
             <p>Update your public name.</p>
         </div>
 
-        <form class="form" method="post" action="profile/username">
+        <form class="form" method="post">
             <div class="form-row">
                 <div class="form-field full-width">
                     <label for="username">

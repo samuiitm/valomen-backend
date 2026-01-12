@@ -14,7 +14,7 @@ class UserProfileController
     private function requireLogin(): int
     {
         if (empty($_SESSION['user_id'])) {
-            header('Location: login');
+            header('Location: ../profile');
             exit;
         }
         return (int)$_SESSION['user_id'];
@@ -24,7 +24,7 @@ class UserProfileController
     {
         $user = $this->userDao->getUserById($userId);
         if (!$user) {
-            header('Location: ');
+            header('Location: ../profile');
             exit;
         }
         return $user;
@@ -63,7 +63,7 @@ class UserProfileController
         ];
 
         $pageTitle = 'Change username';
-        $pageCss   = 'profile_form.css';
+        $pageCss   = 'elements_admin.css';
 
         require __DIR__ . '/../View/partials/header.php';
         require __DIR__ . '/../View/change_username.view.php';
@@ -108,7 +108,7 @@ class UserProfileController
 
         if ($hasErrors) {
             $pageTitle = 'Change username';
-            $pageCss   = 'profile_form.css';
+            $pageCss   = 'elements_admin.css';
 
             $user['username'] = $newUsername;
 
@@ -123,7 +123,7 @@ class UserProfileController
 
         $_SESSION['profile_success'] = 'Username updated successfully.';
 
-        header('Location: profile');
+        header('Location: ../profile');
         exit;
     }
 
@@ -140,7 +140,7 @@ class UserProfileController
         ];
 
         $pageTitle = 'Change password';
-        $pageCss   = 'profile_form.css';
+        $pageCss   = 'elements_admin.css';
 
         require __DIR__ . '/../View/partials/header.php';
         require __DIR__ . '/../View/change_password.view.php';
@@ -195,7 +195,7 @@ class UserProfileController
 
         if ($hasErrors) {
             $pageTitle = 'Change password';
-            $pageCss   = 'profile_form.css';
+            $pageCss   = 'elements_admin.css';
 
             require __DIR__ . '/../View/partials/header.php';
             require __DIR__ . '/../View/change_password.view.php';
@@ -207,7 +207,7 @@ class UserProfileController
 
         $_SESSION['profile_success'] = 'Password updated successfully.';
 
-        header('Location: profile');
+        header('Location: ../profile');
         exit;
     }
 
@@ -253,7 +253,7 @@ class UserProfileController
 
         $oldAvatar = $user['logo'] ?? null;
         $pageTitle = 'Confirm new avatar';
-        $pageCss   = 'profile_form.css';
+        $pageCss   = 'elements_admin.css';
 
         require __DIR__ . '/../View/partials/header.php';
         require __DIR__ . '/../View/avatar_confirm.view.php';
@@ -275,14 +275,14 @@ class UserProfileController
             if ($newAvatar !== '' && is_file($fullPath)) {
                 @unlink($fullPath);
             }
-            header('Location: profile');
+            header('Location: ../profile');
             exit;
         }
 
         if ($newAvatar === '' || !is_file($fullPath)) {
             $_SESSION['profile_success'] = '';
             $_SESSION['profile_error']   = 'Avatar file not found.';
-            header('Location: profile');
+            header('Location: ../profile');
             exit;
         }
 
@@ -298,7 +298,7 @@ class UserProfileController
         $_SESSION['user_logo']       = $newAvatar;
         $_SESSION['profile_success'] = 'Profile picture updated successfully.';
 
-        header('Location: profile');
+        header('Location: ../profile');
         exit;
     }
 

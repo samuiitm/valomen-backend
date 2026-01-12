@@ -26,7 +26,7 @@ if (isset($_SESSION['user_id'])) {
             setcookie(session_name(), '', time() - 42000, $params['path'], $params['domain'], $params['secure'], $params['httponly']);
         }
         session_destroy();
-        header('Location: index.php?page=login&expired=1');
+        header('Location: login?expired=1');
         exit;
     } else {
         $_SESSION['last_activity'] = time();

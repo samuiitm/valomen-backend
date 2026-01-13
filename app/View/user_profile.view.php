@@ -6,16 +6,20 @@ if (!empty($avatarFilename)) {
     $avatarSrc = 'assets/img/default-avatar.png';
 }
 
-$successMessage = !empty($success) ? $success : '';
+$pendingAvatar = $pendingAvatar ?? '';
+$pendingAvatarSrc = '';
+if (!empty($pendingAvatar)) {
+    $pendingAvatarSrc = 'assets/img/user-avatars/' . htmlspecialchars($pendingAvatar);
+}
 ?>
 
 <main class="profile-page">
     <section class="profile-card">
         <h1>Your profile</h1>
 
-        <?php if (!empty($successMessage)): ?>
+        <?php if (!empty($success)): ?>
             <div class="profile-success">
-                <?= htmlspecialchars($successMessage) ?>
+                <?= htmlspecialchars($success) ?>
             </div>
         <?php endif; ?>
 
@@ -25,24 +29,27 @@ $successMessage = !empty($success) ? $success : '';
             </div>
         <?php endif; ?>
 
-        <form action="profile/avatar" method="post" enctype="multipart/form-data" class="profile-form">
+        <form id="avatarForm" action="profile/avatar" method="post" enctype="multipart/form-data" class="profile-form">
             <div class="profile-avatar-block">
                 <div class="avatar-preview">
                     <img src="<?= $avatarSrc ?>" alt="User avatar">
                 </div>
+
                 <div class="avatar-input">
                     <label for="avatar">Profile picture</label>
-                    <input type="file" name="avatar" id="avatar" accept="image/*">
+
+                    <input type="file" name="avatar" id="avatar" accept="image/*" style="display:none;">
+
+                    <button type="button" class="send-button" id="chooseAvatarBtn">
+                        Change photo
+                    </button>
+
                     <?php if (!empty($errors['avatar'])): ?>
                         <p class="field-error"><?= htmlspecialchars($errors['avatar']) ?></p>
                     <?php else: ?>
-                        <p class="field-hint">JPG, PNG or WEBP. Max 4MB. 500x500 center cropped.</p>
+                        <p class="field-hint">Select an image and we’ll ask you to confirm.</p>
                     <?php endif; ?>
                 </div>
-            </div>
-
-            <div class="avatar-actions">
-                <button type="submit" class="btn-primary">Upload new picture</button>
             </div>
         </form>
 
@@ -72,4 +79,49 @@ $successMessage = !empty($success) ? $success : '';
             </a>
         </div>
     </section>
+
+    <?php if (!empty($pendingAvatar)): ?>
+    <div class="modal-overlay">
+        <div class="modal-card">
+        <h2>Change profile picture?</h2>
+        <p class="modal-subtitle">Do you want to set this image as your new avatar?</p>
+
+        <div class="modal-avatar-preview">
+            <img src="assets/img/user-avatars/<?= htmlspecialchars($pendingAvatar) ?>" alt="New avatar">
+        </div>
+
+        <form action="profile/avatar/confirm" method="post" class="modal-actions">
+            <input type="hidden" name="avatar_filename" value="<?= htmlspecialchars($pendingAvatar) ?>">
+
+            <button class="btn-primary" type="submit" name="decision" value="confirm">
+            Yes
+            </button>
+
+            <button class="btn-cancel" type="submit" name="decision" value="cancel">
+            No
+            </button>
+        </form>
+        </div>
+    </div>
+    <?php endif; ?>
+
+    <script>
+        (function () {
+            const chooseBtn = document.getElementById('chooseAvatarBtn');
+            const fileInput = document.getElementById('avatar');
+            const form = document.getElementById('avatarForm');
+
+            if (!chooseBtn || !fileInput || !form) return;
+
+            chooseBtn.addEventListener('click', function () {
+                fileInput.click();
+            });
+
+            fileInput.addEventListener('change', function () {
+                if (fileInput.files && fileInput.files.length > 0) {
+                    form.submit();
+                }
+            });
+        })();
+    </script>
 </main>

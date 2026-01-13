@@ -14,8 +14,7 @@ class UserProfileController
     private function requireLogin(): int
     {
         if (empty($_SESSION['user_id'])) {
-            header('Location: ../profile');
-            exit;
+            redirect_to('login');
         }
         return (int)$_SESSION['user_id'];
     }
@@ -24,8 +23,11 @@ class UserProfileController
     {
         $user = $this->userDao->getUserById($userId);
         if (!$user) {
-            header('Location: ../profile');
-            exit;
+            $_SESSION = [];
+            if (session_status() === PHP_SESSION_ACTIVE) {
+                session_destroy();
+            }
+            redirect_to('login');
         }
         return $user;
     }
@@ -38,10 +40,16 @@ class UserProfileController
         $success = $_SESSION['profile_success'] ?? '';
         unset($_SESSION['profile_success']);
 
+        $profileError = $_SESSION['profile_error'] ?? '';
+        unset($_SESSION['profile_error']);
+
+        // para el popup
+        $pendingAvatar = $_SESSION['pending_avatar'] ?? '';
+
         $errors = [
             'username' => '',
             'avatar'   => '',
-            'global'   => '',
+            'global'   => $profileError,
         ];
 
         $pageTitle = 'Valomen.gg | Profile';
@@ -100,16 +108,12 @@ class UserProfileController
 
         $hasErrors = false;
         foreach ($errors as $e) {
-            if ($e !== '') {
-                $hasErrors = true;
-                break;
-            }
+            if ($e !== '') { $hasErrors = true; break; }
         }
 
         if ($hasErrors) {
             $pageTitle = 'Change username';
             $pageCss   = 'elements_admin.css';
-
             $user['username'] = $newUsername;
 
             require __DIR__ . '/../View/partials/header.php';
@@ -120,17 +124,15 @@ class UserProfileController
 
         $this->userDao->updateUserProfile($userId, $newUsername, $user['logo'] ?? null);
         $_SESSION['username'] = $newUsername;
-
         $_SESSION['profile_success'] = 'Username updated successfully.';
 
-        header('Location: ../profile');
-        exit;
+        redirect_to('profile');
     }
 
     public function showChangePasswordForm(): void
     {
         $userId = $this->requireLogin();
-        $user   = $this->loadUserOrRedirect($userId);
+        $this->loadUserOrRedirect($userId);
 
         $errors = [
             'current_password' => '',
@@ -187,10 +189,7 @@ class UserProfileController
 
         $hasErrors = false;
         foreach ($errors as $e) {
-            if ($e !== '') {
-                $hasErrors = true;
-                break;
-            }
+            if ($e !== '') { $hasErrors = true; break; }
         }
 
         if ($hasErrors) {
@@ -204,60 +203,30 @@ class UserProfileController
         }
 
         $this->userDao->updatePassword($userId, $newPassword);
-
         $_SESSION['profile_success'] = 'Password updated successfully.';
 
-        header('Location: ../profile');
-        exit;
+        redirect_to('profile');
     }
 
     public function uploadAvatarAction(): void
     {
         $userId = $this->requireLogin();
-        $user   = $this->loadUserOrRedirect($userId);
+        $this->loadUserOrRedirect($userId);
 
-        $errors = [
-            'avatar' => '',
-            'global' => '',
-        ];
-
-        if (empty($_FILES['avatar']) || $_FILES['avatar']['error'] === UPLOAD_ERR_NO_FILE) {
-            $errors['avatar'] = 'Please select an image.';
-            $success = '';
-            $user    = $this->userDao->getUserById($userId);
-
-            $pageTitle = 'Valomen.gg | Profile';
-            $pageCss   = 'profile.css';
-
-            require __DIR__ . '/../View/partials/header.php';
-            require __DIR__ . '/../View/user_profile.view.php';
-            require __DIR__ . '/../View/partials/footer.php';
-            return;
+        if (empty($_FILES['avatar']) || ($_FILES['avatar']['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
+            $_SESSION['profile_error'] = 'Please select an image.';
+            redirect_to('profile');
         }
 
         $newAvatarFilename = $this->handleAvatarUpload($_FILES['avatar'], $userId);
 
         if ($newAvatarFilename === null) {
-            $errors['avatar'] = 'Invalid avatar image.';
-            $success          = '';
-            $user             = $this->userDao->getUserById($userId);
-
-            $pageTitle = 'Valomen.gg | Profile';
-            $pageCss   = 'profile.css';
-
-            require __DIR__ . '/../View/partials/header.php';
-            require __DIR__ . '/../View/user_profile.view.php';
-            require __DIR__ . '/../View/partials/footer.php';
-            return;
+            $_SESSION['profile_error'] = 'Invalid avatar image.';
+            redirect_to('profile');
         }
 
-        $oldAvatar = $user['logo'] ?? null;
-        $pageTitle = 'Confirm new avatar';
-        $pageCss   = 'elements_admin.css';
-
-        require __DIR__ . '/../View/partials/header.php';
-        require __DIR__ . '/../View/avatar_confirm.view.php';
-        require __DIR__ . '/../View/partials/footer.php';
+        $_SESSION['pending_avatar'] = $newAvatarFilename;
+        redirect_to('profile');
     }
 
     public function confirmAvatarAction(): void
@@ -268,22 +237,21 @@ class UserProfileController
         $newAvatar = trim($_POST['avatar_filename'] ?? '');
         $decision  = $_POST['decision'] ?? 'cancel';
 
-        $folder = __DIR__ . '/../../public/assets/img/user-avatars/';
+        $folder   = __DIR__ . '/../../public/assets/img/user-avatars/';
         $fullPath = $folder . $newAvatar;
 
-        if ($decision === 'cancel') {
+        unset($_SESSION['pending_avatar']);
+
+        if ($decision !== 'confirm') {
             if ($newAvatar !== '' && is_file($fullPath)) {
                 @unlink($fullPath);
             }
-            header('Location: ../profile');
-            exit;
+            redirect_to('profile');
         }
 
         if ($newAvatar === '' || !is_file($fullPath)) {
-            $_SESSION['profile_success'] = '';
-            $_SESSION['profile_error']   = 'Avatar file not found.';
-            header('Location: ../profile');
-            exit;
+            $_SESSION['profile_error'] = 'Avatar file not found.';
+            redirect_to('profile');
         }
 
         $this->userDao->updateUserProfile($userId, $user['username'], $newAvatar);
@@ -298,54 +266,36 @@ class UserProfileController
         $_SESSION['user_logo']       = $newAvatar;
         $_SESSION['profile_success'] = 'Profile picture updated successfully.';
 
-        header('Location: ../profile');
-        exit;
+        redirect_to('profile');
     }
 
     private function handleAvatarUpload(array $file, int $userId): ?string
     {
-        if ($file['error'] !== UPLOAD_ERR_OK) {
-            return null;
-        }
+        if (($file['error'] ?? UPLOAD_ERR_OK) !== UPLOAD_ERR_OK) return null;
 
-        if (!empty($file['size']) && $file['size'] > 4 * 1024 * 1024) {
-            return null;
-        }
+        if (!empty($file['size']) && $file['size'] > 4 * 1024 * 1024) return null;
+
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mime  = $finfo ? finfo_file($finfo, $file['tmp_name']) : null;
+        if ($finfo) finfo_close($finfo);
 
         $allowedMime = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-        if (!in_array($file['type'], $allowedMime, true)) {
-            return null;
-        }
+        if (!$mime || !in_array($mime, $allowedMime, true)) return null;
 
         $srcPath = $file['tmp_name'];
 
         $src = null;
-        switch ($file['type']) {
-            case 'image/jpeg':
-                $src = imagecreatefromjpeg($srcPath);
-                break;
-            case 'image/png':
-                $src = imagecreatefrompng($srcPath);
-                break;
-            case 'image/gif':
-                $src = imagecreatefromgif($srcPath);
-                break;
-            case 'image/webp':
-                $src = imagecreatefromwebp($srcPath);
-                break;
+        switch ($mime) {
+            case 'image/jpeg': $src = imagecreatefromjpeg($srcPath); break;
+            case 'image/png':  $src = imagecreatefrompng($srcPath);  break;
+            case 'image/gif':  $src = imagecreatefromgif($srcPath);  break;
+            case 'image/webp': $src = imagecreatefromwebp($srcPath); break;
         }
-
-        if (!$src) {
-            return null;
-        }
+        if (!$src) return null;
 
         $origW = imagesx($src);
         $origH = imagesy($src);
-
-        if ($origW <= 0 || $origH <= 0) {
-            imagedestroy($src);
-            return null;
-        }
+        if ($origW <= 0 || $origH <= 0) { imagedestroy($src); return null; }
 
         if ($origW > $origH) {
             $cropSize = $origH;
@@ -358,41 +308,25 @@ class UserProfileController
         }
 
         $crop = imagecrop($src, [
-            'x'      => $cropX,
-            'y'      => $cropY,
-            'width'  => $cropSize,
-            'height' => $cropSize
+            'x' => $cropX, 'y' => $cropY,
+            'width' => $cropSize, 'height' => $cropSize
         ]);
 
-        if (!$crop) {
-            imagedestroy($src);
-            return null;
-        }
+        imagedestroy($src);
+        if (!$crop) return null;
 
         $finalSize = 500;
-        $final     = imagecreatetruecolor($finalSize, $finalSize);
+        $final = imagecreatetruecolor($finalSize, $finalSize);
 
-        imagecopyresampled(
-            $final,
-            $crop,
-            0, 0, 0, 0,
-            $finalSize, $finalSize,
-            $cropSize,  $cropSize
-        );
-
-        imagedestroy($src);
+        imagecopyresampled($final, $crop, 0,0,0,0, $finalSize,$finalSize, $cropSize,$cropSize);
         imagedestroy($crop);
 
         $safeName = 'user_' . $userId . '_' . time() . '.png';
+        $folder   = __DIR__ . '/../../public/assets/img/user-avatars/';
 
-        $folder = __DIR__ . '/../../public/assets/img/user-avatars/';
-        if (!is_dir($folder)) {
-            mkdir($folder, 0777, true);
-        }
+        if (!is_dir($folder)) mkdir($folder, 0777, true);
 
-        $savePath = $folder . $safeName;
-
-        imagepng($final, $savePath);
+        imagepng($final, $folder . $safeName);
         imagedestroy($final);
 
         return $safeName;

@@ -7,7 +7,7 @@ $errors = $data['errors'] ?? [];
     <section class="form-card">
         <div class="form-header">
             <h1>Edit user</h1>
-            <a href="admin?section=users" class="btn-secondary">← Back to users</a>
+            <a href="../admin?section=users" class="btn-secondary">← Back to users</a>
         </div>
 
         <form method="post" class="form">
@@ -57,29 +57,12 @@ $errors = $data['errors'] ?? [];
                 </div>
             </div>
 
-            <div class="form-row">
-                <div class="form-field">
-                    <label class="checkbox-label">
-                        <input
-                            type="checkbox"
-                            name="admin"
-                            value="1"
-                            <?= !empty($old['admin']) && $old['admin'] === '1' ? 'checked' : '' ?>
-                        >
-                        Admin
-                    </label>
-                    <?php if (!empty($errors['admin'])): ?>
-                        <p class="field-error"><?= htmlspecialchars($errors['admin']) ?></p>
-                    <?php endif; ?>
-                </div>
-            </div>
-
             <?php if (!empty($errors['global'])): ?>
                 <p class="field-error global-error"><?= htmlspecialchars($errors['global']) ?></p>
             <?php endif; ?>
 
             <div class="form-actions">
-                <a href="admin?section=users" class="btn-secondary">Cancel</a>
+                <a href="../admin?section=users" class="btn-secondary">Cancel</a>
                 <button type="submit" class="btn-primary">Save changes</button>
             </div>
         </form>

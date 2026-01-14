@@ -31,8 +31,13 @@ class AdminPanelController
             exit;
         }
 
-        // no deixo que un usuari es borri ell mateix
+        // no deixo que un usuari es borri ell mateix ni a altres admins
         if (!empty($_SESSION['user_id']) && (int)$_SESSION['user_id'] === $id) {
+            header('Location: ../admin?section=users');
+            exit;
+        }
+
+        if ($this->userDao->isUserAdmin($id)) {
             header('Location: ../admin?section=users');
             exit;
         }
@@ -70,6 +75,12 @@ class AdminPanelController
     {
         if (empty($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
             header('Location: ../');
+            exit;
+        }
+
+        // no deixo editar altres admins
+        if ($this->userDao->isUserAdmin($id)) {
+            header('Location: ../admin?section=users');
             exit;
         }
         

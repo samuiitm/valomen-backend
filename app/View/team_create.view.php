@@ -41,7 +41,7 @@
             <?php endif; ?>
 
             <div class="form-actions">
-                <a href="admin?section=teams" class="btn-secondary">Cancel</a>
+                <a href="../admin?section=teams" class="btn-secondary">Cancel</a>
                 <button class="btn-primary" type="submit">Create team</button>
             </div>
         </form>

@@ -208,4 +208,14 @@ class UserDAO extends BaseDAO
             ':id'   => $id,
         ]);
     }
+
+    public function isUserAdmin(int $id): bool
+    {
+        $sql = "SELECT admin FROM users WHERE id = :id LIMIT 1";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':id' => $id]);
+        $row = $stmt->fetch();
+
+        return !empty($row['admin']);
+    }
 }

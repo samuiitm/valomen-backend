@@ -136,7 +136,9 @@
                                 <td><?= (int)$user['points'] ?></td>
                                 <td><?= !empty($user['admin']) ? 'Admin' : 'User' ?></td>
                                 <td class="admin-actions-col">
-                                    <?php if ((int)$user['id'] !== (int)($_SESSION['user_id'] ?? 0)): ?>
+                                    <?php if ((int)$user['id'] !== (int)($_SESSION['user_id'] ?? 0) && (int)$user['admin'] === 1): ?>
+                                        <span class="admin-self-label">Admin</span>
+                                    <?php elseif ((int)$user['id'] !== (int)($_SESSION['user_id'] ?? 0) && (int)$user['admin'] === 0): ?>
                                         <a href="admin/user_edit?id=<?= (int)$user['id'] ?>"
                                         class="admin-icon-btn edit"
                                         title="Edit user">✎</a>
@@ -147,6 +149,7 @@
                                         title="Delete user">🗑</a>
                                     <?php else: ?>
                                         <span class="admin-self-label">You</span>
+                                        <span><?php (int)$user['admin'] ?></span>
                                     <?php endif; ?>
                                 </td>
                             </tr>

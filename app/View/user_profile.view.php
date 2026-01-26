@@ -40,7 +40,7 @@ if (!empty($pendingAvatar)) {
 
                     <input type="file" name="avatar" id="avatar" accept="image/*" style="display:none;">
 
-                    <button type="button" class="send-button" id="chooseAvatarBtn">
+                    <button type="button" class="btn-primary" id="chooseAvatarBtn">
                         Change photo
                     </button>
 
@@ -58,14 +58,6 @@ if (!empty($pendingAvatar)) {
                 <div class="info-block">
                     <span class="profile-label">Username</span>
                     <span class="label-value"><?= htmlspecialchars($user['username'] ?? '') ?></span>
-                </div>
-                <span class="arrow"></span>
-            </a>
-
-            <a href="profile/email" class="field-block">
-                <div class="info-block">
-                    <span class="profile-label">Email</span>
-                    <span class="label-value"><?= htmlspecialchars($user['email'] ?? '') ?></span>
                 </div>
                 <span class="arrow"></span>
             </a>

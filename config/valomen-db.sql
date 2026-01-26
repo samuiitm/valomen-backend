@@ -249,3 +249,31 @@ VALUES
 INSERT INTO predictions (user_id, match_id, score_team_1_pred, score_team_2_pred, points_awarded)
 VALUES
 (2, 43, 3, 2, 10);
+
+CREATE TABLE password_resets (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id INT UNSIGNED NOT NULL,
+    selector CHAR(16) NOT NULL UNIQUE,
+    hashed_validator CHAR(64) NOT NULL,
+    expires_at DATETIME NOT NULL,
+    used_at DATETIME DEFAULT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE oauth_identities (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id INT UNSIGNED NOT NULL,
+  provider VARCHAR(30) NOT NULL,
+  provider_user_id VARCHAR(191) NOT NULL,
+  email VARCHAR(255) NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+  UNIQUE KEY uniq_provider_user (provider, provider_user_id),
+  INDEX idx_user_id (user_id),
+
+  CONSTRAINT fk_oauth_user
+    FOREIGN KEY (user_id) REFERENCES users(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

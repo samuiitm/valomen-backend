@@ -574,7 +574,7 @@ class MatchAdminController
         }
 
         $pageTitle = 'Valomen.gg | Create match';
-        $pageCss   = 'elements_admin.css';
+        $pageCss   = 'form_generic.css';
 
         require __DIR__ . '/../View/partials/header.php';
 
@@ -612,7 +612,7 @@ class MatchAdminController
         $matchId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
         $pageTitle = 'Valomen.gg | Edit match';
-        $pageCss   = 'elements_admin.css';
+        $pageCss   = 'form_generic.css';
 
         require __DIR__ . '/../View/partials/header.php';
 

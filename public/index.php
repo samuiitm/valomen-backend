@@ -39,10 +39,15 @@ if (!isset($_SESSION['login_attempts'])) {
 
 require __DIR__ . '/../config/db-connection.php';
 require __DIR__ . '/../config/recaptcha.php';
+require __DIR__ . '/../config/mail.php';
+require __DIR__ . '/../config/oauth.php';
 
 require_once __DIR__ . '/../lib/DateFormat.php';
 require_once __DIR__ . '/../lib/FlagControl.php';
 require_once __DIR__ . '/../lib/CurrencyFormat.php';
+
+require __DIR__ . '/../app/Helpers/url.php';
+require __DIR__ . '/../app/Helpers/mailer.php';
 
 require __DIR__ . '/../app/Model/DAO/BaseDAO.php';
 require __DIR__ . '/../app/Model/DAO/UserDAO.php';
@@ -51,7 +56,8 @@ require __DIR__ . '/../app/Model/DAO/EventDAO.php';
 require __DIR__ . '/../app/Model/DAO/MatchDAO.php';
 require __DIR__ . '/../app/Model/DAO/PredictionDAO.php';
 require __DIR__ . '/../app/Model/DAO/RememberTokenDAO.php';
-require __DIR__ . '/../app/Helpers/url.php';
+require __DIR__ . '/../app/Model/DAO/PasswordResetTokenDAO.php';
+
 
 if (empty($_SESSION['user_id']) && !empty($_COOKIE['remember_me'])) {
     $cookie = $_COOKIE['remember_me'];
@@ -128,13 +134,14 @@ require __DIR__ . '/../app/Controller/EventAdminController.php';
 require __DIR__ . '/../app/Controller/PredictionController.php';
 require __DIR__ . '/../app/Controller/MatchAdminController.php';
 require __DIR__ . '/../app/Controller/AdminPanelController.php';
+require __DIR__ . '/../app/Controller/PasswordResetController.php';
 
 require __DIR__ . '/../app/Controller/HomeController.php';
 require __DIR__ . '/../app/Controller/AuthController.php';
 require __DIR__ . '/../app/Controller/EventsController.php';
 require __DIR__ . '/../app/Controller/MatchesController.php';
 require __DIR__ . '/../app/Controller/AdminPageController.php';
-
+require __DIR__ . '/../app/Controller/OAuthController.php';
 
 require __DIR__ . '/../app/Core/Router.php';
 require __DIR__ . '/../routes.php';

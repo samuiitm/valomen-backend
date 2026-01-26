@@ -24,6 +24,7 @@ class AuthController
         $rememberMe    = false;
         $attempts      = $_SESSION['login_attempts'] ?? 0;
         $showRecaptcha = $attempts >= 3;
+        $resetSuccess  = !empty($_GET['reset']);
 
         require __DIR__ . '/../View/partials/header.php';
         require __DIR__ . '/../View/login.view.php';
@@ -41,6 +42,7 @@ class AuthController
         $rememberMe    = !empty($_POST['remember_me']);
         $attempts      = $_SESSION['login_attempts'] ?? 0;
         $showRecaptcha = $attempts >= 3;
+        $resetSuccess  = !empty($_GET['reset']);
 
         if ($attempts >= 3) {
             $captchaToken = $_POST['g-recaptcha-response'] ?? '';

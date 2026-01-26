@@ -71,7 +71,7 @@ class UserProfileController
         ];
 
         $pageTitle = 'Change username';
-        $pageCss   = 'elements_admin.css';
+        $pageCss   = 'form_generic.css';
 
         require __DIR__ . '/../View/partials/header.php';
         require __DIR__ . '/../View/change_username.view.php';
@@ -113,7 +113,7 @@ class UserProfileController
 
         if ($hasErrors) {
             $pageTitle = 'Change username';
-            $pageCss   = 'elements_admin.css';
+            $pageCss   = 'form_generic.css';
             $user['username'] = $newUsername;
 
             require __DIR__ . '/../View/partials/header.php';
@@ -142,7 +142,7 @@ class UserProfileController
         ];
 
         $pageTitle = 'Change password';
-        $pageCss   = 'elements_admin.css';
+        $pageCss   = 'form_generic.css';
 
         require __DIR__ . '/../View/partials/header.php';
         require __DIR__ . '/../View/change_password.view.php';
@@ -194,7 +194,7 @@ class UserProfileController
 
         if ($hasErrors) {
             $pageTitle = 'Change password';
-            $pageCss   = 'elements_admin.css';
+            $pageCss   = 'form_generic.css';
 
             require __DIR__ . '/../View/partials/header.php';
             require __DIR__ . '/../View/change_password.view.php';

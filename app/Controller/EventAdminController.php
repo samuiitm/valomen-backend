@@ -339,7 +339,7 @@ class EventAdminController
         }
 
         $pageTitle = 'Valomen.gg | Create event';
-        $pageCss   = 'elements_admin.css';
+        $pageCss   = 'form_generic.css';
 
         require __DIR__ . '/../View/partials/header.php';
         $this->showCreateForm();
@@ -378,7 +378,7 @@ class EventAdminController
         }
 
         $pageTitle = 'Valomen.gg | Edit event';
-        $pageCss   = 'elements_admin.css';
+        $pageCss   = 'form_generic.css';
 
         require __DIR__ . '/../View/partials/header.php';
         $this->showEditForm($id);

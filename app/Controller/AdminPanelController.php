@@ -457,7 +457,7 @@ class AdminPanelController
         $data = $this->showEditUser($id);
 
         $pageTitle = 'Edit user';
-        $pageCss   = 'elements_admin.css';
+        $pageCss   = 'form_generic.css';
 
         $old    = $data['old'];
         $errors = $data['errors'];
@@ -491,7 +491,7 @@ class AdminPanelController
         $data = $this->showEditTeam($id);
 
         $pageTitle = 'Edit team';
-        $pageCss   = 'elements_admin.css';
+        $pageCss   = 'form_generic.css';
 
         $old    = $data['old'];
         $errors = $data['errors'];
@@ -526,7 +526,7 @@ class AdminPanelController
         $errors = $data['errors'];
 
         $pageTitle = 'Create team';
-        $pageCss   = 'elements_admin.css';
+        $pageCss   = 'form_generic.css';
 
         require __DIR__ . '/../View/partials/header.php';
         require __DIR__ . '/../View/team_create.view.php';
@@ -547,7 +547,7 @@ class AdminPanelController
             $errors = $data['errors'];
 
             $pageTitle = 'Create team';
-            $pageCss   = 'elements_admin.css';
+            $pageCss   = 'form_generic.css';
 
             require __DIR__ . '/../View/partials/header.php';
             require __DIR__ . '/../View/team_create.view.php';

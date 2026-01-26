@@ -1,3 +1,6 @@
+# NOTE: Aquest .htaccess és antic. Com ara utilitzo routing real, es fa a /public/.htaccess
+# i tot entra per /public/index.php amb el Router.
+
 RewriteEngine On
 
 RewriteCond %{REQUEST_FILENAME} !-f

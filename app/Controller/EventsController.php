@@ -104,15 +104,20 @@ class EventsController
             function build_events_url(int $p, int $perPage, string $order): string {
                 $p       = max(1, $p);
                 $perPage = max(1, $perPage);
+
                 $validOrder  = ['date_asc','date_desc'];
                 if (!in_array($order, $validOrder, true)) {
                     $order = 'date_asc';
                 }
 
-                return '/events'
-                    . '?p=' . $p
-                    . '&perPage=' . $perPage
-                    . '&order=' . urlencode($order);
+                // IMPORTANT: usem url('events') per no dependre de rutes absolutes
+                $params = [
+                    'p'       => $p,
+                    'perPage' => $perPage,
+                    'order'   => $order,
+                ];
+
+                return url('events') . '?' . http_build_query($params);
             }
         }
 

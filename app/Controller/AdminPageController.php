@@ -16,7 +16,7 @@ class AdminPageController
     public function index(): void
     {
         if (empty($_SESSION['user_id']) || empty($_SESSION['is_admin'])) {
-            header('Location: ../');
+            redirect_to('');
             exit;
         }
 
@@ -84,7 +84,7 @@ class AdminPageController
                         $params['search'] = $search;
                     }
 
-                    return 'admin?' . http_build_query($params);
+                    return url('admin') . '?' . http_build_query($params);
                 }
             }
         }

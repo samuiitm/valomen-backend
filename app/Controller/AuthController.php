@@ -77,9 +77,12 @@ class AuthController
 
                         $cookieValue = $selector . ':' . $validator;
 
+                        // Path portable (si el projecte està en subcarpeta)
+                        $cookiePath = base_path() ?: '/';
+
                         setcookie('remember_me', $cookieValue, [
                             'expires'  => time() + 60 * 60 * 24 * 30,
-                            'path'     => '/',
+                            'path'     => $cookiePath,
                             'secure'   => !empty($_SERVER['HTTPS']),
                             'httponly' => true,
                             'samesite' => 'Lax',
@@ -87,7 +90,8 @@ class AuthController
                     }
                 }
 
-                header('Location: ./');
+                // Redirecció portable
+                redirect_to('');
                 exit;
             } else {
                 $_SESSION['login_attempts'] = $attempts + 1;
@@ -110,15 +114,34 @@ class AuthController
             $tokenDao->deleteByUserId((int)$_SESSION['user_id']);
         }
 
-        setcookie('remember_me', '', time() - 3600, '/', '', !empty($_SERVER['HTTPS']), true);
+        // Esborrem la cookie "remember_me" amb el mateix path portable
+        $cookiePath = base_path() ?: '/';
+
+        setcookie('remember_me', '', [
+            'expires'  => time() - 3600,
+            'path'     => $cookiePath,
+            'secure'   => !empty($_SERVER['HTTPS']),
+            'httponly' => true,
+            'samesite' => 'Lax',
+        ]);
 
         $_SESSION = [];
         if (ini_get('session.use_cookies')) {
             $params = session_get_cookie_params();
-            setcookie(session_name(), '', time() - 42000, $params['path'], $params['domain'], $params['secure'], $params['httponly']);
+            setcookie(
+                session_name(),
+                '',
+                time() - 42000,
+                $params['path'],
+                $params['domain'],
+                $params['secure'],
+                $params['httponly']
+            );
         }
         session_destroy();
-        header('Location: login');
+
+        // Redirecció portable
+        redirect_to('login');
         exit;
     }
 

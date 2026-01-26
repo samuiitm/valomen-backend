@@ -181,7 +181,7 @@ class EventAdminController
 
         $this->eventDao->setEventTeams($eventId, $teams);
 
-        header('Location: events');
+        redirect_to('events');
         exit;
     }
 
@@ -311,7 +311,7 @@ class EventAdminController
 
         $this->eventDao->setEventTeams($id, $teams);
 
-        header('Location: events');
+        redirect_to('events');
         exit;
     }
 
@@ -319,7 +319,7 @@ class EventAdminController
     {
         try {
             $this->eventDao->deleteEventById($id);
-            header('Location: events');
+            redirect_to('events');
             exit;
         } catch (PDOException $e) {
             http_response_code(400);
@@ -334,7 +334,7 @@ class EventAdminController
             empty($_SESSION['is_admin']) ||
             empty($_SESSION['edit_mode'])
         ) {
-            header('Location: events');
+            redirect_to('events');
             exit;
         }
 
@@ -353,7 +353,7 @@ class EventAdminController
             empty($_SESSION['is_admin']) ||
             empty($_SESSION['edit_mode'])
         ) {
-            header('Location: events');
+            redirect_to('events');
             exit;
         }
 
@@ -367,13 +367,13 @@ class EventAdminController
             empty($_SESSION['is_admin']) ||
             empty($_SESSION['edit_mode'])
         ) {
-            header('Location: events');
+            redirect_to('events');
             exit;
         }
 
         $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
         if ($id <= 0) {
-            header('Location: events');
+            redirect_to('events');
             exit;
         }
 
@@ -392,13 +392,13 @@ class EventAdminController
             empty($_SESSION['is_admin']) ||
             empty($_SESSION['edit_mode'])
         ) {
-            header('Location: events');
+            redirect_to('events');
             exit;
         }
 
         $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
         if ($id <= 0) {
-            header('Location: events');
+            redirect_to('events');
             exit;
         }
 
@@ -412,17 +412,16 @@ class EventAdminController
             empty($_SESSION['is_admin']) ||
             empty($_SESSION['edit_mode'])
         ) {
-            header('Location: events');
+            redirect_to('events');
             exit;
         }
 
         $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
         if ($id <= 0) {
-            header('Location: events');
+            redirect_to('events');
             exit;
         }
 
         $this->deleteEvent($id);
     }
-
 }

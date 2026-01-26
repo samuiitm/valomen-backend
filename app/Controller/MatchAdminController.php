@@ -169,18 +169,14 @@ class MatchAdminController
 
                 $diffSeconds = $matchDateTime->getTimestamp() - $now->getTimestamp();
 
-                // si encara falta → Upcoming
                 if ($diffSeconds > 0) {
                     $status = 'Upcoming';
-                // si porta menys de 3 hores jugant → Live
                 } elseif ($diffSeconds >= -3 * 3600) {
                     $status = 'Live';
-                // si fa més estona → Completed
                 } else {
                     $status = 'Completed';
                 }
             } catch (Exception $e) {
-                // si hi ha algun problema amb la data, per defecte el poso com a Upcoming
                 $status = 'Upcoming';
             }
         } else {
@@ -189,7 +185,6 @@ class MatchAdminController
 
         // validació de marcador segons l'estat i el BO
         if ($status === 'Completed') {
-            // si està completat, han de tenir marcador obligatori
             if ($scoreTeam1 === null || $scoreTeam2 === null) {
                 $errors['score_team_1'] = 'Score is required for completed matches.';
                 $errors['score_team_2'] = 'Score is required for completed matches.';
@@ -200,17 +195,14 @@ class MatchAdminController
                     $max = max($scoreTeam1, $scoreTeam2);
                     $min = min($scoreTeam1, $scoreTeam2);
 
-                    // regles per BO1
                     if ($bestOf === 1) {
                         if (!(($scoreTeam1 === 1 && $scoreTeam2 === 0) || ($scoreTeam1 === 0 && $scoreTeam2 === 1))) {
                             $errors['global'] = 'For BO1 the score must be 1-0 or 0-1.';
                         }
-                    // regles per BO3
                     } elseif ($bestOf === 3) {
                         if (!($max === 2 && $min >= 0 && $min <= 1)) {
                             $errors['global'] = 'For BO3 the winner must have 2 maps and the loser 0 or 1.';
                         }
-                    // regles per BO5
                     } elseif ($bestOf === 5) {
                         if (!($max === 3 && $min >= 0 && $min <= 2)) {
                             $errors['global'] = 'For BO5 the winner must have 3 maps and the loser 0, 1 or 2.';
@@ -219,11 +211,9 @@ class MatchAdminController
                 }
             }
         } else {
-            // si no està completat, no hauria de tenir marcador
             if ($scoreTeam1 !== null || $scoreTeam2 !== null) {
                 $errors['global'] = 'You can only set the score for completed matches.';
             }
-            // per si de cas, els netejo
             $scoreTeam1 = null;
             $scoreTeam2 = null;
         }
@@ -251,12 +241,10 @@ class MatchAdminController
         ];
 
         if ($hasErrors) {
-            // si hi ha errors, torno a la vista de crear amb old + errors
             $this->showCreateForm($eventId > 0 ? $eventId : null, $old, $errors);
             return;
         }
 
-        // si tot està bé, creo el partit a la bd
         $this->matchDao->createMatch(
             $team1Id,
             $team2Id,
@@ -268,32 +256,27 @@ class MatchAdminController
             $bestOf,
             $eventStage,
             $eventId,
-            $_SESSION['user_id'] ?? null // guardo qui ha creat el partit
+            $_SESSION['user_id'] ?? null
         );
 
-        // redirigeixo a la pàgina de partits
-        header('Location: matches');
+        // redireigeixo a la pàgina de partits
+        redirect_to('matches');
         exit;
     }
 
     public function showEditForm(int $matchId, array $old = [], array $errors = []): void
     {
-        // busco el partit per id
         $match = $this->matchDao->getMatchById($matchId);
         if (!$match) {
             echo '<p>Match not found.</p>';
             return;
         }
 
-        // tots els events per al select
         $events = $this->eventDao->getAllEventsForSelect();
 
-        // miro quin event està seleccionat (old o el de la bd)
         $eventId = !empty($old['event_id']) ? (int)$old['event_id'] : (int)$match['event_id'];
-        // carrego equips de l'event
         $teams   = $this->teamDao->getTeamsByEvent($eventId);
 
-        // si encara no hi ha old, omplo amb les dades actuals del partit
         if (empty($old)) {
             $old = [
                 'event_id'      => $match['event_id'],
@@ -308,7 +291,6 @@ class MatchAdminController
             ];
         }
 
-        // errors per defecte
         $defaultErrors = [
             'event_id'      => '',
             'team_1'        => '',
@@ -323,26 +305,21 @@ class MatchAdminController
         ];
         $errors = array_merge($defaultErrors, $errors);
 
-        // id de l'event seleccionat a la vista
         $selectedEventId = $eventId;
 
-        // carrego la vista d'edició
         require __DIR__ . '/../View/match_edit.view.php';
     }
 
     public function updateFromPost(int $matchId): void
     {
-        // aquí necessito el PredictionController per actualitzar punts
         require_once __DIR__ . '/PredictionController.php';
 
-        // primer miro si el partit existeix
         $match = $this->matchDao->getMatchById($matchId);
         if (!$match) {
-            header('Location: matches');
+            redirect_to('matches');
             exit;
         }
 
-        // llegeixo tots els camps igual que al create
         $eventId    = isset($_POST['event_id']) ? (int) $_POST['event_id'] : 0;
         $team1Id = isset($_POST['team_1']) && $_POST['team_1'] !== ''
             ? (int) $_POST['team_1']
@@ -361,7 +338,6 @@ class MatchAdminController
         $scoreTeam1 = $score1Raw === '' ? null : (int) $score1Raw;
         $scoreTeam2 = $score2Raw === '' ? null : (int) $score2Raw;
 
-        // old per poder tornar a pintar el formulari si falla
         $old = [
             'event_id'      => $eventId,
             'team_1'        => $team1Id,
@@ -374,13 +350,11 @@ class MatchAdminController
             'score_team_2'  => $score2Raw,
         ];
 
-        // si només vol actualitzar la llista d'equips (canvi d'event)
         if (isset($_POST['refresh_teams'])) {
             $this->showEditForm($matchId, $old, []);
             return;
         }
 
-        // errors inicials
         $errors = [
             'event_id'      => '',
             'team_1'        => '',
@@ -394,7 +368,6 @@ class MatchAdminController
             'global'        => '',
         ];
 
-        // mateixes validacions que al create
         if ($eventId <= 0) {
             $errors['event_id'] = 'Event is required.';
         }
@@ -437,7 +410,6 @@ class MatchAdminController
 
         $status = null;
 
-        // tornem a calcular l'estat del partit segons data i hora
         if ($date !== '' && $hour !== '') {
             try {
                 $now           = new DateTime('2025-11-13 13:00:00');
@@ -458,7 +430,6 @@ class MatchAdminController
             $status = 'Upcoming';
         }
 
-        // validació de marcador quan està completat
         if ($status === 'Completed') {
             if ($scoreTeam1 === null || $scoreTeam2 === null) {
                 $errors['score_team_1'] = 'Score is required for completed matches.';
@@ -489,13 +460,11 @@ class MatchAdminController
                 }
             }
         } else {
-            // si no està completat però han posat marcador, aviso
             if ($scoreTeam1 !== null || $scoreTeam2 !== null) {
                 $errors['global'] = 'Score should be empty unless the match is completed.';
             }
         }
 
-        // miro si hi ha errors
         $hasErrors = false;
         foreach ($errors as $e) {
             if ($e !== '') {
@@ -505,12 +474,10 @@ class MatchAdminController
         }
 
         if ($hasErrors) {
-            // si hi ha problemes, torno a la vista d'edició amb old + errors
             $this->showEditForm($matchId, $old, $errors);
             return;
         }
 
-        // si tot bé, actualitzo el partit a la bd
         $this->matchDao->updateMatch(
             $matchId,
             $team1Id,
@@ -525,40 +492,33 @@ class MatchAdminController
             $eventId
         );
 
-        // si el partit ha quedat com a Completed, recalculo les prediccions
         if ($status === 'Completed') {
             $updatedMatch = $this->matchDao->getMatchById($matchId);
             if ($updatedMatch) {
                 $predictionController = new PredictionController($this->db);
-                // aquí es on es donen punts als usuaris segons el resultat
                 $predictionController->processMatchResult($updatedMatch);
             }
         }
 
-        // torno a la pàgina de partits
-        header('Location: matches');
+        redirect_to('matches');
         exit;
     }
 
     public function deleteMatch(int $matchId): void
     {
-        // comprovo que l'id sigui vàlid
         if ($matchId <= 0) {
-            header('Location: matches?view=schedule');
+            redirect_to('matches?view=schedule');
             exit;
         }
 
-        // elimino el partit
         $this->matchDao->deleteMatchById($matchId);
 
-        // mantinc la vista (schedule o results) després de borrar
         $view = $_GET['view'] ?? 'schedule';
-
         if ($view !== 'results') {
             $view = 'schedule';
         }
 
-        header('Location: matches?view=' . urlencode($view));
+        redirect_to('matches?view=' . urlencode($view));
         exit;
     }
 
@@ -569,7 +529,7 @@ class MatchAdminController
             empty($_SESSION['is_admin']) ||
             empty($_SESSION['edit_mode'])
         ) {
-            header('Location: matches');
+            redirect_to('matches');
             exit;
         }
 
@@ -591,7 +551,7 @@ class MatchAdminController
             empty($_SESSION['is_admin']) ||
             empty($_SESSION['edit_mode'])
         ) {
-            header('Location: matches');
+            redirect_to('matches');
             exit;
         }
 
@@ -605,7 +565,7 @@ class MatchAdminController
             empty($_SESSION['is_admin']) ||
             empty($_SESSION['edit_mode'])
         ) {
-            header('Location: matches');
+            redirect_to('matches');
             exit;
         }
 
@@ -632,13 +592,13 @@ class MatchAdminController
             empty($_SESSION['is_admin']) ||
             empty($_SESSION['edit_mode'])
         ) {
-            header('Location: matches');
+            redirect_to('matches');
             exit;
         }
 
         $matchId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
         if ($matchId <= 0) {
-            header('Location: matches');
+            redirect_to('matches');
             exit;
         }
 
@@ -652,12 +612,11 @@ class MatchAdminController
             empty($_SESSION['is_admin']) ||
             empty($_SESSION['edit_mode'])
         ) {
-            header('Location: matches?view=schedule');
+            redirect_to('matches?view=schedule');
             exit;
         }
 
         $matchId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
         $this->deleteMatch($matchId);
     }
-
 }

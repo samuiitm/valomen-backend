@@ -12,7 +12,9 @@ Usuari: **s.canadas**<br>
 Contrasenya: **s.canadas**
 
 ## Inicialització de la base de dades
-El fitxer .sql es troba a la carpeta config
+El fitxer `.sql` es troba a la carpeta `config/` (`config/valomen-db.sql`).
+
+---
 
 ## 1. Descripció general del projecte
 
@@ -27,12 +29,31 @@ També:
 > HE VOLGUT IMPLEMENTAR EL TEMA DE LES PREDICCIONS PERQUÈ SI NO NO TINDRIA SENTIT TENIR USUARIS, JA QUE NO PODRIEN FER RES I NO CANVIARIA RES EL TENIR O NO TENIR UN COMPTE, NOMÉS PER A ADMINISTRADORS.  
 > VAIG ESTAR PENSANT ENTRE UN SISTEMA DE FOROS O UN SISTEMA DE PREDICCIONS I PUNTS, I EM VAIG DECANTAR PER AQUEST ÚLTIM. VA SER MÉS DIFÍCIL PERQUÈ IMPLICAVA GESTIÓ DE PUNTS, RESULTATS, I ACTUALITZACIONS AUTOMÀTIQUES.
 
+---
+
 ## 2. Decisions del projecte segons l’enunciat
+
+### ✔ Arquitectura MVC pròpia (sense frameworks)
+- Front controller a `public/index.php`.
+- Router propi per registrar rutes GET/POST i executar el controlador corresponent.
+- Separació de carpetes: `app/Controller`, `app/Model/DAO`, `app/View`, `config`, `lib`.
 
 ### ✔ Autenticació segura
 - Sessions PHP per gestionar l’usuari logat.
 - Contrasenyes amb `password_hash()` i verificació amb `password_verify()`.
 - Validació de duplicats (email, username).
+
+### ✔ OAuth (Google i GitHub)
+- Login amb Google i GitHub (callback absolut).
+- Sistema d’“identitats” guardat a la taula `oauth_identities`.
+- Si l’email ja existeix, s’enllaça el provider amb l’usuari existent.
+- Si no existeix, es crea un usuari nou i se li enllaça la identitat OAuth.
+
+### ✔ Recuperació de contrasenya (per email)
+- Formulari per demanar l’email i enviar enllaç de reset.
+- Token segur tipus `selector:validator` (a la BD només es guarda el hash del validator).
+- Caducitat del token (TTL) i ús únic (quan es fa servir, queda invalidat).
+- Per seguretat, sempre es mostra “correu enviat” encara que l’email no existeixi.
 
 ### ✔ Recordar sessió (Remember Me)
 - Implementació amb token.
@@ -70,6 +91,20 @@ També:
 - Filtrat en PHP.
 
 ### ✔ Configuracions de seguretat (.htaccess)
-- Deshabilitar `Indexes`.
-- Restringir accés a carpetes internes.
+- Reescriptura de rutes cap a `public/index.php` (URL netes).
+- Bloqueig d’accés a carpetes internes (`app/`, `config/`, `lib/`) amb `Require all denied`.
 - Separació clara entre `/public/` i la resta del backend.
+
+---
+
+## 3. Notes importants d’URLs (portabilitat)
+El projecte es mou entre ordinadors i carpetes, per tant:
+
+❌ PROHIBIT
+- `href="/profile"`
+- `header('Location: /profile')`
+
+✅ OBLIGATORI
+- `base_path()`
+- `url('profile')`
+- `redirect_to('profile')`

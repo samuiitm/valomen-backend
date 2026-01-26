@@ -64,7 +64,7 @@
             <?php endif; ?>
 
             <div class="form-actions">
-                <a href="profile" class="btn-secondary">Cancel</a>
+                <a href="../profile" class="btn-secondary">Cancel</a>
                 <button class="btn-primary" type="submit">Save password</button>
             </div>
         </form>

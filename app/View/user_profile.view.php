@@ -32,7 +32,9 @@ if (!empty($pendingAvatar)) {
         <form id="avatarForm" action="profile/avatar" method="post" enctype="multipart/form-data" class="profile-form">
             <div class="profile-avatar-block">
                 <div class="avatar-preview">
-                    <img src="<?= $avatarSrc ?>" alt="User avatar">
+                    <img src="<?= $avatarSrc ?>" 
+                         alt="User avatar"
+                         onerror="this.onerror=null; this.src='<?= htmlspecialchars(url('assets/img/default-avatar.png')) ?>';">
                 </div>
 
                 <div class="avatar-input">

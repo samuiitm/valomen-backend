@@ -56,7 +56,9 @@ $pageCss   = $pageCss   ?? null;
                         }
                     ?>
                     <button id="userMenuBtn" class="user-avatar-btn">
-                        <img src="<?= htmlspecialchars($headerAvatarSrc) ?>" alt="User avatar">
+                        <img src="<?= htmlspecialchars($headerAvatarSrc) ?>"
+                             alt="User avatar"
+                             onerror="this.onerror=null; this.src='<?= htmlspecialchars(url('assets/img/default-avatar.png')) ?>';">
                     </button>
 
                     <div class="user-dropdown" id="userDropdown">

@@ -43,6 +43,11 @@
                 <p class="field-error"><?= htmlspecialchars($loginError) ?></p>
             <?php endif; ?>
 
+            <?php if (!empty($_SESSION['profile_error'])): ?>
+                <p class="error-message"><?= htmlspecialchars($_SESSION['profile_error']) ?></p>
+                <?php unset($_SESSION['profile_error']); ?>
+            <?php endif; ?>
+
             <div class="container-login">
                 <div class="field-block">
                     <label class="remember-label">

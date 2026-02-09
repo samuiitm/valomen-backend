@@ -16,95 +16,78 @@ class OAuthController
         $this->oauthDao = new OAuthIdentityDAO($db);
     }
 
-    /* =========================
-       GOOGLE
-       ========================= */
+    /* =========================================================
+       GOOGLE (HYBRIDAUTH)
+       ========================================================= */
 
     public function googleRedirect(): void
     {
-        // Guardem un "state" per seguretat (evita CSRF)
-        $_SESSION['oauth_state'] = bin2hex(random_bytes(16));
-
-        // Google demana una URL absoluta de callback
-        $redirectUri = full_url('auth/google/callback');
-
-        $params = [
-            'client_id' => GOOGLE_CLIENT_ID,
-            'redirect_uri' => $redirectUri,
-            'response_type' => 'code',
-            'scope' => 'openid email profile',
-            'state' => $_SESSION['oauth_state'],
-            'prompt' => 'select_account',
-        ];
-
-        // Redirigim cap a Google (això és fora del nostre projecte)
-        $authUrl = 'https://accounts.google.com/o/oauth2/v2/auth?' . http_build_query($params);
-        header('Location: ' . $authUrl);
-        exit;
+        // Aquí comencem el login de Google
+        $this->handleGoogle();
     }
 
     public function googleCallback(): void
     {
-        // Comprovem que el "state" sigui correcte
-        $state = $_GET['state'] ?? '';
-        if (empty($_SESSION['oauth_state']) || !hash_equals($_SESSION['oauth_state'], $state)) {
-            $_SESSION['profile_error'] = 'OAuth state mismatch.';
-            redirect_to('login');
-            exit;
-        }
-        unset($_SESSION['oauth_state']);
-
-        // Si no ve el "code", no podem continuar
-        $code = $_GET['code'] ?? '';
-        if ($code === '') {
-            $_SESSION['profile_error'] = 'Google OAuth: missing code.';
-            redirect_to('login');
-            exit;
-        }
-
-        // Canviem el "code" per un access token
-        $redirectUri = full_url('auth/google/callback');
-        $token = $this->httpPostForm('https://oauth2.googleapis.com/token', [
-            'client_id' => GOOGLE_CLIENT_ID,
-            'client_secret' => GOOGLE_CLIENT_SECRET,
-            'code' => $code,
-            'grant_type' => 'authorization_code',
-            'redirect_uri' => $redirectUri,
-        ]);
-
-        if (empty($token['access_token'])) {
-            $_SESSION['profile_error'] = 'Google OAuth: token error.';
-            redirect_to('login');
-            exit;
-        }
-
-        // Demanem dades de l'usuari amb el token
-        $userInfo = $this->httpGetJson(
-            'https://openidconnect.googleapis.com/v1/userinfo',
-            ['Authorization: Bearer ' . $token['access_token']]
-        );
-
-        $providerUserId = $userInfo['sub'] ?? '';
-        $email = $userInfo['email'] ?? null;
-
-        if ($providerUserId === '' || empty($email)) {
-            $_SESSION['profile_error'] = 'Google OAuth: could not read your email.';
-            redirect_to('login');
-            exit;
-        }
-
-        $this->loginOrCreateFromOAuth('google', $providerUserId, $email, $userInfo['name'] ?? null);
+        // Aquí Google torna després de fer login
+        $this->handleGoogle();
     }
 
-    /* =========================
-       GITHUB
-       ========================= */
+    private function handleGoogle(): void
+    {
+        // Carrego Hybridauth (ve de Composer)
+        $autoload = __DIR__ . '/../../vendor/autoload.php';
+        if (!file_exists($autoload)) {
+            $_SESSION['profile_error'] = 'Falta Hybridauth. Has de fer composer install.';
+            redirect_to('login');
+        }
+        require_once $autoload;
+
+        // Config bàsica de Google amb callback absolut
+        $config = [
+            'callback' => full_url('auth/google/callback'),
+            'keys' => [
+                'id' => GOOGLE_CLIENT_ID,
+                'secret' => GOOGLE_CLIENT_SECRET,
+            ],
+            'scope' => 'openid email profile',
+        ];
+
+        try {
+            // Demano a Google que autentiqui l'usuari
+            $google = new \Hybridauth\Provider\Google($config);
+            $google->authenticate();
+
+            // Agafo dades del perfil
+            $profile = $google->getUserProfile();
+
+            $providerUserId = (string)($profile->identifier ?? '');
+            $email = $profile->email ?? null;
+            $name  = $profile->displayName ?? null;
+
+            // Sense email no podem crear ni enllaçar el compte
+            if ($providerUserId === '' || empty($email)) {
+                $_SESSION['profile_error'] = 'Google OAuth: no hem pogut llegir el teu email.';
+                redirect_to('login');
+            }
+
+            // Aquí fem servir el teu sistema actual per entrar o crear usuari
+            $this->loginOrCreateFromOAuth('google', $providerUserId, $email, $name);
+        } catch (Throwable $e) {
+            $_SESSION['profile_error'] = 'Google OAuth: ' . $e->getMessage();
+            redirect_to('login');
+        }
+    }
+
+    /* =========================================================
+       GITHUB (MANUAL)
+       ========================================================= */
 
     public function githubRedirect(): void
     {
+        // Creo un state per seguretat
         $_SESSION['oauth_state'] = bin2hex(random_bytes(16));
 
-        // GitHub també demana callback absolut
+        // Callback absolut
         $redirectUri = full_url('auth/github/callback');
 
         $params = [
@@ -115,30 +98,31 @@ class OAuthController
         ];
 
         $authUrl = 'https://github.com/login/oauth/authorize?' . http_build_query($params);
+
         header('Location: ' . $authUrl);
         exit;
     }
 
     public function githubCallback(): void
     {
+        // Comprovo que el state coincideix
         $state = $_GET['state'] ?? '';
         if (empty($_SESSION['oauth_state']) || !hash_equals($_SESSION['oauth_state'], $state)) {
             $_SESSION['profile_error'] = 'OAuth state mismatch.';
             redirect_to('login');
-            exit;
         }
         unset($_SESSION['oauth_state']);
 
+        // GitHub torna un code
         $code = $_GET['code'] ?? '';
         if ($code === '') {
             $_SESSION['profile_error'] = 'GitHub OAuth: missing code.';
             redirect_to('login');
-            exit;
         }
 
         $redirectUri = full_url('auth/github/callback');
 
-        // Demanem el token (GitHub ens pot tornar JSON si enviem Accept)
+        // Canvio el code per un access token
         $token = $this->httpPostForm(
             'https://github.com/login/oauth/access_token',
             [
@@ -153,12 +137,11 @@ class OAuthController
         if (empty($token['access_token'])) {
             $_SESSION['profile_error'] = 'GitHub OAuth: token error.';
             redirect_to('login');
-            exit;
         }
 
         $accessToken = $token['access_token'];
 
-        // Demanem el perfil bàsic
+        // Demano el perfil
         $user = $this->httpGetJson(
             'https://api.github.com/user',
             [
@@ -171,7 +154,7 @@ class OAuthController
         $providerUserId = isset($user['id']) ? (string)$user['id'] : '';
         $email = $user['email'] ?? null;
 
-        // Si l'email ve buit, el busquem a /user/emails
+        // Si l’email no ve aquí, el busco a /user/emails
         if (empty($email)) {
             $emails = $this->httpGetJson(
                 'https://api.github.com/user/emails',
@@ -198,59 +181,59 @@ class OAuthController
         if ($providerUserId === '' || empty($email)) {
             $_SESSION['profile_error'] = 'GitHub OAuth: could not read your email.';
             redirect_to('login');
-            exit;
         }
 
         $this->loginOrCreateFromOAuth('github', $providerUserId, $email, $user['login'] ?? null);
     }
 
-    /* =========================
-       CORE
-       ========================= */
+    /* =========================================================
+       CORE: entrar o crear usuari
+       ========================================================= */
 
     private function loginOrCreateFromOAuth(string $provider, string $providerUserId, string $email, ?string $suggestedName): void
     {
-        // 1) Si ja existeix la identitat OAuth, loguem l'usuari
+        // Si aquesta identitat ja existeix, entrem directament
         $identity = $this->oauthDao->findByProviderUser($provider, $providerUserId);
         if ($identity) {
             $u = $this->userDao->getUserById((int)$identity['user_id']);
             if ($u) {
                 $this->setSessionFromUser($u);
                 redirect_to('');
-                exit;
             }
         }
 
-        // 2) Si no, mirem si ja hi ha un usuari amb aquest email
+        // Si no hi ha identitat, miro si ja existeix usuari per email
         $existingUser = $this->userDao->findByEmail($email);
+
         if ($existingUser) {
+            // Enllaço la identitat amb el compte existent
             $this->oauthDao->createIdentity((int)$existingUser['id'], $provider, $providerUserId, $email);
             $this->setSessionFromUser($existingUser);
             redirect_to('');
-            exit;
         }
 
-        // 3) Si no existeix res, creem un usuari nou
+        // Si no existeix res, creo un usuari nou
         $username = $this->makeUniqueUsername($suggestedName ?: $email);
 
-        // Password aleatòria (no la farà servir, però la BD la demana)
+        // Contrasenya aleatòria perquè la BD la demana
         $randomPass = bin2hex(random_bytes(16));
         $userId = $this->userDao->createUser($username, $email, $randomPass, 0);
 
+        // Guardo la identitat OAuth
         $this->oauthDao->createIdentity((int)$userId, $provider, $providerUserId, $email);
 
+        // Inicio sessió
         $u = $this->userDao->getUserById((int)$userId);
         if ($u) {
             $this->setSessionFromUser($u);
         }
 
         redirect_to('');
-        exit;
     }
 
     private function makeUniqueUsername(string $base): string
     {
-        // Convertim email/login en un username “net”
+        // Netejo el text per fer un username acceptable
         $base = strtolower($base);
         $base = explode('@', $base)[0];
         $base = preg_replace('/[^a-z0-9._]/', '', $base);
@@ -266,13 +249,13 @@ class OAuthController
 
         $candidate = substr($base, 0, 20);
 
-        // Si ja existeix, provem afegint números
+        // Si ja existeix, vaig provant amb un sufix
         $tries = 0;
         while ($this->userDao->findByUsername($candidate)) {
             $suffix = (string)random_int(10, 99);
             $candidate = substr($base, 0, 18) . $suffix;
-
             $tries++;
+
             if ($tries > 30) {
                 $candidate = 'user' . random_int(1000, 9999);
                 break;
@@ -284,15 +267,16 @@ class OAuthController
 
     private function setSessionFromUser(array $user): void
     {
+        // Guardo el mínim a sessió per considerar-lo logejat
         $_SESSION['user_id']   = $user['id'];
         $_SESSION['username']  = $user['username'];
         $_SESSION['is_admin']  = (int)($user['admin'] ?? 0);
         $_SESSION['user_logo'] = $user['logo'] ?? null;
     }
 
-    /* =========================
-       HTTP HELPERS
-       ========================= */
+    /* =========================================================
+       HELPERS HTTP
+       ========================================================= */
 
     private function httpPostForm(string $url, array $data, array $headers = []): array
     {

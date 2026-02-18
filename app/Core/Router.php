@@ -45,7 +45,11 @@ class Router
         // Si la ruta no existeix, 404
         if (!isset(self::$routes[$method][$routeKey])) {
             http_response_code(404);
-            echo "404 - Page not found (" . htmlspecialchars($routeKey) . ")";
+            $pageTitle = 'Valomen.gg | 404 Not Found';
+            $pageCss   = '404.css';
+            require __DIR__ . '/../View/partials/header.php';
+            require __DIR__ . '/../View/404.view.php';
+            require __DIR__ . '/../View/partials/footer.php';
             return;
         }
 

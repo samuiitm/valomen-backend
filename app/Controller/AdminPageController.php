@@ -68,24 +68,22 @@ class AdminPageController
         $totalPagesAdminMb = $totalPagesAdmin;
 
         if (!function_exists('build_admin_url')) {
-            if (!function_exists('build_admin_url')) {
-                function build_admin_url(string $section, int $p, int $perPage, string $search = ''): string {
-                    $p       = max(1, $p);
-                    $perPage = max(1, $perPage);
-                    $section = $section === 'teams' ? 'teams' : 'users';
+            function build_admin_url(string $section, int $p, int $perPage, string $search = ''): string {
+                $p       = max(1, $p);
+                $perPage = max(1, $perPage);
+                $section = $section === 'teams' ? 'teams' : 'users';
 
-                    $params = [
-                        'section' => $section,
-                        'p'       => $p,
-                        'perPage' => $perPage,
-                    ];
+                $params = [
+                    'section' => $section,
+                    'p'       => $p,
+                    'perPage' => $perPage,
+                ];
 
-                    if ($search !== '') {
-                        $params['search'] = $search;
-                    }
-
-                    return url('admin') . '?' . http_build_query($params);
+                if ($search !== '') {
+                    $params['search'] = $search;
                 }
+
+                return url('admin') . '?' . http_build_query($params);
             }
         }
 

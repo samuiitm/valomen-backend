@@ -34,7 +34,7 @@ define('SMTP_PASSWORD', $password);
 // "tls" o "ssl"
 define('SMTP_ENCRYPTION', 'tls');
 
-// Remitent (si uses Gmail, normalment ha de ser el mateix que SMTP_USERNAME)
+// Remitent
 define('MAIL_FROM_EMAIL', SMTP_USERNAME);
 define('MAIL_FROM_NAME', 'Valomen.gg');
 

@@ -39,6 +39,7 @@ Router::post('profile/avatar/confirm',  'UserProfileController@confirmAvatarActi
 
 /* ===== Matches ===== */
 Router::get('matches',  'MatchesController@index');
+Router::get('matches_fragment', 'MatchesController@fragmentAction');
 
 Router::get('match_create', 'MatchAdminController@createFormAction');
 Router::post('match_create','MatchAdminController@createPostAction');
@@ -71,6 +72,7 @@ Router::post('admin/team_create','AdminPanelController@createTeamPostAction');
 
 /* ===== Events ===== */
 Router::get('events', 'EventsController@index');
+Router::get('events_fragment', 'EventsController@fragmentAction');
 
 Router::get('event_create', 'EventAdminController@createFormAction');
 Router::post('event_create','EventAdminController@createPostAction');

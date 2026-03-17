@@ -2,6 +2,7 @@
 <?php
 $pageTitle = $pageTitle ?? 'Valomen.gg';
 $pageCss   = $pageCss   ?? null;
+$pageJs    = $pageJs    ?? null;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -19,6 +20,10 @@ $pageCss   = $pageCss   ?? null;
 
     <script defer src="<?= url('js/main.js') ?>"></script>
     <link rel="stylesheet" href="<?= url('css/generic.css') ?>">
+
+    <?php if ($pageJs): ?>
+        <script defer src="<?= url('js/' . $pageJs) ?>"></script>
+    <?php endif; ?>
 
     <?php if ($pageCss): ?>
         <link rel="stylesheet" href="<?= url('css/' . htmlspecialchars($pageCss)) ?>">

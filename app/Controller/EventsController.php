@@ -13,8 +13,33 @@ class EventsController
 
     public function index(): void
     {
+        // carrego totes les dades de la pàgina
+        $data = $this->loadEventsPageData();
+        extract($data);
+
+        $pageTitle = 'Valomen.gg | Events';
+        $pageCss   = 'events.css';
+        $pageJs    = 'events_ajax.js';
+
+        require __DIR__ . '/../View/partials/header.php';
+        require __DIR__ . '/../View/events.view.php';
+        require __DIR__ . '/../View/partials/footer.php';
+    }
+
+    public function fragmentAction(): void
+    {
+        // aquesta ruta només retorna el contingut intern per AJAX
+        $data = $this->loadEventsPageData();
+        extract($data);
+
+        require __DIR__ . '/../View/partials/events_content.view.php';
+    }
+
+    private function loadEventsPageData(): array
+    {
         $orderEvents = $_GET['order'] ?? 'date_asc';
-        $validOrder  = ['date_asc','date_desc'];
+        $validOrder  = ['date_asc', 'date_desc'];
+
         if (!in_array($orderEvents, $validOrder, true)) {
             $orderEvents = 'date_asc';
         }
@@ -31,12 +56,13 @@ class EventsController
         $totalCurrent   = $this->eventDao->countCurrentEvents($searchEvents);
         $totalCompleted = $this->eventDao->countCompletedEvents($searchEvents);
 
+        // si hi ha cerca, no faig paginació real
         if ($searchEvents !== '') {
             $pagesCurrent   = 1;
             $pagesCompleted = 1;
         } else {
-            $pagesCurrent   = max(1, (int)ceil($totalCurrent   / $perPageEvents));
-            $pagesCompleted = max(1, (int)ceil($totalCompleted / $perPageEvents));
+            $pagesCurrent   = max(1, (int) ceil($totalCurrent / $perPageEvents));
+            $pagesCompleted = max(1, (int) ceil($totalCompleted / $perPageEvents));
         }
 
         $totalPagesEvents = max($pagesCurrent, $pagesCompleted);
@@ -47,9 +73,11 @@ class EventsController
             FILTER_VALIDATE_INT,
             ['options' => ['default' => 1, 'min_range' => 1]]
         );
+
         if ($pEvents < 1) {
             $pEvents = 1;
         }
+
         if ($pEvents > $totalPagesEvents) {
             $pEvents = $totalPagesEvents;
         }
@@ -58,14 +86,14 @@ class EventsController
             $offsetCurrent   = 0;
             $offsetCompleted = 0;
 
-            $limitCurrent    = $totalCurrent   > 0 ? $totalCurrent   : 1;
-            $limitCompleted  = $totalCompleted > 0 ? $totalCompleted : 1;
+            $limitCurrent   = $totalCurrent > 0 ? $totalCurrent : 1;
+            $limitCompleted = $totalCompleted > 0 ? $totalCompleted : 1;
         } else {
             $offsetCurrent   = ($pEvents - 1) * $perPageEvents;
             $offsetCompleted = ($pEvents - 1) * $perPageEvents;
 
-            $limitCurrent    = $perPageEvents;
-            $limitCompleted  = $perPageEvents;
+            $limitCurrent   = $perPageEvents;
+            $limitCompleted = $perPageEvents;
         }
 
         $currentEvents = $this->eventDao->getCurrentEventsPaginated(
@@ -85,8 +113,10 @@ class EventsController
         $ongoingEvents  = [];
         $upcomingEvents = [];
 
+        // separo els events actuals segons l'estat
         foreach ($currentEvents as $ev) {
-            $status = strtolower((string)$ev['status']);
+            $status = strtolower((string) ($ev['status'] ?? ''));
+
             if ($status === 'ongoing') {
                 $ongoingEvents[] = $ev;
             } else {
@@ -101,31 +131,42 @@ class EventsController
         $endPageEvents   = min($totalPagesEventsMb, $currentPageEvents + 4);
 
         if (!function_exists('build_events_url')) {
-            function build_events_url(int $p, int $perPage, string $order): string {
+            function build_events_url(int $p, int $perPage, string $order, string $search = ''): string
+            {
                 $p       = max(1, $p);
                 $perPage = max(1, $perPage);
 
-                $validOrder  = ['date_asc','date_desc'];
+                $validOrder = ['date_asc', 'date_desc'];
                 if (!in_array($order, $validOrder, true)) {
                     $order = 'date_asc';
                 }
 
-                // IMPORTANT: usem url('events') per no dependre de rutes absolutes
                 $params = [
                     'p'       => $p,
                     'perPage' => $perPage,
                     'order'   => $order,
                 ];
 
+                if ($search !== '') {
+                    $params['search'] = $search;
+                }
+
+                // usam url('events') per no dependre de rutes absolutes
                 return url('events') . '?' . http_build_query($params);
             }
         }
 
-        $pageTitle = 'Valomen.gg | Events';
-        $pageCss   = 'events.css';
-
-        require __DIR__ . '/../View/partials/header.php';
-        require __DIR__ . '/../View/events.view.php';
-        require __DIR__ . '/../View/partials/footer.php';
+        return [
+            'orderEvents'        => $orderEvents,
+            'perPageEvents'      => $perPageEvents,
+            'searchEvents'       => $searchEvents,
+            'ongoingEvents'      => $ongoingEvents,
+            'upcomingEvents'     => $upcomingEvents,
+            'completedEvents'    => $completedEvents,
+            'currentPageEvents'  => $currentPageEvents,
+            'totalPagesEventsMb' => $totalPagesEventsMb,
+            'startPageEvents'    => $startPageEvents,
+            'endPageEvents'      => $endPageEvents,
+        ];
     }
 }

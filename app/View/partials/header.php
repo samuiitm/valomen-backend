@@ -40,6 +40,7 @@ $pageCss   = $pageCss   ?? null;
                 <li><a href="<?= url('') ?>">Home</a></li>
                 <li><a href="<?= url('matches') ?>">Matches</a></li>
                 <li><a href="<?= url('events') ?>">Events</a></li>
+                <li><a href="<?= url('agents') ?>">Agents</a></li>
             </ul>
 
             <?php if (!empty($_SESSION['user_id'])): ?>

@@ -142,6 +142,8 @@ require __DIR__ . '/../app/Controller/EventsController.php';
 require __DIR__ . '/../app/Controller/MatchesController.php';
 require __DIR__ . '/../app/Controller/AdminPageController.php';
 require __DIR__ . '/../app/Controller/OAuthController.php';
+require __DIR__ . '/../app/Controller/ExternalApiController.php';
+require __DIR__ . '/../app/Controller/ApiController.php';
 
 require __DIR__ . '/../app/Core/Router.php';
 require __DIR__ . '/../routes.php';

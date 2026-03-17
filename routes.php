@@ -79,3 +79,11 @@ Router::get('event_edit',   'EventAdminController@editFormAction');
 Router::post('event_edit',  'EventAdminController@editPostAction');
 
 Router::get('event_delete', 'EventAdminController@deleteAction');
+
+/* ===== External API ===== */
+Router::get('agents', 'ExternalApiController@agentsAction');
+
+/* ===== API pròpia ===== */
+Router::get('api/matches', 'ApiController@matchesAction');
+Router::get('api/events',  'ApiController@eventsAction');
+Router::get('api/teams',   'ApiController@teamsAction');

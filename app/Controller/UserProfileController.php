@@ -152,7 +152,15 @@ class UserProfileController
     public function changePasswordAction(): void
     {
         $userId = $this->requireLogin();
-        $user   = $this->loadUserOrRedirect($userId);
+        $user   = $this->userDao->getUserByIdWithPasswordHash($userId);
+
+        if (!$user) {
+            $_SESSION = [];
+            if (session_status() === PHP_SESSION_ACTIVE) {
+                session_destroy();
+            }
+            redirect_to('login');
+        }
 
         $currentPassword = $_POST['current_password'] ?? '';
         $newPassword     = $_POST['new_password'] ?? '';
@@ -189,7 +197,10 @@ class UserProfileController
 
         $hasErrors = false;
         foreach ($errors as $e) {
-            if ($e !== '') { $hasErrors = true; break; }
+            if ($e !== '') {
+                $hasErrors = true;
+                break;
+            }
         }
 
         if ($hasErrors) {

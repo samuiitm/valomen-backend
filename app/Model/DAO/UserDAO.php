@@ -115,8 +115,22 @@ class UserDAO extends BaseDAO
 
     public function getUserById(int $id): ?array
     {
-        // usuari complet per id (serveix per perfil, admin, etc.)
-        $sql = "SELECT *
+        // retorno només les dades normals de l'usuari
+        $sql = "SELECT id, username, email, points, admin, logo
+                FROM users
+                WHERE id = :id";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':id' => $id]);
+        $row = $stmt->fetch();
+
+        return $row ?: null;
+    }
+
+    public function getUserByIdWithPasswordHash(int $id): ?array
+    {
+        // aquest mètode sí que porta el hash perquè es fa servir al canvi de contrasenya
+        $sql = "SELECT id, username, email, points, admin, logo, passwd_hash
                 FROM users
                 WHERE id = :id";
 

@@ -277,3 +277,11 @@ CREATE TABLE oauth_identities (
     ON DELETE CASCADE
     ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE login_attempts (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    ip_address VARCHAR(45) NOT NULL UNIQUE,
+    attempts INT UNSIGNED NOT NULL DEFAULT 0,
+    last_attempt_at DATETIME NOT NULL,
+    INDEX idx_last_attempt_at (last_attempt_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

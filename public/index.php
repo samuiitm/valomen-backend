@@ -57,7 +57,7 @@ require __DIR__ . '/../app/Model/DAO/MatchDAO.php';
 require __DIR__ . '/../app/Model/DAO/PredictionDAO.php';
 require __DIR__ . '/../app/Model/DAO/RememberTokenDAO.php';
 require __DIR__ . '/../app/Model/DAO/PasswordResetTokenDAO.php';
-
+require __DIR__ . '/../app/Model/DAO/LoginAttemptDAO.php';
 
 if (empty($_SESSION['user_id']) && !empty($_COOKIE['remember_me'])) {
     $cookie = $_COOKIE['remember_me'];

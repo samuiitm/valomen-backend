@@ -18,13 +18,22 @@ class AuthController
         $pageTitle = 'Valomen.gg | Login';
         $pageCss   = 'login.css';
 
-        $expired       = !empty($_GET['expired']);
-        $loginError    = null;
-        $username      = '';
-        $rememberMe    = false;
-        $attempts      = $_SESSION['login_attempts'] ?? 0;
+        $expired      = !empty($_GET['expired']);
+        $loginError   = null;
+        $username     = '';
+        $rememberMe   = false;
+        $resetSuccess = !empty($_GET['reset']);
+
+        $sessionAttempts = $_SESSION['login_attempts'] ?? 0;
+
+        $loginAttemptDao = new LoginAttemptDAO($this->db);
+        $ip              = $this->getClientIp();
+
+        $loginAttemptDao->deleteOldAttempts();
+        $ipAttempts = $loginAttemptDao->getAttemptsByIp($ip);
+
+        $attempts      = max($sessionAttempts, $ipAttempts);
         $showRecaptcha = $attempts >= 3;
-        $resetSuccess  = !empty($_GET['reset']);
 
         require __DIR__ . '/../View/partials/header.php';
         require __DIR__ . '/../View/login.view.php';
@@ -36,15 +45,24 @@ class AuthController
         $pageTitle = 'Valomen.gg | Login';
         $pageCss   = 'login.css';
 
-        $expired       = !empty($_GET['expired']);
-        $loginError    = null;
-        $username      = $_POST['username'] ?? '';
-        $rememberMe    = !empty($_POST['remember_me']);
-        $attempts      = $_SESSION['login_attempts'] ?? 0;
-        $showRecaptcha = $attempts >= 3;
-        $resetSuccess  = !empty($_GET['reset']);
+        $expired      = !empty($_GET['expired']);
+        $loginError   = null;
+        $username     = $_POST['username'] ?? '';
+        $rememberMe   = !empty($_POST['remember_me']);
+        $resetSuccess = !empty($_GET['reset']);
 
-        if ($attempts >= 3) {
+        $sessionAttempts = $_SESSION['login_attempts'] ?? 0;
+
+        $loginAttemptDao = new LoginAttemptDAO($this->db);
+        $ip              = $this->getClientIp();
+
+        $loginAttemptDao->deleteOldAttempts();
+        $ipAttempts = $loginAttemptDao->getAttemptsByIp($ip);
+
+        $attempts      = max($sessionAttempts, $ipAttempts);
+        $showRecaptcha = $attempts >= 3;
+
+        if ($showRecaptcha) {
             $captchaToken = $_POST['g-recaptcha-response'] ?? '';
 
             if (empty($captchaToken) || !verify_recaptcha($captchaToken)) {
@@ -58,6 +76,7 @@ class AuthController
 
             if ($result['success']) {
                 $_SESSION['login_attempts'] = 0;
+                $loginAttemptDao->clearAttemptsByIp($ip);
 
                 if ($rememberMe) {
                     $tokenDao = new RememberTokenDAO($this->db);
@@ -77,7 +96,7 @@ class AuthController
 
                         $cookieValue = $selector . ':' . $validator;
 
-                        // Path portable (si el projecte està en subcarpeta)
+                        // path portable si el projecte va en subcarpeta
                         $cookiePath = base_path() ?: '/';
 
                         setcookie('remember_me', $cookieValue, [
@@ -90,12 +109,16 @@ class AuthController
                     }
                 }
 
-                // Redirecció portable
                 redirect_to('');
                 exit;
             } else {
-                $_SESSION['login_attempts'] = $attempts + 1;
-                $attempts      = $_SESSION['login_attempts'];
+                $_SESSION['login_attempts'] = $sessionAttempts + 1;
+                $loginAttemptDao->registerFailedAttempt($ip);
+
+                $sessionAttempts = $_SESSION['login_attempts'];
+                $ipAttempts      = $loginAttemptDao->getAttemptsByIp($ip);
+
+                $attempts      = max($sessionAttempts, $ipAttempts);
                 $showRecaptcha = $attempts >= 3;
 
                 $loginError = $result['error'];
@@ -114,7 +137,6 @@ class AuthController
             $tokenDao->deleteByUserId((int)$_SESSION['user_id']);
         }
 
-        // Esborrem la cookie "remember_me" amb el mateix path portable
         $cookiePath = base_path() ?: '/';
 
         setcookie('remember_me', '', [
@@ -126,6 +148,7 @@ class AuthController
         ]);
 
         $_SESSION = [];
+
         if (ini_get('session.use_cookies')) {
             $params = session_get_cookie_params();
             setcookie(
@@ -138,9 +161,9 @@ class AuthController
                 $params['httponly']
             );
         }
+
         session_destroy();
 
-        // Redirecció portable
         redirect_to('login');
         exit;
     }
@@ -181,5 +204,10 @@ class AuthController
         require __DIR__ . '/../View/partials/header.php';
         require __DIR__ . '/../View/register.view.php';
         require __DIR__ . '/../View/partials/footer.php';
+    }
+
+    private function getClientIp(): string
+    {
+        return $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
     }
 }

@@ -61,6 +61,7 @@ $isCompleted = $status === 'completed';
         <?php else: ?>
 
             <form class="prediction-form" method="POST">
+                <?= csrf_field() ?>
                 <div class="teams-scores">
                     <div class="team-score-block">
                         <span class="team-name"><?= $team1 ?></span>

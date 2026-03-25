@@ -17,6 +17,7 @@
         <?php else: ?>
 
             <form class="form" method="POST" action="<?= htmlspecialchars(url('reset_password')) ?>">
+                <?= csrf_field() ?>
                 <input type="hidden" name="token" value="<?= htmlspecialchars($token ?? '') ?>">
 
                 <div class="form-row">

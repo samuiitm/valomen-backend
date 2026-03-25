@@ -48,6 +48,17 @@ require_once __DIR__ . '/../lib/CurrencyFormat.php';
 
 require __DIR__ . '/../app/Helpers/url.php';
 require __DIR__ . '/../app/Helpers/mailer.php';
+require __DIR__ . '/../app/Helpers/csrf.php';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $csrfToken = $_POST['csrf_token'] ?? '';
+
+    if (!csrf_verify($csrfToken)) {
+        http_response_code(403);
+        echo 'CSRF token invàlid.';
+        exit;
+    }
+}
 
 require __DIR__ . '/../app/Model/DAO/BaseDAO.php';
 require __DIR__ . '/../app/Model/DAO/UserDAO.php';

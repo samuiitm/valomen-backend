@@ -11,6 +11,7 @@ $errors = $data['errors'] ?? [];
         </div>
 
         <form method="post" class="form">
+            <?= csrf_field() ?>
             <div class="form-row">
                 <div class="form-field">
                     <label for="name">Name <span class="obligatory">*</span></label>

@@ -6,6 +6,7 @@
         </div>
 
         <form class="form" method="GET" action="match_create">
+            <?= csrf_field() ?>
             <input type="hidden" name="page" value="match_create">
 
             <div class="form-row">
@@ -31,6 +32,7 @@
 
         <?php if (!empty($selectedEventId)): ?>
             <form class="form" method="POST" action="match_create">
+                <?= csrf_field() ?>
                 <input type="hidden" name="event_id" value="<?= htmlspecialchars($selectedEventId) ?>">
 
                 <div class="form-row">

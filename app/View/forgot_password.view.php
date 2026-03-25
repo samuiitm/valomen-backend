@@ -18,6 +18,7 @@
         <?php endif; ?>
 
         <form class="form" method="POST" action="<?= htmlspecialchars(url('forgot_password')) ?>">
+            <?= csrf_field() ?>
             <div class="form-row">
                 <div class="form-field full-width">
                     <label>Email <span class="obligatory">*</span></label>

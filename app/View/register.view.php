@@ -1,5 +1,6 @@
 <main class="main-register">
     <form class="register-form" method="POST" action="register" novalidate>
+        <?= csrf_field() ?>
         <?php if (!empty($registerSuccess)): ?>
             <p class="success-message">
                 Account created successfully. You can now

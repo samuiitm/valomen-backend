@@ -6,6 +6,7 @@
         </div>
 
         <form class="form" method="post">
+            <?= csrf_field() ?>
             <div class="form-row">
                 <div class="form-field full-width">
                     <label for="current_password">

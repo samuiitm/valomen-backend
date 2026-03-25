@@ -30,6 +30,7 @@ if (!empty($pendingAvatar)) {
         <?php endif; ?>
 
         <form id="avatarForm" action="profile/avatar" method="post" enctype="multipart/form-data" class="profile-form">
+            <?= csrf_field() ?>
             <div class="profile-avatar-block">
                 <div class="avatar-preview">
                     <img src="<?= $avatarSrc ?>" 
@@ -85,6 +86,7 @@ if (!empty($pendingAvatar)) {
         </div>
 
         <form action="profile/avatar/confirm" method="post" class="modal-actions">
+            <?= csrf_field() ?>
             <input type="hidden" name="avatar_filename" value="<?= htmlspecialchars($pendingAvatar) ?>">
 
             <button class="btn-primary" type="submit" name="decision" value="confirm">

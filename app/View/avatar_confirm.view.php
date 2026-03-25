@@ -24,6 +24,7 @@ $oldAvatarSrc = !empty($user['logo'])
         </div>
 
         <form class="form" method="post" action="profile/avatar/confirm">
+            <?= csrf_field() ?>
             <input type="hidden" name="avatar_filename" value="<?= htmlspecialchars($newAvatarFilename) ?>">
 
             <div class="form-actions">

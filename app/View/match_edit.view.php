@@ -16,6 +16,7 @@ $matchId = (int)($match['id'] ?? 0);
         <?php endif; ?>
 
         <form id="match-edit-form" method="POST" action="match_edit?id=<?= $matchId ?>" class="form">
+            <?= csrf_field() ?>
             <div class="form-row">
                 <div class="form-field">
                     <label for="event_id">Event <span class="obligatory">*</span></label>

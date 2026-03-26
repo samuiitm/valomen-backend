@@ -137,29 +137,39 @@ class EventDAO extends BaseDAO
 
     public function setEventTeams(int $eventId, array $teamIds): void
     {
-        // faig la operació en una transacció per si falla alguna cosa
-        $this->db->beginTransaction();
+        try {
+            // obro transacció perquè el canvi sigui tot o res
+            $this->db->beginTransaction();
 
-        // primer esborro tots els equips d'aquest event
-        $sqlDelete = "DELETE FROM event_teams WHERE event_id = :event_id";
-        $stmtDel   = $this->db->prepare($sqlDelete);
-        $stmtDel->execute([':event_id' => $eventId]);
+            // primer esborro els equips actuals de l'event
+            $sqlDelete = "DELETE FROM event_teams WHERE event_id = :event_id";
+            $stmtDel   = $this->db->prepare($sqlDelete);
+            $stmtDel->execute([':event_id' => $eventId]);
 
-        // i després torno a inserir els que m'han passat
-        if (!empty($teamIds)) {
-            $sqlIns = "INSERT INTO event_teams (event_id, team_id)
-                       VALUES (:event_id, :team_id)";
-            $stmtIns = $this->db->prepare($sqlIns);
+            // després insereixo els equips nous
+            if (!empty($teamIds)) {
+                $sqlIns = "INSERT INTO event_teams (event_id, team_id)
+                        VALUES (:event_id, :team_id)";
+                $stmtIns = $this->db->prepare($sqlIns);
 
-            foreach ($teamIds as $teamId) {
-                $stmtIns->execute([
-                    ':event_id' => $eventId,
-                    ':team_id'  => (int)$teamId,
-                ]);
+                foreach ($teamIds as $teamId) {
+                    $stmtIns->execute([
+                        ':event_id' => $eventId,
+                        ':team_id'  => (int)$teamId,
+                    ]);
+                }
             }
-        }
 
-        $this->db->commit();
+            // si tot ha anat bé, guardo els canvis
+            $this->db->commit();
+        } catch (Throwable $e) {
+            // si alguna query falla, desfem tota la transacció
+            if ($this->db->inTransaction()) {
+                $this->db->rollBack();
+            }
+
+            throw $e;
+        }
     }
 
     public function getOngoingEvents(): array

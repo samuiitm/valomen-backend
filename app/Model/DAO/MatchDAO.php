@@ -20,14 +20,15 @@ class MatchDAO extends BaseDAO
         foreach ($matches as $match) {
             // si ja té marcador, el partit es considera completat
             if ($match['score_team_1'] !== null && $match['score_team_2'] !== null) {
-                $newStatus = 'completed';
+                $newStatus = 'Completed';
             } else {
-                // si no té marcador, miro si és future o passat per dir Upcoming o Live
+                // si no té marcador, miro si és futur o passat per dir Upcoming o Live
                 $matchDateTime = new DateTime($match['date'] . ' ' . $match['hour']);
+
                 if ($matchDateTime > $now) {
-                    $newStatus = 'upcoming';
+                    $newStatus = 'Upcoming';
                 } else {
-                    $newStatus = 'live';
+                    $newStatus = 'Live';
                 }
             }
 
@@ -82,68 +83,84 @@ class MatchDAO extends BaseDAO
     public function countUpcomingMatches(): int
     {
         // compta partits Upcoming + Live
-        $sql = "SELECT COUNT(*) AS total FROM matches
-                WHERE status = 'Upcoming' || status = 'Live'";
+        $sql = "SELECT COUNT(*) AS total
+                FROM matches
+                WHERE status = 'Upcoming' OR status = 'Live'";
+
         $stmt = $this->db->query($sql);
         $r = $stmt->fetch();
+
         return (int)($r['total'] ?? 0);
     }
 
     public function getUpcomingMatchesPaginated(int $limit, int $offset, string $order): array
     {
         // ordenació per data/hora asc o desc
-        if ($order === 'date_desc') $orderBy = 'm.date DESC, m.hour DESC';
-        else $orderBy = 'm.date ASC, m.hour ASC';
+        if ($order === 'date_desc') {
+            $orderBy = 'm.date DESC, m.hour DESC';
+        } else {
+            $orderBy = 'm.date ASC, m.hour ASC';
+        }
 
         $sql = "SELECT m.*,
                     t1.name AS team_1_name, t1.country AS team_1_country,
                     t2.name AS team_2_name, t2.country AS team_2_country, m.status,
                     e.name AS event_name, e.logo AS event_logo
-              FROM matches m
-              LEFT JOIN teams t1 ON m.team_1 = t1.id
-              LEFT JOIN teams t2 ON m.team_2 = t2.id
-              JOIN events e ON m.event_id = e.id
-              WHERE m.status = 'Upcoming' OR m.status = 'Live'
-              ORDER BY $orderBy
-              LIMIT :limit OFFSET :offset";
+                FROM matches m
+                LEFT JOIN teams t1 ON m.team_1 = t1.id
+                LEFT JOIN teams t2 ON m.team_2 = t2.id
+                JOIN events e ON m.event_id = e.id
+                WHERE m.status = 'Upcoming' OR m.status = 'Live'
+                ORDER BY $orderBy
+                LIMIT :limit OFFSET :offset";
+
         $stmt = $this->db->prepare($sql);
-        $stmt->bindValue(':limit',  $limit,  PDO::PARAM_INT);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
         $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
         $stmt->execute();
+
         return $stmt->fetchAll();
     }
 
     public function countCompletedMatches(): int
     {
         // compta el total de partits completats
-        $sql = "SELECT COUNT(*) AS total FROM matches
+        $sql = "SELECT COUNT(*) AS total
+                FROM matches
                 WHERE status = 'Completed'";
+
         $stmt = $this->db->query($sql);
         $r = $stmt->fetch();
+
         return (int)($r['total'] ?? 0);
     }
 
     public function getCompletedMatchesPaginated(int $limit, int $offset, string $order): array
     {
         // ordenació per data/hora pels completats
-        if ($order === 'date_desc') $orderBy = 'm.date DESC, m.hour DESC';
-        else $orderBy = 'm.date ASC, m.hour ASC';
-      
+        if ($order === 'date_desc') {
+            $orderBy = 'm.date DESC, m.hour DESC';
+        } else {
+            $orderBy = 'm.date ASC, m.hour ASC';
+        }
+
         $sql = "SELECT m.*,
                     t1.name AS team_1_name, t1.country AS team_1_country,
                     t2.name AS team_2_name, t2.country AS team_2_country,
                     e.name AS event_name, e.logo AS event_logo
-              FROM matches m
-              LEFT JOIN teams t1 ON m.team_1 = t1.id
-              LEFT JOIN teams t2 ON m.team_2 = t2.id
-              JOIN events e ON m.event_id = e.id
-              WHERE m.status = 'Completed'
-              ORDER BY $orderBy
-              LIMIT :limit OFFSET :offset";
+                FROM matches m
+                LEFT JOIN teams t1 ON m.team_1 = t1.id
+                LEFT JOIN teams t2 ON m.team_2 = t2.id
+                JOIN events e ON m.event_id = e.id
+                WHERE m.status = 'Completed'
+                ORDER BY $orderBy
+                LIMIT :limit OFFSET :offset";
+
         $stmt = $this->db->prepare($sql);
-        $stmt->bindValue(':limit',  $limit,  PDO::PARAM_INT);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
         $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
         $stmt->execute();
+
         return $stmt->fetchAll();
     }
 
@@ -255,27 +272,28 @@ class MatchDAO extends BaseDAO
                     t1.name AS team_1_name, t1.country AS team_1_country,
                     t2.name AS team_2_name, t2.country AS team_2_country, m.status,
                     e.name AS event_name, e.logo AS event_logo
-              FROM matches m
-              LEFT JOIN teams t1 ON m.team_1 = t1.id
-              LEFT JOIN teams t2 ON m.team_2 = t2.id
-              JOIN events e ON m.event_id = e.id
-              WHERE (m.status = 'Upcoming' OR m.status = 'Live')
+                FROM matches m
+                LEFT JOIN teams t1 ON m.team_1 = t1.id
+                LEFT JOIN teams t2 ON m.team_2 = t2.id
+                JOIN events e ON m.event_id = e.id
+                WHERE (m.status = 'Upcoming' OR m.status = 'Live')
                 AND (
-                      t1.name LIKE :like
-                  OR t2.name LIKE :like
-                  OR e.name LIKE :like
-                  OR m.event_stage LIKE :like
+                        t1.name LIKE :like
+                    OR t2.name LIKE :like
+                    OR e.name LIKE :like
+                    OR m.event_stage LIKE :like
                 )
-              ORDER BY $orderBy";
+                ORDER BY $orderBy";
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute([':like' => $like]);
+
         return $stmt->fetchAll();
     }
 
     public function searchCompletedMatches(string $term, string $order): array
     {
-        // cerca de partits Completed pel mateixos camps
+        // cerca de partits Completed pels mateixos camps
         $orderBy = ($order === 'date_desc')
             ? 'm.date DESC, m.hour DESC'
             : 'm.date ASC, m.hour ASC';
@@ -286,21 +304,22 @@ class MatchDAO extends BaseDAO
                     t1.name AS team_1_name, t1.country AS team_1_country,
                     t2.name AS team_2_name, t2.country AS team_2_country,
                     e.name AS event_name, e.logo AS event_logo
-              FROM matches m
-              LEFT JOIN teams t1 ON m.team_1 = t1.id
-              LEFT JOIN teams t2 ON m.team_2 = t2.id
-              JOIN events e ON m.event_id = e.id
-              WHERE m.status = 'Completed'
+                FROM matches m
+                LEFT JOIN teams t1 ON m.team_1 = t1.id
+                LEFT JOIN teams t2 ON m.team_2 = t2.id
+                JOIN events e ON m.event_id = e.id
+                WHERE m.status = 'Completed'
                 AND (
-                      t1.name LIKE :like
-                  OR t2.name LIKE :like
-                  OR e.name LIKE :like
-                  OR m.event_stage LIKE :like
+                        t1.name LIKE :like
+                    OR t2.name LIKE :like
+                    OR e.name LIKE :like
+                    OR m.event_stage LIKE :like
                 )
-              ORDER BY $orderBy";
+                ORDER BY $orderBy";
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute([':like' => $like]);
+
         return $stmt->fetchAll();
     }
 }
